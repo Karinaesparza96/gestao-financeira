@@ -1,0 +1,6 @@
+@Api_HostAddress = http://localhost:5224
+
+GET {{Api_HostAddress}}/api/
+Accept: application/json
+
+###

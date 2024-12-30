@@ -1,0 +1,18 @@
+﻿using Business.Entities;
+using Data.Context;
+using Microsoft.AspNetCore.Identity;
+
+namespace Api.Configurations
+{
+    public static class IdentityConfiguration
+    {
+        public static WebApplicationBuilder AddIdentityConfiguration(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddIdentity<Usuario, IdentityRole>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            return builder;
+        }
+    }
+}
