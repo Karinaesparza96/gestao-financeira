@@ -9,7 +9,7 @@ namespace Business.Interfaces
 
         Task<TEntity?> ObterPorId(int id);
 
-        Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> Buscar<TOrderKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TOrderKey>>? orderBy = null);
 
         Task Atualizar(TEntity entity);
 

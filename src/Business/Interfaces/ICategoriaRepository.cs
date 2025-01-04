@@ -4,8 +4,7 @@ namespace Business.Interfaces
 {
     public interface ICategoriaRepository : IRepository<Categoria>
     {
-        Task<Categoria?> ObterPorId(int id, string usuarioIdentityId);
+        Task<Categoria?> ObterTransacoes(int id);
 
-        Task<IEnumerable<Categoria>> ObterCategoriasPadrao();
     }
 }

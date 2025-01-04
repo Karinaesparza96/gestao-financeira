@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations.SQLite
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241229222322_InitialMigrationSQLite")]
+    [Migration("20250102193641_InitialMigrationSQLite")]
     partial class InitialMigrationSQLite
     {
         /// <inheritdoc />
@@ -328,7 +328,7 @@ namespace Data.Migrations.SQLite
             modelBuilder.Entity("Business.Entities.Transacao", b =>
                 {
                     b.HasOne("Business.Entities.Categoria", "Categoria")
-                        .WithMany()
+                        .WithMany("Transacoes")
                         .HasForeignKey("CategoriaId")
                         .IsRequired();
 
@@ -391,6 +391,11 @@ namespace Data.Migrations.SQLite
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Business.Entities.Categoria", b =>
+                {
+                    b.Navigation("Transacoes");
                 });
 #pragma warning restore 612, 618
         }

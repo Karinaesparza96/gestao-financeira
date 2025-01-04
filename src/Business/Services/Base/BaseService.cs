@@ -1,51 +1,33 @@
 ﻿using Business.Entities;
 using Business.Interfaces;
-using Business.Notificacoes;
 using FluentValidation;
-using FluentValidation.Results;
 
 namespace Business.Services.Base
 {
-    public abstract class BaseService(IAppIdentityUser appIdentityUser, INotificador notificador, IUsuarioService usuarioService)
+    public abstract class BaseService(IAppIdentityUser appIdentityUser, IUsuarioService usuarioService)
     {
-        protected readonly IAppIdentityUser _appIdentityUser = appIdentityUser;
-        private readonly INotificador _noficador = notificador;
+        private readonly IAppIdentityUser _appIdentityUser = appIdentityUser;
         private readonly IUsuarioService _usuarioService = usuarioService;
-
-        protected bool ExecutarValidacao<TV, TE>(TV validador, TE entity) where TV : AbstractValidator<TE> where TE : Entity
+        protected string UsuarioId => _appIdentityUser.GetUserId();
+        protected ResultadoOperacao<TE> ExecutarValidacao<TV, TE>(TV validador, TE entity) where TV : AbstractValidator<TE> where TE : Entity
         {
             var entidadeValidada = validador.Validate(entity);
 
-            if (entidadeValidada.IsValid) return true;
-
-            NotificarErro(entidadeValidada);
-
-            return false;
-        }
-
-        protected void NotificarErro(ValidationResult validation)
-        {
-            foreach (var erro in validation.Errors)
+            if (entidadeValidada.IsValid)
             {
-                NotificarErro(erro.ErrorMessage);
+                return ResultadoOperacao<TE>.Sucesso(entity);
             }
-        }
 
-        protected void NotificarErro(string mensagem)
-        {
-            _noficador.Adicionar(new Notificacao(mensagem));
+            return ResultadoOperacao<TE>.Falha(entidadeValidada.Errors.Select(e => e.ErrorMessage));
         }
-
-        protected string ObterUsuarioId()
-        {
-            return _appIdentityUser.GetUserId();
-        }
-
         protected async Task<Usuario?> ObterUsuarioLogado()
         {
-            var idUsuariologado = ObterUsuarioId();
+           return await _usuarioService.ObterUsuarioPorId(UsuarioId);
+        }
 
-           return await _usuarioService.ObterUsuarioPorId(idUsuariologado);
+        protected bool AcessoAutorizado(string? usuarioId)
+        {
+            return _appIdentityUser.IsOwner(usuarioId);
         }
     }
 }

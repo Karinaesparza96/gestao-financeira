@@ -2,9 +2,9 @@
 
 namespace Business.Entities.Validations
 {
-    public class LimiteOrcamentoMapping : AbstractValidator<LimiteOrcamento>
+    public class LimiteOrcamentoValidation : AbstractValidator<LimiteOrcamento>
     {
-        public LimiteOrcamentoMapping()
+        public LimiteOrcamentoValidation()
         {
             RuleFor(x => x.Limite)
                 .NotEmpty().WithMessage("O campo {PropertyName} deve ser fornecido.")

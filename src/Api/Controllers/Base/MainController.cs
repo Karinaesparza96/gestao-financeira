@@ -1,5 +1,4 @@
-﻿using Business.Interfaces;
-using Business.Notificacoes;
+﻿using Business.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,70 +7,52 @@ using System.Net;
 namespace Api.Controllers.Base
 {
     [ApiController]
-    public abstract class MainController(INotificador notificador) : ControllerBase
+    public abstract class MainController : ControllerBase
     {   
-        private readonly INotificador _notificador = notificador;
-        protected ActionResult RetornoPadrao(HttpStatusCode statusCode = HttpStatusCode.OK, object? data = null)
+        protected ActionResult RetornoPadrao<T>(ResultadoOperacao<T> data, HttpStatusCode statusCode = HttpStatusCode.OK) where T : class 
         {
-            if (OperacaoValida())
+            if (data.OperacaoValida)
             {
-                return new ObjectResult(data ?? new { })
+                return new ObjectResult(data.Data)
                 {
                     StatusCode = (int)statusCode,
                 };
             }
             return BadRequest(new
             {
-                erros = _notificador.ObterTodos().Select(x => x.Mensagem)
+                erros = data.Erros,
+            });
+        }
+
+        protected ActionResult RetornoPadrao(ResultadoOperacao data, HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            if (data.OperacaoValida)
+            {
+                return new ObjectResult(data.Mensagem ?? null)
+                {
+                    StatusCode = (int)statusCode,
+                };
+            }
+            return BadRequest(new
+            {
+                erros = data.Erros,
             });
         }
 
         protected ActionResult RetornoPadrao(ModelStateDictionary modelstate)
         {   
-            if (!modelstate.IsValid)
-            {
-               NotificarErros(modelstate);
-            }
-            return RetornoPadrao();
+            var erros = modelstate.Values
+                        .SelectMany(e => e.Errors)
+                        .Select(e => e.Exception?.Message ?? e.ErrorMessage);
+
+            return RetornoPadrao(ResultadoOperacao.Falha(erros));
         }
 
         protected ActionResult RetornoPadrao(IdentityResult identityResult)
         {
-            if (!identityResult.Succeeded)
-            {
-                NotificarErros(identityResult);
-            }
-            return RetornoPadrao();
+            var erros = identityResult.Errors.Select(e => e.Description);
+
+            return RetornoPadrao(ResultadoOperacao.Falha(erros));
         }
-
-
-        protected void NotificarErros(ModelStateDictionary modelstate)
-        {
-            foreach (var e in modelstate.Values.SelectMany(e => e.Errors))
-            {
-                var msg = e.Exception != null ? e.Exception.Message : e.ErrorMessage;
-                NotificarErros(msg);
-            }
-        }
-
-        protected void NotificarErros(IdentityResult IdentityResult)
-        {
-            foreach (var e in IdentityResult.Errors)
-            {
-                var msg = e.Description;
-                NotificarErros(msg);
-            }
-        }
-
-        protected void NotificarErros(string mensagemErro)
-        {
-            _notificador.Adicionar(new Notificacao(mensagemErro));
-        }
-
-        protected bool OperacaoValida()
-        {
-            return !_notificador.TemNotificacao();
-        }
-
     }
 }

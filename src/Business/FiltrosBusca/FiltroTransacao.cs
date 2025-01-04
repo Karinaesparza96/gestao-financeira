@@ -1,12 +1,11 @@
 ﻿using Business.Entities;
 
-namespace Business.Dtos
+namespace Business.FiltrosBusca
 {
-    public class FiltroTransacaoDto
+    public class FiltroTransacao
     {
         public DateTime? Data { get; set; }
         public int? CategoriaId { get; set; }
         public TipoTransacao? TipoTransacao { get; set; }
-
     }
 }

@@ -20,7 +20,7 @@ namespace Data.Mappings
                 .HasColumnType("varchar(200)");
 
             builder.HasOne(t => t.Categoria)
-                .WithMany()
+                .WithMany(c => c.Transacoes)
                 .HasForeignKey(t => t.CategoriaId)
                 .IsRequired();
 

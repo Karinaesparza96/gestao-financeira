@@ -10,9 +10,12 @@
 
         public decimal Limite { get; set; }
 
+        public bool LimiteGeral => CategoriaId == null;
+
         // Props navigation ef
         public Categoria? Categoria { get; set; }
 
         public Usuario Usuario { get; set; } = null!;
+
     }
 }

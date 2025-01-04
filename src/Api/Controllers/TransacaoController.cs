@@ -1,7 +1,8 @@
 ﻿using Api.Controllers.Base;
+using Api.Dtos;
 using AutoMapper;
-using Business.Dtos;
 using Business.Entities;
+using Business.FiltrosBusca;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,26 @@ namespace Api.Controllers
 {
     [Route("api/transacoes")]
     [Authorize]
-    public class TransacaoController(ITransacaoService transacaoService, INotificador notificador, IMapper mapper) : MainController(notificador)
+    public class TransacaoController(ITransacaoService transacaoService, IMapper mapper) : MainController
     {
         private readonly ITransacaoService _transacaoService = transacaoService;
-        private readonly IMapper _mapper = mapper;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransacaoDto>>> ObterTodos([FromQuery]FiltroTransacaoDto filtroDto)
+        public async Task<ActionResult> ObterTodos([FromQuery]FiltroTransacao filtroDto)
         {
-            var transacoes = await _transacaoService.ObterTodos(filtroDto);
-            return RetornoPadrao(HttpStatusCode.OK, _mapper.Map<IEnumerable<TransacaoDto>>(transacoes));
+            var resultadoOperacao = await _transacaoService.ObterTodos(filtroDto);
+
+            return RetornoPadrao(ResultadoOperacao<IEnumerable<TransacaoDto>>
+                        .Sucesso(mapper.Map<IEnumerable<TransacaoDto>>(resultadoOperacao.Data)));
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TransacaoDto?>> ObterPorId(int id)
+        public async Task<ActionResult> ObterPorId(int id)
         {   
-            var transacao = await _transacaoService.ObterPorId(id);
-            return RetornoPadrao(HttpStatusCode.OK, _mapper.Map<TransacaoDto>(transacao));
+            var resultadoOperacao = await _transacaoService.ObterPorId(id);
+
+            return RetornoPadrao(ResultadoOperacao<TransacaoDto>
+                        .Sucesso(mapper.Map<TransacaoDto>(resultadoOperacao.Data)));
         }
 
         [HttpPost]
@@ -35,10 +39,9 @@ namespace Api.Controllers
         {   
             if (!ModelState.IsValid) return RetornoPadrao(ModelState);
 
-            var transacao = _mapper.Map<Transacao>(transacaoDto);
-            await _transacaoService.Adicionar(transacao);
+            var retornoOperacao = await _transacaoService.Adicionar(mapper.Map<Transacao>(transacaoDto));
 
-            return RetornoPadrao(HttpStatusCode.Created);
+            return RetornoPadrao(retornoOperacao, HttpStatusCode.Created);
         }
 
         [HttpPut("{id:int}")]
@@ -46,23 +49,21 @@ namespace Api.Controllers
         {
             if (id != transacaoDto.Id)
             {
-                NotificarErros("Os ids devem ser iguais.");
-                return RetornoPadrao();
+                return RetornoPadrao(ResultadoOperacao.Falha("Os ids devem ser iguais."));
             }
 
             if (!ModelState.IsValid) return RetornoPadrao(ModelState);
 
-            var transacao = _mapper.Map<Transacao>(transacaoDto);
-            await _transacaoService.Atualizar(transacao);
+            var resultadoOperacao = await _transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
 
-            return RetornoPadrao(HttpStatusCode.NoContent);
+            return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Excluir(int id)
         {
-            await _transacaoService.Exluir(id);
-            return RetornoPadrao(HttpStatusCode.NoContent);
+            var resultadoOperacao = await _transacaoService.Exluir(id);
+            return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
         }
     }
 }

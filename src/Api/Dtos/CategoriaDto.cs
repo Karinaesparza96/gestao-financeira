@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Business.Dtos
+namespace Api.Dtos
 {
     public class CategoriaDto
     {

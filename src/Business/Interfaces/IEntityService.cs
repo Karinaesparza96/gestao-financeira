@@ -2,11 +2,11 @@
 
 namespace Business.Interfaces
 {
-    public interface IEntityService<TEntity> where TEntity : Entity 
+    public interface IEntityService<T> where T : class
     {
-        Task<TEntity?> ObterPorId(int id);
-        Task Adicionar(TEntity entity);
-        Task Atualizar(TEntity entity);
-        Task Exluir(int id);
+        Task<ResultadoOperacao<T>> ObterPorId(int id);
+        Task<ResultadoOperacao> Adicionar(T entityDto);
+        Task<ResultadoOperacao> Atualizar(T entityDto);
+        Task<ResultadoOperacao> Exluir(int id);
     }
 }

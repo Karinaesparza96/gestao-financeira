@@ -43,27 +43,42 @@ namespace Api.Configurations
                 Nome = "Teste"
             };
 
-            var categoria = new Categoria
+            var categoria1 = new Categoria
             {
                 Default = true,
                 Nome = "Alimentação"
             };
 
+            var categoria2 = new Categoria
+            {
+                Default = true,
+                Nome = "Saúde"
+            };
+
+            var categoria3 = new Categoria
+            {
+                Default = true,
+                Nome = "Transporte"
+            };
+
             var transacao = new Transacao
             {
                 UsuarioId = userIdentity.Id,
-                CategoriaId = categoria.Id,
+                CategoriaId = categoria1.Id,
                 Data = DateTime.Now,
                 Tipo = TipoTransacao.Entrada,
                 Descricao = "teste",
                 Valor = 1000.59M,
-                Categoria = categoria,
+                Categoria = categoria1,
                 Usuario = userIdentity,
             };
 
             await context.Users.AddAsync(userIdentity);
 
+            await context.Set<Categoria>().AddRangeAsync([categoria1, categoria2, categoria3]);
+
             await context.Set<Transacao>().AddAsync(transacao);
+
 
             await context.SaveChangesAsync();
         }

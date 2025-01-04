@@ -17,11 +17,13 @@ namespace Api.Configurations
 
             builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
             builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            builder.Services.AddScoped<ILimiteOrcamentoRepository, LimiteOrcamentoRepository>();
 
             builder.Services.AddScoped<ITransacaoService, TransacaoService>();
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
             builder.Services.AddScoped<ILimiteOrcamentoService, LimiteOrcamentoService>();
+
 
             return builder;
         }

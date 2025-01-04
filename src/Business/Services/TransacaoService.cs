@@ -1,6 +1,7 @@
-﻿using Business.Dtos;
+﻿using AutoMapper;
 using Business.Entities;
 using Business.Entities.Validations;
+using Business.FiltrosBusca;
 using Business.Interfaces;
 using Business.Services.Base;
 
@@ -9,76 +10,88 @@ namespace Business.Services
     public class TransacaoService(ITransacaoRepository repository, 
                                 IAppIdentityUser appIdentityUser, 
                                 ICategoriaRepository categoriaRepository,
-                                IUsuarioService usuarioService,
-                                INotificador notificador) : BaseService(appIdentityUser, notificador, usuarioService), ITransacaoService
+                                IMapper mapper,
+                                IUsuarioService usuarioService) : BaseService(appIdentityUser, usuarioService), ITransacaoService
     {
         private readonly ITransacaoRepository _transacaoRepository = repository;
         private readonly ICategoriaRepository _categoriaRepository = categoriaRepository;
-        public async Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacaoDto filtroDto)
+        public async Task<ResultadoOperacao<IEnumerable<Transacao>>> ObterTodos(FiltroTransacao filtroDto)
         {
-            var transacoesUsuario = await _transacaoRepository.ObterTodos(filtroDto, ObterUsuarioId());
+            var transacoesUsuario = await _transacaoRepository.ObterTodos(filtroDto, UsuarioId);
+            var transacoesUsuarioDto = mapper.Map<IEnumerable<Transacao>>(transacoesUsuario);
 
-            return transacoesUsuario;
+            return ResultadoOperacao<IEnumerable<Transacao>>.Sucesso(transacoesUsuarioDto);
         }
 
-        public async Task<Transacao?> ObterPorId(int id)
+        public async Task<ResultadoOperacao<Transacao>> ObterPorId(int id)
         {
             var transacao = await _transacaoRepository.ObterPorId(id);
 
-            var usuarioAutorizado = _appIdentityUser.IsOwner(transacao?.UsuarioId);
+            if (transacao == null)
+            {
+                return ResultadoOperacao<Transacao>.Falha("Registro não encontrado.");
+            }
 
-            return usuarioAutorizado ? transacao : null;
+            if (!AcessoAutorizado(transacao.UsuarioId))
+            {
+                return ResultadoOperacao<Transacao>.Falha("Não é possível acessar o registro de outro usuário.");
+            }
+            var transacaoDto = mapper.Map<Transacao>(transacao);
+            return ResultadoOperacao<Transacao>.Sucesso(transacaoDto);
         }
 
-        public async Task Adicionar(Transacao entity)
+        public async Task<ResultadoOperacao> Adicionar(Transacao transacao)
         {
-            if (!ExecutarValidacao(new TransacaoValidation(), entity)) return;
+            var result = ExecutarValidacao(new TransacaoValidation(), transacao);
+            if (!result.OperacaoValida) return ResultadoOperacao.Falha(result.Erros);
 
             var usuario = await ObterUsuarioLogado();
 
             if (usuario == null)
             {
-                NotificarErro("Usuário não encontrado.");
-                return;
+                return ResultadoOperacao.Falha("Usuário não encontrado.");
             }
 
-            if (entity.Tipo == TipoTransacao.Saida)
+            if (transacao.Tipo == TipoTransacao.Saida)
             {
-                entity.Valor = -entity.Valor;
+                transacao.Valor = -transacao.Valor;
             }
 
-            var categoria = await _categoriaRepository.ObterPorId(entity.CategoriaId);
+            var categoria = await _categoriaRepository.ObterPorId(transacao.CategoriaId);
 
             if (categoria == null)
             {
-                NotificarErro("Categoria precisa ser cadastrada antes de associar a uma transação.");
-                return;
+                return ResultadoOperacao.Falha("Categoria precisa ser cadastrada antes de associar a uma transação.");
             }
 
-            entity.Categoria = categoria;
-            entity.Usuario = usuario;
+            transacao.Categoria = categoria;
+            transacao.Usuario = usuario;
 
-            await _transacaoRepository.Adicionar(entity);
+            await _transacaoRepository.Adicionar(transacao);
+            var limiteExcedido = await _transacaoRepository.VerificarLimiteExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
+
+            if (limiteExcedido)
+            {
+                return ResultadoOperacao.Sucesso(new Mensagem("Você excedeu um limite de orçamento definido."));
+            }
+            return ResultadoOperacao.Sucesso();
         }
 
-        public async Task Atualizar(Transacao transacao)
+        public async Task<ResultadoOperacao> Atualizar(Transacao transacao)
         {
-            if (!ExecutarValidacao(new TransacaoValidation(), transacao)) return;
+            var result = ExecutarValidacao(new TransacaoValidation(), transacao);
+            if (!result.OperacaoValida) return ResultadoOperacao.Falha(result.Erros);
 
             var transacaoBanco = await _transacaoRepository.ObterPorId(transacao.Id);
 
             if (transacaoBanco == null)
             {
-                NotificarErro("Registro não encontrado.");
-                return;
+                return ResultadoOperacao.Falha("Registro não encontrado.");
             }
 
-            var usuarioAutorizado = _appIdentityUser.IsOwner(transacaoBanco.UsuarioId);
-
-            if (!usuarioAutorizado)
+            if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                NotificarErro("Não é possivel atualizar registro de outro usuário.");
-                return;
+                return ResultadoOperacao.Falha("Não é possivel atualizar registro de outro usuário.");
             }
 
             if (transacao.Tipo == TipoTransacao.Saida)
@@ -93,26 +106,25 @@ namespace Business.Services
             transacaoBanco.Descricao = transacao.Descricao;
 
             await _transacaoRepository.Atualizar(transacaoBanco);
+            return ResultadoOperacao.Sucesso();
         }
 
-        public async Task Exluir(int id)
+        public async Task<ResultadoOperacao> Exluir(int id)
         {   
             var transacaoBanco = await _transacaoRepository.ObterPorId(id);
 
             if (transacaoBanco == null)
             {
-                NotificarErro("Registro não encontrado.");
-                return;
+                return ResultadoOperacao.Falha("Registro não encontrado.");
             }
-            var usuarioAutorizado = _appIdentityUser.IsOwner(transacaoBanco.UsuarioId);
 
-            if (!usuarioAutorizado)
+            if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                NotificarErro("Não é possivel excluir registro de outro usuário.");
-                return;
+                return ResultadoOperacao.Falha("Não é possivel excluir registro de outro usuário.");
             }
 
             await _transacaoRepository.Excluir(transacaoBanco);
+            return ResultadoOperacao.Sucesso();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Api.Controllers.Base;
-using Business.Dtos;
+using Api.Dtos;
 using Business.Entities;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -11,8 +11,7 @@ namespace Api.Controllers
     [Route("api/conta")]
     public class AutenticacaoController(SignInManager<Usuario> signInManager, 
                                         UserManager<Usuario> userManager,
-                                        INotificador notificador,
-                                        IJwtService jwtService) : MainController(notificador)
+                                        IJwtService jwtService) : MainController
     {
 
         [HttpPost("registrar")]
@@ -35,7 +34,7 @@ namespace Api.Controllers
                 await signInManager.SignInAsync(userIdentity, false);
                 var token = await jwtService.GenerateTokenAsync(userIdentity.Email);
 
-                return RetornoPadrao(HttpStatusCode.Created, new { token });
+                return RetornoPadrao(ResultadoOperacao<object>.Sucesso(new { token }), HttpStatusCode.Created);
             }
 
             return RetornoPadrao(result);
@@ -52,11 +51,10 @@ namespace Api.Controllers
             if (result.Succeeded)
             {
                 var token = await jwtService.GenerateTokenAsync(loginUser.Email);
-                return RetornoPadrao(HttpStatusCode.OK, new { token });
+                return RetornoPadrao(ResultadoOperacao<object>.Sucesso(new { token }), HttpStatusCode.OK);
             }
-            NotificarErros("Usuário ou senha incorretos.");
-            return RetornoPadrao();
 
+            return RetornoPadrao(ResultadoOperacao.Falha("Usuário ou senha incorretos."));
         }
     }
 }

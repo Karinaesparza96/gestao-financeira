@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using Business.Dtos;
+﻿using Api.Dtos;
+using AutoMapper;
 using Business.Entities;
 
 namespace Api.Mapper
@@ -9,7 +9,8 @@ namespace Api.Mapper
         public AutoMapperConfig()
         {
             CreateMap<TransacaoDto, Transacao>().ReverseMap();
-            CreateMap<CategoriaDto, Categoria>();
+            CreateMap<CategoriaDto, Categoria>().ReverseMap();
+            CreateMap<LimiteOrcamentoDto, LimiteOrcamento>().ReverseMap();
         }
     }
 }

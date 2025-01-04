@@ -9,5 +9,8 @@
         public string? UsuarioId { get; set; }
 
         public Usuario? Usuario { get; set; }
+
+        // EF relational
+        public IEnumerable<Transacao>? Transacoes { get; set; }
     }
 }
