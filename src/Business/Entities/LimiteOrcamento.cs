@@ -12,6 +12,8 @@
 
         public bool LimiteGeral => CategoriaId == null;
 
+        public double PorcentagemAviso { get; set; }
+
         // Props navigation ef
         public Categoria? Categoria { get; set; }
 

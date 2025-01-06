@@ -1,5 +1,6 @@
 ﻿using Business.Entities;
 using Business.FiltrosBusca;
+using Business.ValueObjets;
 
 namespace Business.Interfaces
 {
@@ -9,6 +10,6 @@ namespace Business.Interfaces
 
         decimal ObterSaldoTotal(string usuarioIdentityId);
 
-        Task<bool> VerificarLimiteExcedido(string usuarioId, DateOnly periodo);
+        Task<IEnumerable<TotalSaidaCategoria>> ObterSaldoTotalCategoriaPorPeriodo(string usuarioId, DateOnly periodo);
     }
 }

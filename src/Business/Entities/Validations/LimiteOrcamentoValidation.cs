@@ -12,6 +12,11 @@ namespace Business.Entities.Validations
 
             RuleFor(x => x.Periodo)
                 .NotEmpty().WithMessage("O campo {PropertyName} deve ser fornecido.");
+
+            RuleFor(x => x.PorcentagemAviso)
+                .InclusiveBetween(0.01, 100)
+                .WithMessage("O campo {PropertyName} deve estar entre {From} e {To}.");
+
         }
     }
 }

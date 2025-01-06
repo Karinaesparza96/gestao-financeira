@@ -22,7 +22,7 @@ namespace Data.Mappings
                 .IsRequired();
 
             builder.HasOne(x => x.Categoria)
-                .WithMany()
+                .WithMany(x => x.Limites)
                 .HasForeignKey(x => x.CategoriaId)
                 .IsRequired(false);
 

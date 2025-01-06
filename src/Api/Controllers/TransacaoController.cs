@@ -14,12 +14,10 @@ namespace Api.Controllers
     [Authorize]
     public class TransacaoController(ITransacaoService transacaoService, IMapper mapper) : MainController
     {
-        private readonly ITransacaoService _transacaoService = transacaoService;
-
         [HttpGet]
         public async Task<ActionResult> ObterTodos([FromQuery]FiltroTransacao filtroDto)
         {
-            var resultadoOperacao = await _transacaoService.ObterTodos(filtroDto);
+            var resultadoOperacao = await transacaoService.ObterTodos(filtroDto);
 
             return RetornoPadrao(ResultadoOperacao<IEnumerable<TransacaoDto>>
                         .Sucesso(mapper.Map<IEnumerable<TransacaoDto>>(resultadoOperacao.Data)));
@@ -28,7 +26,7 @@ namespace Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult> ObterPorId(int id)
         {   
-            var resultadoOperacao = await _transacaoService.ObterPorId(id);
+            var resultadoOperacao = await transacaoService.ObterPorId(id);
 
             return RetornoPadrao(ResultadoOperacao<TransacaoDto>
                         .Sucesso(mapper.Map<TransacaoDto>(resultadoOperacao.Data)));
@@ -39,7 +37,7 @@ namespace Api.Controllers
         {   
             if (!ModelState.IsValid) return RetornoPadrao(ModelState);
 
-            var retornoOperacao = await _transacaoService.Adicionar(mapper.Map<Transacao>(transacaoDto));
+            var retornoOperacao = await transacaoService.Adicionar(mapper.Map<Transacao>(transacaoDto));
 
             return RetornoPadrao(retornoOperacao, HttpStatusCode.Created);
         }
@@ -54,7 +52,7 @@ namespace Api.Controllers
 
             if (!ModelState.IsValid) return RetornoPadrao(ModelState);
 
-            var resultadoOperacao = await _transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
+            var resultadoOperacao = await transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
 
             return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
         }
@@ -62,7 +60,7 @@ namespace Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Excluir(int id)
         {
-            var resultadoOperacao = await _transacaoService.Exluir(id);
+            var resultadoOperacao = await transacaoService.Exluir(id);
             return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
         }
     }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Business.Entities;
+﻿using Business.Entities;
 using Business.Entities.Validations;
 using Business.Interfaces;
 using Business.Services.Base;
@@ -10,16 +9,15 @@ namespace Business.Services
                                 ICategoriaRepository categoriaRepository,
                                 IUsuarioService usuarioService) : BaseService(appIdentityUser, usuarioService), ICategoriaService
     {
-        private readonly ICategoriaRepository _categoriaRepository = categoriaRepository;
         public async Task<IEnumerable<Categoria>> ObterTodos()
         {
-            var categorias = await _categoriaRepository.Buscar(predicate: x => x.Default || x.UsuarioId == UsuarioId, 
+            var categorias = await categoriaRepository.Buscar(predicate: x => x.Default || x.UsuarioId == UsuarioId, 
                                                                 orderBy: x => !x.Default);
             return categorias;
         }
         public async Task<ResultadoOperacao<Categoria>> ObterPorId(int id)
         {   
-            var categoria = await _categoriaRepository.ObterPorId(id);
+            var categoria = await categoriaRepository.ObterPorId(id);
 
             if (categoria == null)
             {
@@ -45,7 +43,7 @@ namespace Business.Services
             categoria.Usuario = usuario;
             categoria.Default = false;
 
-            await _categoriaRepository.Adicionar(categoria);
+            await categoriaRepository.Adicionar(categoria);
 
             return ResultadoOperacao.Sucesso();
         }
@@ -57,7 +55,7 @@ namespace Business.Services
 
             if (!validacao.OperacaoValida) return ResultadoOperacao.Falha(validacao.Erros);
 
-            var categoriaBanco = await _categoriaRepository.ObterPorId(categoria.Id);
+            var categoriaBanco = await categoriaRepository.ObterPorId(categoria.Id);
 
             if (categoriaBanco == null) return ResultadoOperacao.Falha("Registro não encontrado.");
 
@@ -73,14 +71,14 @@ namespace Business.Services
 
             categoriaBanco.Nome = categoria.Nome;
 
-            await _categoriaRepository.Atualizar(categoriaBanco);
+            await categoriaRepository.Atualizar(categoriaBanco);
 
             return ResultadoOperacao.Sucesso();
         }
 
         public async Task<ResultadoOperacao> Exluir(int id)
         {
-            var categoria = await _categoriaRepository.ObterTransacoes(id);
+            var categoria = await categoriaRepository.ObterTransacoes(id);
 
             if (categoria == null)
             {
@@ -102,7 +100,7 @@ namespace Business.Services
                return ResultadoOperacao.Falha("Não é possivel excluir uma categoria que possui transações lançadas.");
             }
 
-            await _categoriaRepository.Excluir(categoria);
+            await categoriaRepository.Excluir(categoria);
 
             return ResultadoOperacao.Sucesso();
         }

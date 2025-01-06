@@ -12,5 +12,7 @@
 
         // EF relational
         public IEnumerable<Transacao>? Transacoes { get; set; }
+
+        public IEnumerable<LimiteOrcamento>? Limites { get; set; }
     }
 }

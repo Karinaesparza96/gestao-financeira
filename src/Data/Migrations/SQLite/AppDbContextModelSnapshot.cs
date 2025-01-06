@@ -55,6 +55,9 @@ namespace Data.Migrations.SQLite
                     b.Property<DateOnly>("Periodo")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("PorcentagemAviso")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("UsuarioId")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -309,7 +312,7 @@ namespace Data.Migrations.SQLite
             modelBuilder.Entity("Business.Entities.LimiteOrcamento", b =>
                 {
                     b.HasOne("Business.Entities.Categoria", "Categoria")
-                        .WithMany()
+                        .WithMany("Limites")
                         .HasForeignKey("CategoriaId");
 
                     b.HasOne("Business.Entities.Usuario", "Usuario")
@@ -392,6 +395,8 @@ namespace Data.Migrations.SQLite
 
             modelBuilder.Entity("Business.Entities.Categoria", b =>
                 {
+                    b.Navigation("Limites");
+
                     b.Navigation("Transacoes");
                 });
 #pragma warning restore 612, 618

@@ -14,7 +14,8 @@ namespace Data.Repositories
 
             if (filtro.Periodo != null)
             {
-                query = query.Where(x => x.Periodo == filtro.Periodo);
+                query = query.Where(x => x.Periodo.Year == filtro.Periodo.Value.Year && 
+                                    x.Periodo.Month == filtro.Periodo.Value.Month);
             }
 
             if (filtro.CategoriaId != null)
@@ -25,11 +26,6 @@ namespace Data.Repositories
             query = query.Where(x => x.UsuarioId == usuarioIdentityId);
 
             return await query.ToListAsync();
-        }
-
-        public async Task<LimiteOrcamento?> ObterLimiteOrcamentoCategoria(int idLimiteOrcamento)
-        {
-            return await DbSet.Include(x => x.Categoria).Where(x => x.Id == idLimiteOrcamento).FirstOrDefaultAsync();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Api.Configurations
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
             builder.Services.AddScoped<ILimiteOrcamentoService, LimiteOrcamentoService>();
+            builder.Services.AddScoped<ILimiteOrcamentoTransacaoService, LimiteOrcamentoTransacaoService>();
 
 
             return builder;

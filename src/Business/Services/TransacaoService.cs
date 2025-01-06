@@ -7,17 +7,16 @@ using Business.Services.Base;
 
 namespace Business.Services
 {
-    public class TransacaoService(ITransacaoRepository repository, 
+    public class TransacaoService(ITransacaoRepository transacaoRepository,
+                                ILimiteOrcamentoTransacaoService limiteOrcamentoTransacaoService,
                                 IAppIdentityUser appIdentityUser, 
                                 ICategoriaRepository categoriaRepository,
                                 IMapper mapper,
                                 IUsuarioService usuarioService) : BaseService(appIdentityUser, usuarioService), ITransacaoService
     {
-        private readonly ITransacaoRepository _transacaoRepository = repository;
-        private readonly ICategoriaRepository _categoriaRepository = categoriaRepository;
         public async Task<ResultadoOperacao<IEnumerable<Transacao>>> ObterTodos(FiltroTransacao filtroDto)
         {
-            var transacoesUsuario = await _transacaoRepository.ObterTodos(filtroDto, UsuarioId);
+            var transacoesUsuario = await transacaoRepository.ObterTodos(filtroDto, UsuarioId);
             var transacoesUsuarioDto = mapper.Map<IEnumerable<Transacao>>(transacoesUsuario);
 
             return ResultadoOperacao<IEnumerable<Transacao>>.Sucesso(transacoesUsuarioDto);
@@ -25,7 +24,7 @@ namespace Business.Services
 
         public async Task<ResultadoOperacao<Transacao>> ObterPorId(int id)
         {
-            var transacao = await _transacaoRepository.ObterPorId(id);
+            var transacao = await transacaoRepository.ObterPorId(id);
 
             if (transacao == null)
             {
@@ -57,7 +56,7 @@ namespace Business.Services
                 transacao.Valor = -transacao.Valor;
             }
 
-            var categoria = await _categoriaRepository.ObterPorId(transacao.CategoriaId);
+            var categoria = await categoriaRepository.ObterPorId(transacao.CategoriaId);
 
             if (categoria == null)
             {
@@ -67,14 +66,10 @@ namespace Business.Services
             transacao.Categoria = categoria;
             transacao.Usuario = usuario;
 
-            await _transacaoRepository.Adicionar(transacao);
-            var limiteExcedido = await _transacaoRepository.VerificarLimiteExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
+            await transacaoRepository.Adicionar(transacao);
+            var limiteExcedido = await limiteOrcamentoTransacaoService.ValidarLimiteExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
 
-            if (limiteExcedido)
-            {
-                return ResultadoOperacao.Sucesso(new Mensagem("Você excedeu um limite de orçamento definido."));
-            }
-            return ResultadoOperacao.Sucesso();
+            return limiteExcedido ? ResultadoOperacao.Sucesso(new Mensagem("Você excedeu um limite de orçamento definido.")) : ResultadoOperacao.Sucesso();
         }
 
         public async Task<ResultadoOperacao> Atualizar(Transacao transacao)
@@ -82,7 +77,7 @@ namespace Business.Services
             var result = ExecutarValidacao(new TransacaoValidation(), transacao);
             if (!result.OperacaoValida) return ResultadoOperacao.Falha(result.Erros);
 
-            var transacaoBanco = await _transacaoRepository.ObterPorId(transacao.Id);
+            var transacaoBanco = await transacaoRepository.ObterPorId(transacao.Id);
 
             if (transacaoBanco == null)
             {
@@ -105,13 +100,13 @@ namespace Business.Services
             transacaoBanco.Categoria = transacao.Categoria;
             transacaoBanco.Descricao = transacao.Descricao;
 
-            await _transacaoRepository.Atualizar(transacaoBanco);
+            await transacaoRepository.Atualizar(transacaoBanco);
             return ResultadoOperacao.Sucesso();
         }
 
         public async Task<ResultadoOperacao> Exluir(int id)
         {   
-            var transacaoBanco = await _transacaoRepository.ObterPorId(id);
+            var transacaoBanco = await transacaoRepository.ObterPorId(id);
 
             if (transacaoBanco == null)
             {
@@ -123,7 +118,7 @@ namespace Business.Services
                 return ResultadoOperacao.Falha("Não é possivel excluir registro de outro usuário.");
             }
 
-            await _transacaoRepository.Excluir(transacaoBanco);
+            await transacaoRepository.Excluir(transacaoBanco);
             return ResultadoOperacao.Sucesso();
         }
     }
