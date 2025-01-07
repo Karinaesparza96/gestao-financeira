@@ -1,7 +1,6 @@
 ﻿using Business.Entities;
 using Business.FiltrosBusca;
 using Business.Interfaces;
-using Business.ValueObjets;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,16 +38,16 @@ namespace Data.Repositories
            return result;
         }
 
-        public async Task<IEnumerable<TotalSaidaCategoria>> ObterSaldoTotalCategoriaPorPeriodo(string usuarioId, DateOnly periodo)
+        public async Task<Dictionary<int, decimal>> ObterSaldoTotalCategoriaPorPeriodo(string usuarioId, DateOnly periodo)
         {
             return await DbSet.Where(t => t.UsuarioId == usuarioId
-                                    && t.Data.Year == periodo.Year
-                                    && t.Data.Month == periodo.Month)
-                                .GroupBy(x => x.CategoriaId).Select(g => new TotalSaidaCategoria
-                                {
-                                    CategoriaId = g.Key,
-                                    TotalSaida = g.Sum(t => t.Valor)
-                                }).ToListAsync();
+                                          && t.Data.Year == periodo.Year
+                                          && t.Data.Month == periodo.Month)
+                            .GroupBy(t => t.CategoriaId)
+                            .ToDictionaryAsync(
+                                g => g.Key, 
+                                g => g.Sum(t => t.Valor)
+                            );
         }
     }
 }

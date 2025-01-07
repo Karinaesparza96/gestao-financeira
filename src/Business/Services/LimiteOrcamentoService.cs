@@ -8,9 +8,9 @@ namespace Business.Services
 {
     public class LimiteOrcamentoService(IAppIdentityUser appIdentityUser, 
                                         ILimiteOrcamentoRepository limiteOrcamentoRepository,
-                                        ILimiteOrcamentoTransacaoService limiteOrcamentoTransacaoService,
-                                        ICategoriaService categoriaService,
-                                        IUsuarioService usuarioService) : BaseService(appIdentityUser, usuarioService), ILimiteOrcamentoService
+                                        ILimiteOrcamentoTransacaoService limiteOrcamentoTransacao,
+                                        INotificador notificador,
+                                        ICategoriaService categoriaService) : BaseService(appIdentityUser, notificador), ILimiteOrcamentoService
     {
         public async Task<IEnumerable<LimiteOrcamento>> ObterTodos(FiltroLimiteOrcamento filtro)
         {
@@ -18,117 +18,112 @@ namespace Business.Services
 
             return limitesOrcamentos;
         }
-        public async Task<ResultadoOperacao<LimiteOrcamento>> ObterPorId(int id)
+        public async Task<LimiteOrcamento?> ObterPorId(int id)
         {
             var limiteOrcamento = await limiteOrcamentoRepository.ObterPorId(id);
 
             if (limiteOrcamento == null)
             {
-                return ResultadoOperacao<LimiteOrcamento>.Falha("Registro não encontrado");
+                Notificar("Registro não encontrado");
+                return null;
             }
 
             if (!AcessoAutorizado(limiteOrcamento.UsuarioId))
             {
-                return ResultadoOperacao<LimiteOrcamento>.Falha("Não é possivel acessar um registro de outro usuário.");
+                Notificar("Não é possivel acessar um registro de outro usuário.");
+                return null;
             }
 
-            return ResultadoOperacao<LimiteOrcamento>.Sucesso(limiteOrcamento);
+            return limiteOrcamento;
         }
 
-        public async Task<ResultadoOperacao> Adicionar(LimiteOrcamento limiteOrcamento)
+        public async Task Adicionar(LimiteOrcamento limiteOrcamento)
         {
-            var validacaoEntidade = ExecutarValidacao(new LimiteOrcamentoValidation(), limiteOrcamento);
+            if(!ExecutarValidacao(new LimiteOrcamentoValidation(), limiteOrcamento)) return;
 
-            if (!validacaoEntidade.OperacaoValida) 
-                return ResultadoOperacao.Falha(validacaoEntidade.Erros);
-
-            if (!limiteOrcamentoTransacaoService.TemRecursoDisponivel(limiteOrcamento.Limite))
+            if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
             {
-                return ResultadoOperacao.Falha("Não é possivel definir um limite que excede os recursos disponíveis.");
+                Notificar("Não é possivel definir um limite que excede os recursos disponíveis.");
+                return;
             }
-            var validacaoLimite = await ValidarPorTipoLimite(limiteOrcamento);
+            if(!await ValidarPorTipoLimite(limiteOrcamento)) return;
 
-            if (!validacaoLimite.OperacaoValida)
-                return validacaoLimite;
-
-            limiteOrcamento.Usuario = (await ObterUsuarioLogado())!;
+            limiteOrcamento.CategoriaId = limiteOrcamento.CategoriaId;
+            limiteOrcamento.UsuarioId = UsuarioId;
 
             await limiteOrcamentoRepository.Adicionar(limiteOrcamento);
-            return ResultadoOperacao.Sucesso();
         }
 
-        public async Task<ResultadoOperacao> Atualizar(LimiteOrcamento limiteOrcamento)
+        public async Task Atualizar(LimiteOrcamento limiteOrcamento)
         {
-            var validacaoEntidade = ExecutarValidacao(new LimiteOrcamentoValidation(), limiteOrcamento);
-
-            if (!validacaoEntidade.OperacaoValida)
-                return ResultadoOperacao.Falha(validacaoEntidade.Erros);
+            if(!ExecutarValidacao(new LimiteOrcamentoValidation(), limiteOrcamento)) return;
 
             var limiteOrcamentoBanco = await limiteOrcamentoRepository.ObterPorId(limiteOrcamento.Id);
 
             if (limiteOrcamentoBanco == null)
             {
-                return ResultadoOperacao.Falha("Registro não encontrado.");
+                Notificar("Registro não encontrado.");
+                return;
             }
 
             if (!AcessoAutorizado(UsuarioId))
             {
-                return ResultadoOperacao.Falha("Não é possivel atualizar um registro de outro usuário.");
+                Notificar("Não é possível atualizar um registro de outro usuário.");
+                return;
             }
 
-            if (!limiteOrcamentoTransacaoService.TemRecursoDisponivel(limiteOrcamento.Limite))
-            {
-                return ResultadoOperacao.Falha("Não é possivel definir um limite que excede os recursos disponíveis.");
+            if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
+            {   
+                Notificar("Não é possivel definir um limite que excede os recursos disponíveis.");
+                return;
             }
-            var validacaoLimite = await ValidarPorTipoLimite(limiteOrcamento);
 
-            if (!validacaoLimite.OperacaoValida)
-                return validacaoLimite;
+            if(!await ValidarPorTipoLimite(limiteOrcamento)) return;
 
             limiteOrcamentoBanco.Limite = limiteOrcamento.Limite;
             limiteOrcamentoBanco.CategoriaId = limiteOrcamento.CategoriaId;
             limiteOrcamentoBanco.Periodo = limiteOrcamento.Periodo;
 
             await limiteOrcamentoRepository.Atualizar(limiteOrcamentoBanco);
-            return ResultadoOperacao.Sucesso();
         }
-        public async Task<ResultadoOperacao> Exluir(int id)
+        public async Task Exluir(int id)
         {
             var entity = await limiteOrcamentoRepository.ObterPorId(id);
 
-            if (entity == null) return ResultadoOperacao.Falha("Registro não encontrado");
+            if (entity == null)
+            {   
+                Notificar("Registro não encontrado");
+                return;
+            }
 
             await limiteOrcamentoRepository.Excluir(entity);
-
-            return ResultadoOperacao.Sucesso();
         }
 
-        private async Task<ResultadoOperacao> ValidarPorTipoLimite(LimiteOrcamento limiteOrcamento)
+        private async Task<bool> ValidarPorTipoLimite(LimiteOrcamento limiteOrcamento)
         {
             if (limiteOrcamento.LimiteGeral)
             {
                 return ValidarLimiteGeral(limiteOrcamento.Periodo);
             }
 
-            return await ValidarEAtribuirLimitePorCategoria(limiteOrcamento);
+            return await ValidarLimitePorCategoria(limiteOrcamento);
         }
 
-        private ResultadoOperacao ValidarLimiteGeral(DateOnly periodo)
+        private bool ValidarLimiteGeral(DateOnly periodo)
         {
-            return ExisteLimiteGeral(periodo) ? ResultadoOperacao.Falha("Já existe um limite geral definido para este período.") : ResultadoOperacao.Sucesso();
-        }
-
-        private async Task<ResultadoOperacao> ValidarEAtribuirLimitePorCategoria(LimiteOrcamento limiteOrcamento)
-        {
-            var validaCategoria = await categoriaService.ObterPorId((int)limiteOrcamento.CategoriaId!);
-
-            if (!validaCategoria.OperacaoValida)
+            if (ExisteLimiteGeral(periodo))
             {
-                return ResultadoOperacao.Falha(validaCategoria.Erros);
+                Notificar("Já existe um limite geral definido para este período.");
+                return false;
             }
+            return true;
+        }
 
-            limiteOrcamento.Categoria = validaCategoria.Data;
-            return ResultadoOperacao.Sucesso();
+        private async Task<bool> ValidarLimitePorCategoria(LimiteOrcamento limiteOrcamento)
+        {
+            await categoriaService.ObterPorId((int)limiteOrcamento.CategoriaId!);
+
+            return !TemNotificacao();
         }
 
         private bool ExisteLimiteGeral(DateOnly periodo)

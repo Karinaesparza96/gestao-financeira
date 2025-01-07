@@ -11,47 +11,53 @@ namespace Api.Controllers
 {
     [Authorize]
     [Route("api/categorias")]
-    public class CategoriaController(ICategoriaService categoriaService, IMapper mapper) : MainController
+    public class CategoriaController(ICategoriaService categoriaService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {
         [HttpGet]
-        public async Task<ActionResult> ObterTodos()
+        public async Task<ActionResult<IEnumerable<CategoriaDto>>> ObterTodos()
         {
             var categorias = await categoriaService.ObterTodos();
-            return RetornoPadrao(ResultadoOperacao<IEnumerable<CategoriaDto>>.Sucesso(mapper.Map<IEnumerable<CategoriaDto>>(categorias)));
+            return RetornoPadrao(default, mapper.Map<IEnumerable<CategoriaDto>>(categorias));
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> ObterPorId(int id)
+        public async Task<ActionResult<CategoriaDto>> ObterPorId(int id)
         {
-            var resultadoPadrao = await categoriaService.ObterPorId(id);
-            return RetornoPadrao(ResultadoOperacao<CategoriaDto>.Sucesso(mapper.Map<CategoriaDto>(resultadoPadrao.Data)));
+            var categoria = await categoriaService.ObterPorId(id);
+            return RetornoPadrao(default, mapper.Map<CategoriaDto>(categoria));
         }
 
         [HttpPost]
         public async Task<IActionResult> Adicionar(CategoriaDto categoriaDto)
         {
             if (!ModelState.IsValid)
-                return RetornoPadrao(ModelState);
-
-            var resultadoPadrao = await categoriaService.Adicionar(mapper.Map<Categoria>(categoriaDto));
-            return RetornoPadrao(resultadoPadrao, HttpStatusCode.Created);
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
+            
+            await categoriaService.Adicionar(mapper.Map<Categoria>(categoriaDto));
+            return RetornoPadrao(HttpStatusCode.Created);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Atualizar(int id, CategoriaDto categoriaDto)
         {
-            if (id != categoriaDto.Id) 
-                return RetornoPadrao(ResultadoOperacao.Falha("Os ids fornecidos não são iguais."));
+            if (id != categoriaDto.Id)
+            {
+                NotificarErro("Os ids fornecidos não são iguais.");
+                return RetornoPadrao();
+            }
 
-            var resultadoPadrao = await categoriaService.Atualizar(mapper.Map<Categoria>(categoriaDto));
-            return RetornoPadrao(resultadoPadrao, HttpStatusCode.NoContent);
+            await categoriaService.Atualizar(mapper.Map<Categoria>(categoriaDto));
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Excluir(int id)
         {
-            var resultadoPadrao = await categoriaService.Exluir(id);
-            return RetornoPadrao(resultadoPadrao, HttpStatusCode.NoContent);
+            await categoriaService.Exluir(id);
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }
 }

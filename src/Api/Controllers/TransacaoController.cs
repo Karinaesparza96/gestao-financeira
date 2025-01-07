@@ -12,56 +12,63 @@ namespace Api.Controllers
 {
     [Route("api/transacoes")]
     [Authorize]
-    public class TransacaoController(ITransacaoService transacaoService, IMapper mapper) : MainController
+    public class TransacaoController(ITransacaoService transacaoService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {
         [HttpGet]
         public async Task<ActionResult> ObterTodos([FromQuery]FiltroTransacao filtroDto)
         {
-            var resultadoOperacao = await transacaoService.ObterTodos(filtroDto);
+            var transacaos = await transacaoService.ObterTodos(filtroDto);
 
-            return RetornoPadrao(ResultadoOperacao<IEnumerable<TransacaoDto>>
-                        .Sucesso(mapper.Map<IEnumerable<TransacaoDto>>(resultadoOperacao.Data)));
+            return RetornoPadrao(default, mapper.Map<IEnumerable<TransacaoDto>>(transacaos));
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult> ObterPorId(int id)
         {   
-            var resultadoOperacao = await transacaoService.ObterPorId(id);
+            var transacao = await transacaoService.ObterPorId(id);
 
-            return RetornoPadrao(ResultadoOperacao<TransacaoDto>
-                        .Sucesso(mapper.Map<TransacaoDto>(resultadoOperacao.Data)));
+            return RetornoPadrao(default, mapper.Map<TransacaoDto>(transacao));
         }
 
         [HttpPost]
         public async Task<ActionResult> Adicionar(TransacaoDto transacaoDto)
-        {   
-            if (!ModelState.IsValid) return RetornoPadrao(ModelState);
+        {
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
 
-            var retornoOperacao = await transacaoService.Adicionar(mapper.Map<Transacao>(transacaoDto));
+            await transacaoService.Adicionar(mapper.Map<Transacao>(transacaoDto));
 
-            return RetornoPadrao(retornoOperacao, HttpStatusCode.Created);
+            return RetornoPadrao(HttpStatusCode.Created);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Atualizar(int id, TransacaoDto transacaoDto)
         {
             if (id != transacaoDto.Id)
-            {
-                return RetornoPadrao(ResultadoOperacao.Falha("Os ids devem ser iguais."));
+            {   
+                NotificarErro("Os ids devem ser iguais.");
+                return RetornoPadrao();
             }
 
-            if (!ModelState.IsValid) return RetornoPadrao(ModelState);
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
 
-            var resultadoOperacao = await transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
+            await transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
 
-            return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Excluir(int id)
         {
-            var resultadoOperacao = await transacaoService.Exluir(id);
-            return RetornoPadrao(resultadoOperacao, HttpStatusCode.NoContent);
+            await transacaoService.Exluir(id);
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }
 }

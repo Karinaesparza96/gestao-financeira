@@ -1,4 +1,5 @@
-﻿using Api.Controllers.Base;
+﻿using System.Net;
+using Api.Controllers.Base;
 using Api.Dtos;
 using AutoMapper;
 using Business.Entities;
@@ -9,50 +10,59 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers
 {
     [Route("api/limites-orcamentos")]
-    public class LimiteOrcamentoController(ILimiteOrcamentoService limiteOrcamentoService, IMapper mapper) : MainController
+    public class LimiteOrcamentoController(ILimiteOrcamentoService limiteOrcamentoService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {
         [HttpGet]
-        public async Task<ActionResult> ObterTodos([FromQuery]FiltroLimiteOrcamento filtroLimiteOrcamento)
+        public async Task<ActionResult<IEnumerable<LimiteOrcamentoDto>>> ObterTodos([FromQuery]FiltroLimiteOrcamento filtroLimiteOrcamento)
         {
             var limiteOrcamentos = await limiteOrcamentoService.ObterTodos(filtroLimiteOrcamento);
-            return RetornoPadrao(ResultadoOperacao<IEnumerable<LimiteOrcamentoDto>>
-                .Sucesso(mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos)));
+            return RetornoPadrao(default, mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos));
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(int id)
         {
-            var result = await limiteOrcamentoService.ObterPorId(id);
-            return RetornoPadrao(ResultadoOperacao<LimiteOrcamentoDto>
-                .Sucesso(mapper.Map<LimiteOrcamentoDto>(result.Data)));
+            var limiteOrcamento = await limiteOrcamentoService.ObterPorId(id);
+            return RetornoPadrao(default, mapper.Map<LimiteOrcamentoDto>(limiteOrcamento));
         }
 
         [HttpPost]
         public async Task<ActionResult> Adicionar(LimiteOrcamentoDto limiteOrcamentoDto)
         {
-            if (!ModelState.IsValid) return RetornoPadrao(ModelState);
-            var limiteOrcamento = await limiteOrcamentoService.Adicionar(mapper.Map<LimiteOrcamento>(limiteOrcamentoDto));
-            return RetornoPadrao(limiteOrcamento);
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
+
+            await limiteOrcamentoService.Adicionar(mapper.Map<LimiteOrcamento>(limiteOrcamentoDto));
+            return RetornoPadrao(HttpStatusCode.Created);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Atualizar(int id, LimiteOrcamentoDto limiteOrcamentoDto)
         {
-            if (id != limiteOrcamentoDto.Id) 
-                return RetornoPadrao(ResultadoOperacao.Falha("Os ids fornecidos não são iguais."));
+            if (id != limiteOrcamentoDto.Id)
+            {
+                NotificarErro("Os ids fornecidos não são iguais.");
+                return RetornoPadrao();
+            }
 
-            if (!ModelState.IsValid) 
-                return RetornoPadrao(ModelState);
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
 
-            var result = await limiteOrcamentoService.Atualizar(mapper.Map<LimiteOrcamento>(limiteOrcamentoDto));
-            return RetornoPadrao(result);
+            await limiteOrcamentoService.Atualizar(mapper.Map<LimiteOrcamento>(limiteOrcamentoDto));
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Excluir(int id)
         {
-            var result =  await limiteOrcamentoService.Exluir(id);
-            return RetornoPadrao(result);
+            await limiteOrcamentoService.Exluir(id);
+            return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }
 }

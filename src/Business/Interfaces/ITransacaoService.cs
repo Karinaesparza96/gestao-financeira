@@ -5,6 +5,6 @@ namespace Business.Interfaces
 {
     public interface ITransacaoService : IEntityService<Transacao>
     {
-        Task<ResultadoOperacao<IEnumerable<Transacao>>> ObterTodos(FiltroTransacao filtroDto);
+        Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtroDto);
     }
 }

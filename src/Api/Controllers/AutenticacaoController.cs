@@ -11,13 +11,18 @@ namespace Api.Controllers
     [Route("api/conta")]
     public class AutenticacaoController(SignInManager<Usuario> signInManager, 
                                         UserManager<Usuario> userManager,
-                                        IJwtService jwtService) : MainController
+                                        INotificador notificador,
+                                        IJwtService jwtService) : MainController(notificador)
     {
 
         [HttpPost("registrar")]
         public async Task<ActionResult> Registrar(RegisterUserDto registerUser)
         {
-            if (!ModelState.IsValid) return RetornoPadrao(ModelState);
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
 
             var userIdentity = new Usuario
             {
@@ -27,34 +32,38 @@ namespace Api.Controllers
                 Nome = registerUser.Nome
             };
 
-            var result = await userManager.CreateAsync(userIdentity, registerUser.Senha);
+            var result = await userManager.CreateAsync(userIdentity, registerUser.Senha!);
 
             if (result.Succeeded)
             { 
                 await signInManager.SignInAsync(userIdentity, false);
-                var token = await jwtService.GenerateTokenAsync(userIdentity.Email);
+                var token = await jwtService.GenerateTokenAsync(userIdentity.Email!);
 
-                return RetornoPadrao(ResultadoOperacao<object>.Sucesso(new { token }), HttpStatusCode.Created);
+                return RetornoPadrao(HttpStatusCode.Created, new { token });
             }
-
-            return RetornoPadrao(result);
+            NotificarErro(result);
+            return RetornoPadrao();
             
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginUserDto loginUser)
         {
-            if (!ModelState.IsValid) return RetornoPadrao(ModelState);
+            if (!ModelState.IsValid)
+            {
+                NotificarErro(ModelState);
+                return RetornoPadrao();
+            }
 
             var result = await signInManager.PasswordSignInAsync(loginUser.Email!, loginUser.Senha!, false, true);
 
             if (result.Succeeded)
             {
-                var token = await jwtService.GenerateTokenAsync(loginUser.Email);
-                return RetornoPadrao(ResultadoOperacao<object>.Sucesso(new { token }), HttpStatusCode.OK);
+                var token = await jwtService.GenerateTokenAsync(loginUser.Email!);
+                return RetornoPadrao(default, new { token });
             }
-
-            return RetornoPadrao(ResultadoOperacao.Falha("Usuário ou senha incorretos."));
+            NotificarErro("Usuário ou senha incorretos.");
+            return RetornoPadrao();
         }
     }
 }

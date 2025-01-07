@@ -7,102 +7,101 @@ namespace Business.Services
 {
     public class CategoriaService(IAppIdentityUser appIdentityUser,
                                 ICategoriaRepository categoriaRepository,
-                                IUsuarioService usuarioService) : BaseService(appIdentityUser, usuarioService), ICategoriaService
+                                INotificador notificador) : BaseService(appIdentityUser, notificador), ICategoriaService
     {
         public async Task<IEnumerable<Categoria>> ObterTodos()
         {
             var categorias = await categoriaRepository.Buscar(predicate: x => x.Default || x.UsuarioId == UsuarioId, 
-                                                                orderBy: x => !x.Default);
+                                                                orderBy: x => x.Default);
             return categorias;
         }
-        public async Task<ResultadoOperacao<Categoria>> ObterPorId(int id)
+        public async Task<Categoria?> ObterPorId(int id)
         {   
             var categoria = await categoriaRepository.ObterPorId(id);
 
             if (categoria == null)
-            {
-                return ResultadoOperacao<Categoria>.Falha("Registro não encontrado");
+            {   
+                Notificar("Registro não encontrado");
+                return null;
             }
 
             if (!categoria.Default && !AcessoAutorizado(categoria.UsuarioId))
             {
-                return ResultadoOperacao<Categoria>.Falha("Não é possivel acessar uma categoria de outro usuário.");
+                Notificar("Não é possivel acessar uma categoria de outro usuário.");
+                return null;
             }
 
-            return ResultadoOperacao<Categoria>.Sucesso(categoria);
+            return categoria;
         }
 
-        public async Task<ResultadoOperacao> Adicionar(Categoria categoria)
+        public async Task Adicionar(Categoria categoria)
         {
-            var validacao = ExecutarValidacao(new CategoriaValidation(), categoria);
+           if(!ExecutarValidacao(new CategoriaValidation(), categoria)) return;
 
-            if (!validacao.OperacaoValida) return ResultadoOperacao.Falha(validacao.Erros);
-
-            var usuario = await ObterUsuarioLogado();
-
-            categoria.Usuario = usuario;
+            categoria.UsuarioId = UsuarioId;
             categoria.Default = false;
 
             await categoriaRepository.Adicionar(categoria);
-
-            return ResultadoOperacao.Sucesso();
         }
 
-        public async Task<ResultadoOperacao> Atualizar(Categoria categoria)
+        public async Task Atualizar(Categoria categoria)
         {
-
-            var validacao = ExecutarValidacao(new CategoriaValidation(), categoria);
-
-            if (!validacao.OperacaoValida) return ResultadoOperacao.Falha(validacao.Erros);
+            if (!ExecutarValidacao(new CategoriaValidation(), categoria)) return;
 
             var categoriaBanco = await categoriaRepository.ObterPorId(categoria.Id);
 
-            if (categoriaBanco == null) return ResultadoOperacao.Falha("Registro não encontrado.");
+            if (categoriaBanco == null)
+            {
+               Notificar("Registro não encontrado.");
+               return;
+            }
 
             if (categoriaBanco.Default)
             {
-                return ResultadoOperacao.Falha("Não é possivél atualizar uma categoria default.");
+                Notificar("Não é possível atualizar uma categoria default.");
+                return;
             }
 
             if (!AcessoAutorizado(categoriaBanco.UsuarioId))
             {
-                return ResultadoOperacao.Falha("Não é possivel atualizar uma categoria de outro usuário.");
+                Notificar("Não é possível atualizar uma categoria de outro usuário.");
+                return;
             }
 
             categoriaBanco.Nome = categoria.Nome;
 
             await categoriaRepository.Atualizar(categoriaBanco);
-
-            return ResultadoOperacao.Sucesso();
         }
 
-        public async Task<ResultadoOperacao> Exluir(int id)
+        public async Task Exluir(int id)
         {
             var categoria = await categoriaRepository.ObterTransacoes(id);
 
             if (categoria == null)
             {
-                return ResultadoOperacao.Falha("Registro não encontrado."); 
+                Notificar("Registro não encontrado");
+                return;
             }
 
             if (categoria.Default)
-            {
-                return ResultadoOperacao.Falha("Não é possivél excluir uma categoria default.");
+            {   
+                Notificar("Não é possível excluir uma categoria default.");
+                return;
             }
 
             if (!AcessoAutorizado(categoria.UsuarioId))
             {
-                return ResultadoOperacao.Falha("Não é possivel exluir uma categoria de outro usuário.");
+                Notificar("Não é possível exluir uma categoria de outro usuário.");
+                return;
             }
 
-            if (categoria?.Transacoes?.Count() > 0)
+            if (categoria.Transacoes?.Count() > 0)
             {
-               return ResultadoOperacao.Falha("Não é possivel excluir uma categoria que possui transações lançadas.");
+                Notificar("Não é possivel excluir uma categoria que possui transações lançadas.");
+                return;
             }
 
-            await categoriaRepository.Excluir(categoria);
-
-            return ResultadoOperacao.Sucesso();
+            await categoriaRepository.Excluir(categoria!);
         }
 
     }

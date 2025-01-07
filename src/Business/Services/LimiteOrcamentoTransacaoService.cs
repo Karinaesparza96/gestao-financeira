@@ -1,56 +1,66 @@
 ﻿using Business.FiltrosBusca;
 using Business.Interfaces;
+using Business.Notificacoes;
+using Business.Services.Base;
 
 namespace Business.Services
 {
     public class LimiteOrcamentoTransacaoService(ILimiteOrcamentoRepository limiteOrcamentoRepository,
                                                  IAppIdentityUser appIdentityUser,
-                                                 ITransacaoRepository transacaoRepository) : ILimiteOrcamentoTransacaoService
+                                                 INotificador notificador,
+                                                 ITransacaoRepository transacaoRepository) : BaseService(appIdentityUser, notificador), ILimiteOrcamentoTransacaoService
     {
+        private readonly IAppIdentityUser _appIdentityUser = appIdentityUser;
+
         public bool TemRecursoDisponivel(decimal limite)
         {
-            var saldoTotal = transacaoRepository.ObterSaldoTotal(appIdentityUser.GetUserId());
+            var saldoTotal = transacaoRepository.ObterSaldoTotal(_appIdentityUser.GetUserId());
 
             return saldoTotal > limite;
         }
-        public async Task<bool> ValidarLimiteExcedido(string usuarioId, DateOnly periodo)
+        public async Task ValidarLimiteExcedido(string usuarioId, DateOnly periodo)
         {
-            var totalSaidasCategoria = await transacaoRepository.ObterSaldoTotalCategoriaPorPeriodo(usuarioId, periodo);
+            var saldoTotalPorCategoria = await transacaoRepository.ObterSaldoTotalCategoriaPorPeriodo(usuarioId, periodo);
             var limites = await limiteOrcamentoRepository.ObterTodos(new FiltroLimiteOrcamento { Periodo = periodo }, usuarioId);
 
-            // verificar se limite geral for excedido
             var limiteGeral = limites.FirstOrDefault(l => l.LimiteGeral);
 
             if (limiteGeral != null)
             {
-                var totalSaida = Math.Abs(totalSaidasCategoria.Sum(t => t.TotalSaida));
-                var porcentagemAtingido = CalcularPorcentagem(totalSaida, limiteGeral.Limite);
+                var saldoTotalGeral = saldoTotalPorCategoria.Sum(x => x.Value);
+                var porcentagemAtingido = CalcularPorcentagem(saldoTotalGeral, limiteGeral.Limite);
 
-                if (totalSaida > limiteGeral.Limite)
+                if (saldoTotalGeral > limiteGeral.Limite)
                 {
-                    // Notificar
-                    return true;
+                    Notificar("O limite geral definido foi excedido.", TipoNotificacao.Aviso);
+                    return;
                 }
 
                 if ((double)porcentagemAtingido >= limiteGeral.PorcentagemAviso)
                 {
-                    // Notificar
-                    return true;
+                    Notificar($"O limite geral definido atingiu {porcentagemAtingido}%.");
+                    return;
                 }
             }
 
-            //verificar se limite por categoria for excedido
             foreach (var limiteCategoria in limites.Where(x => !x.LimiteGeral))
             {
-                var totalsaidaCategoria = Math.Abs(totalSaidasCategoria.FirstOrDefault(x => x.CategoriaId == limiteCategoria.CategoriaId)?.TotalSaida ?? 0);
+                var totalsaidaCategoria = Math.Abs(saldoTotalPorCategoria.FirstOrDefault(x => x.Key == limiteCategoria.CategoriaId).Value);
                 var porcentagemAtingido = CalcularPorcentagem(totalsaidaCategoria, limiteCategoria.Limite);
 
-                if (totalsaidaCategoria > limiteCategoria.Limite) { return true; } // notificar
+                if (totalsaidaCategoria > limiteCategoria.Limite)
+                {   
+                    Notificar($"O limite definido para categoria {limiteCategoria?.Categoria?.Nome} foi excedido.", TipoNotificacao.Aviso);
+                    return;
+                }
 
-                if ((double)porcentagemAtingido >= limiteCategoria.PorcentagemAviso) { return true; } // notificar
+                if ((double)porcentagemAtingido >= limiteCategoria.PorcentagemAviso)
+                {
+                    Notificar($"O limite definido para categoria {limiteCategoria?.Categoria?.Nome} atingiu {porcentagemAtingido}%.", TipoNotificacao.Aviso);
+                    return;
+                } 
 
             }
-            return false;
         }
 
         private decimal CalcularPorcentagem(decimal totalSaida, decimal limite)

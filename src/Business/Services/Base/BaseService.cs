@@ -1,31 +1,49 @@
 ﻿using Business.Entities;
 using Business.Interfaces;
+using Business.Notificacoes;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Business.Services.Base
 {
-    public abstract class BaseService(IAppIdentityUser appIdentityUser, IUsuarioService usuarioService)
+    public abstract class BaseService(IAppIdentityUser appIdentityUser, INotificador notificador)
     {
         protected string UsuarioId => appIdentityUser.GetUserId();
-        protected ResultadoOperacao<TE> ExecutarValidacao<TV, TE>(TV validador, TE entity) where TV : AbstractValidator<TE> where TE : Entity
+        protected bool ExecutarValidacao<TV, TE>(TV validador, TE entity) where TV : AbstractValidator<TE> where TE : Entity
         {
             var entidadeValidada = validador.Validate(entity);
 
             if (entidadeValidada.IsValid)
             {
-                return ResultadoOperacao<TE>.Sucesso(entity);
+                return true;
             }
 
-            return ResultadoOperacao<TE>.Falha(entidadeValidada.Errors.Select(e => e.ErrorMessage));
-        }
-        protected async Task<Usuario?> ObterUsuarioLogado()
-        {
-           return await usuarioService.ObterUsuarioPorId(UsuarioId);
+            Notificar(entidadeValidada);
+
+            return false;
         }
 
         protected bool AcessoAutorizado(string? usuarioId)
         {
             return appIdentityUser.IsOwner(usuarioId);
+        }
+
+        protected void Notificar(string mensagem, TipoNotificacao? tipo = TipoNotificacao.Erro)
+        {
+            notificador.Adicionar(new Notificacao(mensagem, tipo));
+        }
+
+        protected void Notificar(ValidationResult validationResult)
+        {
+            foreach (var error in validationResult.Errors)
+            {
+                Notificar(error.ErrorMessage);
+            }
+        }
+
+        protected bool TemNotificacao()
+        {
+            return notificador.TemNotificacao();
         }
     }
 }
