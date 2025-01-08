@@ -7,7 +7,7 @@ using Data.Repositories;
 
 namespace Api.Configurations
 {
-    public static class ResolveDIConfiguration
+    public static class ResolveDiConfiguration
     {
         public static WebApplicationBuilder AddResolveDependencie(this WebApplicationBuilder builder)
         {
@@ -18,9 +18,9 @@ namespace Api.Configurations
             builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
             builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             builder.Services.AddScoped<ILimiteOrcamentoRepository, LimiteOrcamentoRepository>();
+            builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
             builder.Services.AddScoped<ITransacaoService, TransacaoService>();
-            builder.Services.AddScoped<IUsuarioService, UsuarioService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
             builder.Services.AddScoped<ILimiteOrcamentoService, LimiteOrcamentoService>();
             builder.Services.AddScoped<ILimiteOrcamentoTransacaoService, LimiteOrcamentoTransacaoService>();

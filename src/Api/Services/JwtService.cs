@@ -1,5 +1,4 @@
-﻿using Business.Entities;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using Business.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -10,7 +9,7 @@ using System.Text;
 
 namespace Api.Services
 {
-    public class JwtService(UserManager<Usuario> userManager,
+    public class JwtService(UserManager<IdentityUser> userManager,
                             IOptions<JwtSettings> jwtSettings) : IJwtService
     {
         public async Task<string> GenerateTokenAsync(string email)

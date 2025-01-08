@@ -4,26 +4,26 @@ namespace Business.Notificacoes
 {
     public class Notificador : INotificador
     {
-        private List<Notificacao> _notificacoes { get; } = [];
+        private List<Notificacao> Notificacoes { get; } = [];
 
         public bool TemNotificacao(TipoNotificacao? tipo = null)
         {
-            return tipo == null ? _notificacoes.Any() : _notificacoes.Any(n => n.TipoNotificacao == tipo);
+            return tipo == null ? Notificacoes.Any() : Notificacoes.Any(n => n.TipoNotificacao == tipo);
         }
 
         public List<Notificacao> ObterTodos()
         {
-            return _notificacoes;
+            return Notificacoes;
         }
 
         public List<Notificacao> ObterPorTipo(TipoNotificacao tipo)
         {
-            return _notificacoes.Where(n => n.TipoNotificacao == tipo).ToList();
+            return Notificacoes.Where(n => n.TipoNotificacao == tipo).ToList();
         }
 
         public void Adicionar(Notificacao notificacao)
         {
-            _notificacoes.Add(notificacao);
+            Notificacoes.Add(notificacao);
         }
     }
 }

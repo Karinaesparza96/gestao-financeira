@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Business.Entities
+﻿namespace Business.Entities
 {
-    public class Usuario : IdentityUser
+    public class Usuario : Entity
     {
-        public string? Nome { get; set; }
+        public new string Id { get; set; } = null!;
+        public string Nome { get; set; } = null!;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public bool Ativo { get; set; } = true;
 
     }
 }

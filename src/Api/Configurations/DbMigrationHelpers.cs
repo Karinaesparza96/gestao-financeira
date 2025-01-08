@@ -30,7 +30,7 @@ namespace Api.Configurations
         {   
             if (context.Users.Any() || context.Set<Usuario>().Any()) return;
            
-            var userIdentity = new Usuario
+            var userIdentity = new IdentityUser()
             {
                 Id = "1",
                 Email = "teste@teste.com",
@@ -40,6 +40,11 @@ namespace Api.Configurations
                 AccessFailedCount = 0,
                 PasswordHash = "AQAAAAIAAYagAAAAEF/nmfwFGPa8pnY9AvZL8HKI7r7l+aM4nryRB+Y3Ktgo6d5/0d25U2mhixnO4h/K5w==",
                 NormalizedUserName = "TESTE@TESTE.COM",
+            };
+
+            var usuario = new Usuario()
+            {
+                Id = userIdentity.Id,
                 Nome = "Teste"
             };
 
@@ -70,10 +75,12 @@ namespace Api.Configurations
                 Descricao = "teste",
                 Valor = 1000.59M,
                 Categoria = categoria1,
-                Usuario = userIdentity,
+                Usuario = usuario,
             };
 
             await context.Users.AddAsync(userIdentity);
+
+            await context.Set<Usuario>().AddAsync(usuario);
 
             await context.Set<Categoria>().AddRangeAsync([categoria1, categoria2, categoria3]);
 

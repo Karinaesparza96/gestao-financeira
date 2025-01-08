@@ -30,7 +30,6 @@ namespace Data.Migrations.SQLite
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Nome = table.Column<string>(type: "TEXT", nullable: true),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -49,6 +48,20 @@ namespace Data.Migrations.SQLite
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Usuario",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Nome = table.Column<string>(type: "TEXT", nullable: false),
+                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Usuario", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,9 +184,9 @@ namespace Data.Migrations.SQLite
                 {
                     table.PrimaryKey("PK_Categorias", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Categorias_AspNetUsers_UsuarioId",
+                        name: "FK_Categorias_Usuario_UsuarioId",
                         column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Usuario",
                         principalColumn: "Id");
                 });
 
@@ -193,14 +206,14 @@ namespace Data.Migrations.SQLite
                 {
                     table.PrimaryKey("PK_LimitesOrcamentos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LimitesOrcamentos_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_LimitesOrcamentos_Categorias_CategoriaId",
                         column: x => x.CategoriaId,
                         principalTable: "Categorias",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_LimitesOrcamentos_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
                         principalColumn: "Id");
                 });
 
@@ -221,14 +234,14 @@ namespace Data.Migrations.SQLite
                 {
                     table.PrimaryKey("PK_Transacoes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transacoes_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Transacoes_Categorias_CategoriaId",
                         column: x => x.CategoriaId,
                         principalTable: "Categorias",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transacoes_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
                         principalColumn: "Id");
                 });
 
@@ -323,10 +336,13 @@ namespace Data.Migrations.SQLite
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Categorias");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Usuario");
         }
     }
 }

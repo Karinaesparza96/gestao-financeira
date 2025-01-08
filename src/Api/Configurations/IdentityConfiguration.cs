@@ -8,7 +8,7 @@ namespace Api.Configurations
     {
         public static WebApplicationBuilder AddIdentityConfiguration(this WebApplicationBuilder builder)
         {
-            builder.Services.AddIdentity<Usuario, IdentityRole>()
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
 

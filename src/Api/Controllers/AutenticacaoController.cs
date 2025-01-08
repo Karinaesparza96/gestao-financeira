@@ -9,9 +9,10 @@ using System.Net;
 namespace Api.Controllers
 {
     [Route("api/conta")]
-    public class AutenticacaoController(SignInManager<Usuario> signInManager, 
-                                        UserManager<Usuario> userManager,
+    public class AutenticacaoController(SignInManager<IdentityUser> signInManager, 
+                                        UserManager<IdentityUser> userManager,
                                         INotificador notificador,
+                                        IUsuarioRepository usuarioRepository,
                                         IJwtService jwtService) : MainController(notificador)
     {
 
@@ -24,26 +25,30 @@ namespace Api.Controllers
                 return RetornoPadrao();
             }
 
-            var userIdentity = new Usuario
+            var userIdentity = new IdentityUser()
             {
                 UserName = registerUser.Email,
                 Email = registerUser.Email,
                 EmailConfirmed = true,
-                Nome = registerUser.Nome
             };
 
             var result = await userManager.CreateAsync(userIdentity, registerUser.Senha!);
 
-            if (result.Succeeded)
-            { 
-                await signInManager.SignInAsync(userIdentity, false);
-                var token = await jwtService.GenerateTokenAsync(userIdentity.Email!);
-
-                return RetornoPadrao(HttpStatusCode.Created, new { token });
+            if (!result.Succeeded)
+            {
+                NotificarErro(result);
+                return RetornoPadrao();
             }
-            NotificarErro(result);
-            return RetornoPadrao();
-            
+
+            var usuario = new Usuario()
+            {
+                Id = userIdentity.Id,
+                Nome = registerUser.Nome
+            };
+
+            await usuarioRepository.Adicionar(usuario);
+
+            return RetornoPadrao(HttpStatusCode.Created);
         }
 
         [HttpPost("login")]
