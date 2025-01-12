@@ -10,6 +10,13 @@ namespace Api.Configurations
                 .ConfigureApiBehaviorOptions(opt => opt.SuppressModelStateInvalidFilter = true);
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddAutoMapper(typeof(AutoMapperConfig).Assembly);
+
+            builder.Services.AddCors(opt => opt.AddPolicy("*", b =>
+            {
+                b.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
             return builder;
         }
     }

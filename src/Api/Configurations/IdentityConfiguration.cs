@@ -1,5 +1,4 @@
-﻿using Business.Entities;
-using Data.Context;
+﻿using Data.Context;
 using Microsoft.AspNetCore.Identity;
 
 namespace Api.Configurations

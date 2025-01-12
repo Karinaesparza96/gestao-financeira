@@ -13,7 +13,8 @@ namespace Api.Controllers
     [Route("api/transacoes")]
     [Authorize]
     public class TransacaoController(ITransacaoService transacaoService, IMapper mapper, INotificador notificador) : MainController(notificador)
-    {
+    {   
+        // TODO: criar metodo que fornceça o saldo total, total de entradas e saidas
         [HttpGet]
         public async Task<ActionResult> ObterTodos([FromQuery]FiltroTransacao filtroDto)
         {

@@ -111,12 +111,10 @@ namespace Business.Services
 
         private bool ValidarLimiteGeral(DateOnly periodo)
         {
-            if (ExisteLimiteGeral(periodo))
-            {
-                Notificar("Já existe um limite geral definido para este período.");
-                return false;
-            }
-            return true;
+            if (!ExisteLimiteGeral(periodo)) return true;
+
+            Notificar("Já existe um limite geral definido para este período.");
+            return false;
         }
 
         private async Task<bool> ValidarLimitePorCategoria(LimiteOrcamento limiteOrcamento)

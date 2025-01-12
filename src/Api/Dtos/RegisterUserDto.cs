@@ -5,7 +5,7 @@ namespace Api.Dtos
     public class RegisterUserDto
     {
         [Required(ErrorMessage = "Campo {0} é obrigatório.")]
-        public required string Nome { get; set; }
+        public string? Nome { get; set; }
 
         [Required(ErrorMessage = "Campo {0} é obrigatório.")]
         [EmailAddress(ErrorMessage = "Campo {0} está em formato inválido.")]

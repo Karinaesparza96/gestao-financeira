@@ -6,6 +6,5 @@
         public string Nome { get; set; } = null!;
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
         public bool Ativo { get; set; } = true;
-
     }
 }

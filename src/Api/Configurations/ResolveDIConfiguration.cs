@@ -1,5 +1,4 @@
 ﻿using Api.Extensions;
-using Api.Services;
 using Business.Interfaces;
 using Business.Notificacoes;
 using Business.Services;
@@ -12,7 +11,6 @@ namespace Api.Configurations
         public static WebApplicationBuilder AddResolveDependencie(this WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<IAppIdentityUser, AppIdentityUser>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<INotificador, Notificador>();
 
             builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
