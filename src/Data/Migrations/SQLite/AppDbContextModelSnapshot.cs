@@ -55,8 +55,11 @@ namespace Data.Migrations.SQLite
                     b.Property<DateOnly>("Periodo")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("PorcentagemAviso")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("PorcentagemAviso")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TipoLimite")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UsuarioId")
                         .IsRequired()

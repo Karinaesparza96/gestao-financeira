@@ -5,10 +5,12 @@ using AutoMapper;
 using Business.Entities;
 using Business.FiltrosBusca;
 using Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("api/limites-orcamentos")]
     public class LimiteOrcamentoController(ILimiteOrcamentoService limiteOrcamentoService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {
@@ -16,14 +18,14 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<LimiteOrcamentoDto>>> ObterTodos([FromQuery]FiltroLimiteOrcamento filtroLimiteOrcamento)
         {
             var limiteOrcamentos = await limiteOrcamentoService.ObterTodos(filtroLimiteOrcamento);
-            return RetornoPadrao(default, mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos));
+            return RetornoPadrao(data: mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos));
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(int id)
         {
             var limiteOrcamento = await limiteOrcamentoService.ObterPorId(id);
-            return RetornoPadrao(default, mapper.Map<LimiteOrcamentoDto>(limiteOrcamento));
+            return RetornoPadrao(data: mapper.Map<LimiteOrcamentoDto>(limiteOrcamento));
         }
 
         [HttpPost]

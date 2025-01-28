@@ -14,8 +14,20 @@ namespace Business.Entities.Validations
                 .NotEmpty().WithMessage("O campo {PropertyName} deve ser fornecido.");
 
             RuleFor(x => x.PorcentagemAviso)
-                .InclusiveBetween(0.01, 100)
+                .InclusiveBetween(0.01m, 100)
                 .WithMessage("O campo {PropertyName} deve estar entre {From} e {To}.");
+
+            RuleFor(x => x.TipoLimite)
+                .IsInEnum()
+                .WithMessage("O campo {PropertyName} deve ser um valor válido: Geral (1) ou Categoria (2).");
+
+            When(x => x.TipoLimite == TipoLimite.Geral, () =>
+                {
+                    RuleFor(x => x.CategoriaId)
+                        .Null()
+                        .WithMessage("Para definir um limite geral o {PropertyName} não pode conter valor.");
+                }
+            );
 
         }
     }

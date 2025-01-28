@@ -71,7 +71,7 @@ namespace Api.Controllers
             if (result.Succeeded)
             {
                 var loginResponse = await GenerateTokenAsync(loginUser.Email!);
-                return RetornoPadrao(default, loginResponse);
+                return RetornoPadrao(HttpStatusCode.Created, loginResponse);
             }
             NotificarErro("Usuário ou senha incorretos.");
             return RetornoPadrao();

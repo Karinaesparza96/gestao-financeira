@@ -2,8 +2,7 @@
 {
     public interface ILimiteOrcamentoTransacaoService
     {
-        Task ValidarLimiteExcedido(string usuarioId, DateOnly periodo);
-
+        Task ValidarLimitesExcedido(string usuarioId, DateOnly periodo);
         bool TemRecursoDisponivel(decimal limite);
     }
 }

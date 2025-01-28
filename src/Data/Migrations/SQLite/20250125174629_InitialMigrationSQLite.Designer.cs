@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations.SQLite
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250108132542_InitialMigrationSQLite")]
+    [Migration("20250125174629_InitialMigrationSQLite")]
     partial class InitialMigrationSQLite
     {
         /// <inheritdoc />
@@ -58,8 +58,11 @@ namespace Data.Migrations.SQLite
                     b.Property<DateOnly>("Periodo")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("PorcentagemAviso")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("PorcentagemAviso")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TipoLimite")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UsuarioId")
                         .IsRequired()

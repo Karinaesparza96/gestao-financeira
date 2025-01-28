@@ -10,14 +10,20 @@
 
         public decimal Limite { get; set; }
 
-        public bool LimiteGeral => CategoriaId == null;
+        public TipoLimite TipoLimite { get; set; }
 
-        public double PorcentagemAviso { get; set; }
+        public decimal PorcentagemAviso { get; set; }
 
         // Props navigation ef
         public Categoria? Categoria { get; set; }
 
         public Usuario Usuario { get; set; } = null!;
 
+    }
+
+    public enum TipoLimite
+    {
+        Geral = 1,
+        Categoria
     }
 }

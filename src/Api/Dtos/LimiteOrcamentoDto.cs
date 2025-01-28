@@ -12,6 +12,11 @@ namespace Api.Dtos
 
         [Required(ErrorMessage = "Campo {0} é obrigatório.")]
         public decimal Limite { get; set; }
+
+        [Required(ErrorMessage = "Campo {0} é obrigatório.")]
         public int PorcentagemAviso { get; set; }
+
+        [Required(ErrorMessage = "Campo {0} é obrigatório.")]
+        public int TipoLimite { get; set; }
     }
 }

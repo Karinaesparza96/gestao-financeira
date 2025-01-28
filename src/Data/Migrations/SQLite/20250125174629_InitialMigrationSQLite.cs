@@ -200,7 +200,8 @@ namespace Data.Migrations.SQLite
                     UsuarioId = table.Column<string>(type: "TEXT", nullable: false),
                     Periodo = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     Limite = table.Column<decimal>(type: "TEXT", nullable: false),
-                    PorcentagemAviso = table.Column<double>(type: "REAL", nullable: false)
+                    TipoLimite = table.Column<int>(type: "INTEGER", nullable: false),
+                    PorcentagemAviso = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

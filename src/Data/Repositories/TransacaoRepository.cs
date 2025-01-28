@@ -1,8 +1,10 @@
 ﻿using Business.Entities;
 using Business.FiltrosBusca;
 using Business.Interfaces;
+using Business.ValueObjects;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Data.Repositories
 {
@@ -38,16 +40,39 @@ namespace Data.Repositories
            return result;
         }
 
-        public async Task<Dictionary<int, decimal>> ObterSaldoTotalCategoriaPorPeriodo(string usuarioId, DateOnly periodo)
+        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, int? categoriaId)
         {
-            return await DbSet.Where(t => t.UsuarioId == usuarioId
-                                          && t.Data.Year == periodo.Year
-                                          && t.Data.Month == periodo.Month)
-                            .GroupBy(t => t.CategoriaId)
-                            .ToDictionaryAsync(
-                                g => g.Key, 
-                                g => g.Sum(t => t.Valor)
-                            );
+            var query = DbSet.Where(t => t.UsuarioId == usuarioId
+                                         && t.Data.Year == periodo.Year
+                                         && t.Data.Month == periodo.Month
+                                         && t.Tipo == TipoTransacao.Saida);
+            if (categoriaId.HasValue)
+            {
+                query = query.Where(t => t.CategoriaId == categoriaId);
+            }
+                
+            var result = query.Sum(t => t.Valor);
+            return result;
+        }
+
+
+        public async Task<ResumoFinanceiro> ObterResumoEntradasESaidas(string usuarioId)
+        {   
+            var query = await DbSet
+                .Where(x => x.UsuarioId == usuarioId)
+                .GroupBy(t => t.Tipo).ToDictionaryAsync(
+                    g => g.Key,
+                    g => g.Sum(t => t.Valor)
+                );
+
+            var resumo = new ResumoFinanceiro
+            {
+                TotalReceita = query.FirstOrDefault(x => x.Key == TipoTransacao.Entrada).Value,
+                TotalDespesa = query.FirstOrDefault(x => x.Key == TipoTransacao.Saida).Value
+            };
+
+            return resumo;
+           
         }
     }
 }

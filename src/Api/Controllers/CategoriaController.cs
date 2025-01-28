@@ -17,14 +17,14 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<CategoriaDto>>> ObterTodos()
         {
             var categorias = await categoriaService.ObterTodos();
-            return RetornoPadrao(default, mapper.Map<IEnumerable<CategoriaDto>>(categorias));
+            return RetornoPadrao(data: mapper.Map<IEnumerable<CategoriaDto>>(categorias));
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CategoriaDto>> ObterPorId(int id)
         {
             var categoria = await categoriaService.ObterPorId(id);
-            return RetornoPadrao(default, mapper.Map<CategoriaDto>(categoria));
+            return RetornoPadrao(data: mapper.Map<CategoriaDto>(categoria));
         }
 
         [HttpPost]

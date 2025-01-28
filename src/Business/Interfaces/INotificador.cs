@@ -4,10 +4,8 @@ namespace Business.Interfaces
 {
     public interface INotificador
     {
-        bool TemNotificacao(TipoNotificacao? tipo = null);
+        bool TemNotificacao();
         List<Notificacao> ObterTodos();
-
-        List<Notificacao> ObterPorTipo(TipoNotificacao tipo);
         void Adicionar(Notificacao notificacao);    
     }
 }

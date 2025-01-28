@@ -6,19 +6,14 @@ namespace Business.Notificacoes
     {
         private List<Notificacao> Notificacoes { get; } = [];
 
-        public bool TemNotificacao(TipoNotificacao? tipo = null)
+        public bool TemNotificacao()
         {
-            return tipo == null ? Notificacoes.Any() : Notificacoes.Any(n => n.TipoNotificacao == tipo);
+            return Notificacoes.Any(x => x.TipoNotificacao == TipoNotificacao.Erro);
         }
 
         public List<Notificacao> ObterTodos()
         {
             return Notificacoes;
-        }
-
-        public List<Notificacao> ObterPorTipo(TipoNotificacao tipo)
-        {
-            return Notificacoes.Where(n => n.TipoNotificacao == tipo).ToList();
         }
 
         public void Adicionar(Notificacao notificacao)

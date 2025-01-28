@@ -1,5 +1,6 @@
 ﻿using Business.Entities;
 using Business.FiltrosBusca;
+using Business.ValueObjects;
 
 namespace Business.Interfaces
 {
@@ -9,6 +10,8 @@ namespace Business.Interfaces
 
         decimal ObterSaldoTotal(string usuarioIdentityId);
 
-        Task<Dictionary<int, decimal>> ObterSaldoTotalCategoriaPorPeriodo(string usuarioId, DateOnly periodo);
+        decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, int? categoriaId = null);
+
+        Task<ResumoFinanceiro> ObterResumoEntradasESaidas(string usuarioId);
     }
 }

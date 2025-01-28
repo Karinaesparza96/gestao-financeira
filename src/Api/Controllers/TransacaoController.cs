@@ -10,17 +10,17 @@ using System.Net;
 
 namespace Api.Controllers
 {
-    [Route("api/transacoes")]
     [Authorize]
+    [Route("api/transacoes")]
     public class TransacaoController(ITransacaoService transacaoService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {   
-        // TODO: criar metodo que fornceça o saldo total, total de entradas e saidas
+        
         [HttpGet]
         public async Task<ActionResult> ObterTodos([FromQuery]FiltroTransacao filtroDto)
         {
             var transacaos = await transacaoService.ObterTodos(filtroDto);
 
-            return RetornoPadrao(default, mapper.Map<IEnumerable<TransacaoDto>>(transacaos));
+            return RetornoPadrao(data: mapper.Map<IEnumerable<TransacaoDto>>(transacaos));
         }
 
         [HttpGet("{id:int}")]
@@ -28,7 +28,14 @@ namespace Api.Controllers
         {   
             var transacao = await transacaoService.ObterPorId(id);
 
-            return RetornoPadrao(default, mapper.Map<TransacaoDto>(transacao));
+            return RetornoPadrao(data: mapper.Map<TransacaoDto>(transacao));
+        }
+
+        [HttpGet("resumo")]
+        public async Task<ActionResult> ObterResumo()
+        {
+            var resumo = await transacaoService.ObterResumoEntradasESaidas();
+            return RetornoPadrao(data: resumo);
         }
 
         [HttpPost]

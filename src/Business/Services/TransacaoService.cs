@@ -4,6 +4,7 @@ using Business.FiltrosBusca;
 using Business.Interfaces;
 using Business.Notificacoes;
 using Business.Services.Base;
+using Business.ValueObjects;
 
 namespace Business.Services
 {
@@ -39,15 +40,15 @@ namespace Business.Services
             return transacao;
         }
 
+        public async Task<ResumoFinanceiro> ObterResumoEntradasESaidas()
+        {
+            return await transacaoRepository.ObterResumoEntradasESaidas(UsuarioId);
+        }
+
         public async Task Adicionar(Transacao transacao)
         {
             if(!ExecutarValidacao(new TransacaoValidation(), transacao)) return;
-
-            if (transacao.Tipo == TipoTransacao.Saida)
-            {
-                transacao.Valor = -transacao.Valor;
-            }
-
+            
             var categoria = await categoriaRepository.ObterPorId(transacao.CategoriaId);
 
             if (categoria == null)
@@ -60,7 +61,7 @@ namespace Business.Services
             transacao.UsuarioId = UsuarioId;
 
             await transacaoRepository.Adicionar(transacao);
-            await limiteOrcamentoTransacaoService.ValidarLimiteExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
+            await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
         }
 
         public async Task Atualizar(Transacao transacao)
@@ -81,11 +82,6 @@ namespace Business.Services
                 return;
             }
 
-            if (transacao.Tipo == TipoTransacao.Saida)
-            {
-                transacao.Valor = -transacao.Valor;
-            }
-
             transacaoBanco.Tipo = transacao.Tipo;
             transacaoBanco.Valor = transacao.Valor;
             transacaoBanco.Data =  transacao.Data;
@@ -93,6 +89,7 @@ namespace Business.Services
             transacaoBanco.Descricao = transacao.Descricao;
 
             await transacaoRepository.Atualizar(transacaoBanco);
+            await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
         }
 
         public async Task Exluir(int id)

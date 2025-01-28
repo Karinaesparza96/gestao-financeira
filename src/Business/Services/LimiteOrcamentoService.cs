@@ -48,7 +48,6 @@ namespace Business.Services
             }
             if(!await ValidarPorTipoLimite(limiteOrcamento)) return;
 
-            limiteOrcamento.CategoriaId = limiteOrcamento.CategoriaId;
             limiteOrcamento.UsuarioId = UsuarioId;
 
             await limiteOrcamentoRepository.Adicionar(limiteOrcamento);
@@ -80,9 +79,11 @@ namespace Business.Services
 
             if(!await ValidarPorTipoLimite(limiteOrcamento)) return;
 
+            limiteOrcamentoBanco.TipoLimite = limiteOrcamento.TipoLimite;
             limiteOrcamentoBanco.Limite = limiteOrcamento.Limite;
             limiteOrcamentoBanco.CategoriaId = limiteOrcamento.CategoriaId;
             limiteOrcamentoBanco.Periodo = limiteOrcamento.Periodo;
+            limiteOrcamentoBanco.PorcentagemAviso = limiteOrcamento.PorcentagemAviso;
 
             await limiteOrcamentoRepository.Atualizar(limiteOrcamentoBanco);
         }
@@ -101,7 +102,7 @@ namespace Business.Services
 
         private async Task<bool> ValidarPorTipoLimite(LimiteOrcamento limiteOrcamento)
         {
-            if (limiteOrcamento.LimiteGeral)
+            if (limiteOrcamento.TipoLimite == TipoLimite.Geral)
             {
                 return ValidarLimiteGeral(limiteOrcamento.Periodo);
             }
@@ -126,7 +127,8 @@ namespace Business.Services
 
         private bool ExisteLimiteGeral(DateOnly periodo)
         {
-            return limiteOrcamentoRepository.Buscar(predicate: x => x.UsuarioId == UsuarioId && x.Periodo == periodo && x.CategoriaId == null,
+            return limiteOrcamentoRepository.Buscar(predicate: x => x.UsuarioId == UsuarioId && x.Periodo == periodo 
+                                                    && x.CategoriaId == null && x.TipoLimite == TipoLimite.Geral,
                                                                         orderBy: x => x.CategoriaId).Result.Any();
         }
     }

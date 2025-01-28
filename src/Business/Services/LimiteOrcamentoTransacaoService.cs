@@ -1,7 +1,9 @@
-﻿using Business.FiltrosBusca;
+﻿using Business.Entities;
+using Business.FiltrosBusca;
 using Business.Interfaces;
 using Business.Notificacoes;
 using Business.Services.Base;
+using Business.Utils;
 
 namespace Business.Services
 {
@@ -18,54 +20,49 @@ namespace Business.Services
 
             return saldoTotal > limite;
         }
-        public async Task ValidarLimiteExcedido(string usuarioId, DateOnly periodo)
+
+
+        public async Task ValidarLimitesExcedido(string usuarioId, DateOnly periodo)
         {
-            var saldoTotalPorCategoria = await transacaoRepository.ObterSaldoTotalCategoriaPorPeriodo(usuarioId, periodo);
             var limites = await limiteOrcamentoRepository.ObterTodos(new FiltroLimiteOrcamento { Periodo = periodo }, usuarioId);
 
-            var limiteGeral = limites.FirstOrDefault(l => l.LimiteGeral);
-
-            if (limiteGeral != null)
+            foreach (var limite in limites)
             {
-                var saldoTotalGeral = saldoTotalPorCategoria.Sum(x => x.Value);
-                var porcentagemAtingido = CalcularPorcentagem(saldoTotalGeral, limiteGeral.Limite);
-
-                if (saldoTotalGeral > limiteGeral.Limite)
-                {
-                    Notificar("O limite geral definido foi excedido.", TipoNotificacao.Aviso);
-                    return;
-                }
-
-                if ((double)porcentagemAtingido >= limiteGeral.PorcentagemAviso)
-                {
-                    Notificar($"O limite geral definido atingiu {porcentagemAtingido}%.");
-                    return;
-                }
-            }
-
-            foreach (var limiteCategoria in limites.Where(x => !x.LimiteGeral))
-            {
-                var totalsaidaCategoria = Math.Abs(saldoTotalPorCategoria.FirstOrDefault(x => x.Key == limiteCategoria.CategoriaId).Value);
-                var porcentagemAtingido = CalcularPorcentagem(totalsaidaCategoria, limiteCategoria.Limite);
-
-                if (totalsaidaCategoria > limiteCategoria.Limite)
-                {   
-                    Notificar($"O limite definido para categoria {limiteCategoria?.Categoria?.Nome} foi excedido.", TipoNotificacao.Aviso);
-                    return;
-                }
-
-                if ((double)porcentagemAtingido >= limiteCategoria.PorcentagemAviso)
-                {
-                    Notificar($"O limite definido para categoria {limiteCategoria?.Categoria?.Nome} atingiu {porcentagemAtingido}%.", TipoNotificacao.Aviso);
-                    return;
-                } 
-
+               ValidarLimite(limite);
             }
         }
 
-        private decimal CalcularPorcentagem(decimal totalSaida, decimal limite)
+        public void ValidarLimite(LimiteOrcamento limite)
         {
-            return (totalSaida / limite) * 100;
+            var totalTransacoesSaida = transacaoRepository.ObterValorTotalDeSaidasNoPeriodo(UsuarioId, limite.Periodo, limite.CategoriaId);
+
+            if (ExcedeuLimite(totalTransacoesSaida, limite))
+            {
+                return;
+            }
+
+            VerificarPorcentagemAviso(totalTransacoesSaida, limite);
         }
+
+        private bool ExcedeuLimite(decimal totalSaida, LimiteOrcamento limite)
+        {
+            if (totalSaida > limite.Limite)
+            {
+                var percentual = PercentualHelper.CalcularPercentualExcedido(totalSaida, limite.Limite);
+                Notificar($"O limite {limite?.Categoria?.Nome ?? "Geral"} ultrapassou {percentual}%", TipoNotificacao.Aviso);
+                return true;
+            }
+            return false;
+        }
+        private void VerificarPorcentagemAviso(decimal totalSaida, LimiteOrcamento limite)
+        {
+            var porcentualAtingido = PercentualHelper.CalcularPorcentagem(totalSaida, limite.Limite);
+            if (porcentualAtingido >= limite.PorcentagemAviso)
+            {
+                Notificar($"O limite {limite?.Categoria?.Nome ?? "Geral"} atingiu {porcentualAtingido}%.", TipoNotificacao.Aviso);
+            }
+        }
+
+
     }
 }
