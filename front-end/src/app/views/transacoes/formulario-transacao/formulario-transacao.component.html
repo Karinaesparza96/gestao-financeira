@@ -1,0 +1,33 @@
+<div class="container">
+  <form [formGroup]="formTransacao">
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <input type="email" class="form-control" id="descricao" formControlName="descricao">
+    </div>
+    <div class="row">
+      <div class="mb-3 col">
+        <label for="valor" class="form-label">Valor</label>
+        <input type="text" class="form-control" id="valor" formControlName="valor">
+      </div>
+      <div class="mb-3 col">
+        <label for="data" class="form-label">Data</label>
+        <input type="date" class="form-control" id="data"  formControlName="data">
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Categoria</label>
+      <select
+        class="form-select form-select-lg"
+        name=""
+        id=""
+      >
+        <option selected>Select one</option>
+        <option value="">New Delhi</option>
+        <option value="">Istanbul</option>
+        <option value="">Jakarta</option>
+      </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Enviar</button>
+  </form>
+</div>

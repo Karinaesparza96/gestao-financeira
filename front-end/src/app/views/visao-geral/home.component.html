@@ -1,0 +1,41 @@
+<div class="container-grid">
+  <div class="header item">
+    <div class="header-col">
+      <app-saudacao-usuario/>
+      <div class="resumo-mensal">
+        <div class="receita">
+          <span>receita mensal</span>
+          <p>R$ {{transacao.data.totalReceita}}</p>
+        </div>
+        <div class="despesa">
+          <span>despesa mensal</span>
+          <p>R$ {{transacao.data.totalDespesa}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="header-col">
+      <div class="acesso-rapido">
+        <span>Acesso rápido</span>
+        <div class="acoes">
+          <div class="btn-saida" (click)="adicionar($event)"></div>
+          <div class="btn-entrada" (click)="adicionar($event)" style="cursor: pointer;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="item">
+    <p>saldo geral</p>
+    <p>R$ {{transacao.data.totalSaldo}}</p>
+  </div>
+  <div class="item">
+    <p>totas as faturas</p>
+    <p>r$5000,00</p>
+  </div>
+  <div class="item">
+    <p>Maiores gastos do mes atual</p>
+    <span>casa</span><span>100,00%</span>
+  </div>
+</div>
+<app-modal [label]="'Nova receita'">
+  <app-formulario-transacao/>
+</app-modal>

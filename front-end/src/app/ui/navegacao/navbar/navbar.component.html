@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <div class="container-fluid">
+    <a href="#" class="navbar-brand">Gestão Financeira</a>
+    <button
+    class="navbar-toggler"
+    type="button"
+    (click)="toggleMenu()"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <div class="collapse navbar-collapse justify-content-md-around" [class.show]="isMenuOpen">
+      <ul class="navbar-nav text-center">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/']" routerLinkActive="link-primary">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/transacoes']">Transações</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/limites']">Limites</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/relatorios']">Relatórios</a>
+        </li>
+      </ul>
+        <ul class="navbar-nav text-center">
+          @if(true) {
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="['/login']">Entrar</a></li>
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="['/register']">Registrar</a>
+            </li>
+          } @else {
+            <li class="nav-item">
+              <a class="nav-link">Olá, teste</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">Sair</a>
+            </li>
+          }
+        </ul>
+    </div>
+  </div>
+</nav>
