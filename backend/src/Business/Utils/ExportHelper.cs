@@ -1,0 +1,188 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Business.Utils
+{
+    public static class ExportHelper
+    {        
+        public static void WriteTsv<T>(this IEnumerable<T> data, TextWriter output)
+        {
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
+            foreach (PropertyDescriptor prop in props)
+            {
+                output.Write(prop.DisplayName); // header
+                output.Write("\t");
+            }
+            output.WriteLine();
+            foreach (T item in data)
+            {
+                foreach (PropertyDescriptor prop in props)
+                {
+                    output.Write(prop.Converter.ConvertToString(
+                         prop.GetValue(item)));
+                    output.Write("\t");
+                }
+                output.WriteLine();
+            }
+
+            //return output.ToString();
+        }
+
+        public static string getCSV<T>(this IEnumerable<T> data)
+        {
+            StringBuilder sb = new StringBuilder();
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
+            foreach (PropertyDescriptor prop in props)
+            {
+                sb.Append(prop.DisplayName); // header
+                sb.Append("\t");
+            }
+            sb.AppendLine();
+            foreach (T item in data)
+            {
+                foreach (PropertyDescriptor prop in props)
+                {
+                    sb.Append(prop.Converter.ConvertToString(
+                         prop.GetValue(item)));
+                    sb.Append("\t");
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        public static string CsvLinq<T>(this IEnumerable<T> myList)
+        {
+            return String.Join(",", myList.Select(x => x.ToString()).ToArray());
+        }
+
+        public static string CreateCSVTextFile<T>(List<T> data, string seperator = ",")
+        {
+            var properties = typeof(T).GetProperties();
+            var result = new StringBuilder();
+
+            foreach (var row in data)
+            {
+                var values = properties.Select(p => p.GetValue(row, null));
+                var line = string.Join(seperator, values);
+                result.AppendLine(line);
+            }
+
+            return result.ToString();
+        }
+
+        private static string CreateCSVTextFile<T>(List<T> data)
+        {
+            var properties = typeof(T).GetProperties();
+            var result = new StringBuilder();
+
+            foreach (var row in data)
+            {
+                var values = properties.Select(p => p.GetValue(row, null))
+                                       .Select(v => StringToCSVCell(Convert.ToString(v)));
+                var line = string.Join(",", values);
+                result.AppendLine(line);
+            }
+
+            return result.ToString();
+        }
+
+        private static string StringToCSVCell(string str)
+        {
+            bool mustQuote = (str.Contains(",") || str.Contains("\"") || str.Contains("\r") || str.Contains("\n"));
+            if (mustQuote)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("\"");
+                foreach (char nextChar in str)
+                {
+                    sb.Append(nextChar);
+                    if (nextChar == '"')
+                        sb.Append("\"");
+                }
+                sb.Append("\"");
+                return sb.ToString();
+            }
+
+            return str;
+        }
+
+        public static string ToCsv<T>(IEnumerable<T> objectlist, string separator = ",")
+        {
+            Type t = typeof(T);
+            PropertyInfo[] fields = t.GetProperties();
+
+            string header = String.Join(separator, fields.Select(f => f.Name).ToArray());
+
+            StringBuilder csvdata = new StringBuilder();
+            csvdata.AppendLine(header);
+
+            foreach (var o in objectlist)
+                csvdata.AppendLine(ToCsvFields(separator, fields, o));
+
+            return csvdata.ToString();
+        }
+
+        public static string ToCsvFields(string separator, PropertyInfo[] fields, object o)
+        {
+            StringBuilder linie = new StringBuilder();
+
+            foreach (var f in fields)
+            {
+                if (linie.Length > 0)
+                    linie.Append(separator);
+
+                var x = f.GetValue(o);
+
+                if (x != null)
+                    linie.Append(x.ToString());
+            }
+
+            return linie.ToString();
+        }    
+    
+
+        private static void CreateHeader<T>(List<T> list, StreamWriter sw)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            for (int i = 0; i < properties.Length - 1; i++)
+            {
+                sw.Write(properties[i].Name + ",");
+            }
+            var lastProp = properties[properties.Length - 1].Name;
+            sw.Write(lastProp + sw.NewLine);
+        }
+
+        private static void CreateRows<T>(List<T> list, StreamWriter sw)
+        {
+            foreach (var item in list)
+            {
+                PropertyInfo[] properties = typeof(T).GetProperties();
+                for (int i = 0; i < properties.Length - 1; i++)
+                {
+                    var prop = properties[i];
+                    sw.Write(prop.GetValue(item) + ",");
+                }
+                var lastProp = properties[properties.Length - 1];
+                sw.Write(lastProp.GetValue(item) + sw.NewLine);
+            }
+        }
+
+        public static void CreateCSV<T>(List<T> list, string filePath)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            using (StreamWriter sw = new StreamWriter("d:\\teste4.csv"))
+            {
+                CreateHeader(list, sw);
+                CreateRows(list, sw);
+            }
+        }
+
+    }
+}
