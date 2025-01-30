@@ -53,7 +53,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Atualizar(int id, TransacaoDto transacaoDto)
+        public async Task<IActionResult> Atualizar(Guid id, TransacaoDto transacaoDto)
         {
             if (id != transacaoDto.Id)
             {   

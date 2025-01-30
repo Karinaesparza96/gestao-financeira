@@ -4,7 +4,7 @@ namespace Api.Dtos
 {
     public class LimiteOrcamentoDto
     {
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
         public int? CategoriaId { get; set; }
 
         [Required(ErrorMessage = "Campo {0} é obrigatório.")]

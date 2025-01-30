@@ -42,7 +42,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Atualizar(int id, LimiteOrcamentoDto limiteOrcamentoDto)
+        public async Task<ActionResult> Atualizar(Guid id, LimiteOrcamentoDto limiteOrcamentoDto)
         {
             if (id != limiteOrcamentoDto.Id)
             {
