@@ -21,7 +21,7 @@ namespace Business.Services
             return transacoesUsuario;
         }
 
-        public async Task<Transacao?> ObterPorId(int id)
+        public async Task<Transacao?> ObterPorId(Guid id)
         {
             var transacao = await transacaoRepository.ObterPorId(id);
 
@@ -92,7 +92,7 @@ namespace Business.Services
             await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
         }
 
-        public async Task Exluir(int id)
+        public async Task Excluir(Guid id)
         {   
             var transacaoBanco = await transacaoRepository.ObterPorId(id);
 

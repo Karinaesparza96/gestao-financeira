@@ -15,7 +15,7 @@ namespace Business.Services
                                                                 orderBy: x => x.Default);
             return categorias;
         }
-        public async Task<Categoria?> ObterPorId(int id)
+        public async Task<Categoria?> ObterPorId(Guid id)
         {   
             var categoria = await categoriaRepository.ObterPorId(id);
 
@@ -73,7 +73,7 @@ namespace Business.Services
             await categoriaRepository.Atualizar(categoriaBanco);
         }
 
-        public async Task Exluir(int id)
+        public async Task Excluir(Guid id)
         {
             var categoria = await categoriaRepository.ObterTransacoes(id);
 
@@ -91,7 +91,7 @@ namespace Business.Services
 
             if (!AcessoAutorizado(categoria.UsuarioId))
             {
-                Notificar("Não é possível exluir uma categoria de outro usuário.");
+                Notificar("Não é possível excluir uma categoria de outro usuário.");
                 return;
             }
 

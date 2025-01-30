@@ -24,7 +24,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> ObterPorId(int id)
+        public async Task<ActionResult> ObterPorId(Guid id)
         {   
             var transacao = await transacaoService.ObterPorId(id);
 
@@ -73,9 +73,9 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Excluir(int id)
+        public async Task<IActionResult> Excluir(Guid id)
         {
-            await transacaoService.Exluir(id);
+            await transacaoService.Excluir(id);
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }

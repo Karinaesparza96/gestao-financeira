@@ -2,9 +2,9 @@
 {
     public interface IEntityService<T> where T : class
     {
-        Task<T?> ObterPorId(int id);
+        Task<T?> ObterPorId(Guid id);
         Task Adicionar(T entityDto);
         Task Atualizar(T entityDto);
-        Task Exluir(int id);
+        Task Excluir(Guid id);
     }
 }

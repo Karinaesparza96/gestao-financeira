@@ -10,6 +10,9 @@ namespace Data.Mappings
         {
             builder.HasKey(x => x.Id);
 
+            builder.Property(x => x.Nome)
+                .HasColumnType("varchar(200)");
+
             builder.HasOne(x => x.Usuario)
                 .WithMany()
                 .HasForeignKey(x => x.UsuarioId)

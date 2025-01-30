@@ -7,6 +7,11 @@ namespace Api.Configurations
 {
     public static class DbMigrationHelpers
     {
+        public static void UseDbMigrationHelper(this WebApplication app)
+        {
+            EnsureSeedData(app).Wait();
+        }
+
         public static async Task EnsureSeedData(WebApplication application)
         {
             var service = application.Services.CreateScope().ServiceProvider;
@@ -19,20 +24,20 @@ namespace Api.Configurations
             var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 await context.Database.MigrateAsync();
-                await EnsureSeedProduts(context);
-            }
+                await InserirDadosIniciais(context);
+            //}
         }
 
-        private static async Task EnsureSeedProduts(AppDbContext context)
+        private static async Task InserirDadosIniciais(AppDbContext context)
         {   
             if (context.Users.Any() || context.Set<Usuario>().Any()) return;
            
             var userIdentity = new IdentityUser()
             {
-                Id = "1",
+                Id = Guid.NewGuid().ToString(),
                 Email = "teste@teste.com",
                 EmailConfirmed = true,
                 NormalizedEmail = "TESTE@TESTE.COM",

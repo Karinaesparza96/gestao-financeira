@@ -50,6 +50,7 @@ namespace Api.Controllers
             {
                 Id = userIdentity.Id,
                 Nome = registerUser.Nome
+
             };
 
             await usuarioRepository.Adicionar(usuario);

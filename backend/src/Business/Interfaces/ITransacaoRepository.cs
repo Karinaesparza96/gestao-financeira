@@ -10,7 +10,7 @@ namespace Business.Interfaces
 
         decimal ObterSaldoTotal(string usuarioIdentityId);
 
-        decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, int? categoriaId = null);
+        decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, Guid? categoriaId = null);
 
         Task<ResumoFinanceiro> ObterResumoEntradasESaidas(string usuarioId);
     }

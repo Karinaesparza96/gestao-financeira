@@ -18,7 +18,7 @@ namespace Business.Services
 
             return limitesOrcamentos;
         }
-        public async Task<LimiteOrcamento?> ObterPorId(int id)
+        public async Task<LimiteOrcamento?> ObterPorId(Guid id)
         {
             var limiteOrcamento = await limiteOrcamentoRepository.ObterPorId(id);
 
@@ -87,7 +87,7 @@ namespace Business.Services
 
             await limiteOrcamentoRepository.Atualizar(limiteOrcamentoBanco);
         }
-        public async Task Exluir(int id)
+        public async Task Excluir(Guid id)
         {
             var entity = await limiteOrcamentoRepository.ObterPorId(id);
 
@@ -120,7 +120,7 @@ namespace Business.Services
 
         private async Task<bool> ValidarLimitePorCategoria(LimiteOrcamento limiteOrcamento)
         {
-            await categoriaService.ObterPorId((int)limiteOrcamento.CategoriaId!);
+            await categoriaService.ObterPorId((Guid)limiteOrcamento.CategoriaId!);
 
             return !TemNotificacao();
         }
