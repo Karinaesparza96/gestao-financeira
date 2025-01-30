@@ -1,4 +1,6 @@
-﻿namespace Business.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Business.Entities
 {
     public class Categoria : Entity 
     {

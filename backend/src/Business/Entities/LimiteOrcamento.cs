@@ -1,9 +1,11 @@
-﻿namespace Business.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Business.Entities
 {
     public class LimiteOrcamento : Entity
     {
-        public int? CategoriaId { get; set; }
-
+        public Guid? CategoriaId { get; set; }
+        
         public string UsuarioId { get; set; } = null!;
 
         public DateOnly Periodo { get; set; } 

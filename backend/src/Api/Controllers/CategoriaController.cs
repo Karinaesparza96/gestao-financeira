@@ -21,7 +21,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CategoriaDto>> ObterPorId(int id)
+        public async Task<ActionResult<CategoriaDto>> ObterPorId(Guid id)
         {
             var categoria = await categoriaService.ObterPorId(id);
             return RetornoPadrao(data: mapper.Map<CategoriaDto>(categoria));
@@ -41,7 +41,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Atualizar(int id, CategoriaDto categoriaDto)
+        public async Task<IActionResult> Atualizar(Guid id, CategoriaDto categoriaDto)
         {
             if (id != categoriaDto.Id)
             {
@@ -54,9 +54,9 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Excluir(int id)
+        public async Task<IActionResult> Excluir(Guid id)
         {
-            await categoriaService.Exluir(id);
+            await categoriaService.Excluir(id);
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }

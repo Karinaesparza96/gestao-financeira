@@ -40,7 +40,7 @@ namespace Data.Repositories
            return result;
         }
 
-        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, int? categoriaId)
+        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, Guid? categoriaId)
         {
             var query = DbSet.Where(t => t.UsuarioId == usuarioId
                                          && t.Data.Year == periodo.Year
