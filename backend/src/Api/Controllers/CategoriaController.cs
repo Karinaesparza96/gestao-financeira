@@ -6,6 +6,7 @@ using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Business.Messages;
 
 namespace Api.Controllers
 {
@@ -45,7 +46,7 @@ namespace Api.Controllers
         {
             if (id != categoriaDto.Id)
             {
-                NotificarErro("Os ids fornecidos não são iguais.");
+                NotificarErro(Mensagens.IdsDiferentes);
                 return RetornoPadrao();
             }
 

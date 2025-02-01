@@ -7,6 +7,7 @@ using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Business.Messages;
 
 namespace Api.Controllers
 {
@@ -57,7 +58,7 @@ namespace Api.Controllers
         {
             if (id != transacaoDto.Id)
             {   
-                NotificarErro("Os ids devem ser iguais.");
+                NotificarErro(Mensagens.IdsDiferentes);
                 return RetornoPadrao();
             }
 
