@@ -2,6 +2,7 @@
 using Business.Entities.Validations;
 using Business.FiltrosBusca;
 using Business.Interfaces;
+using Business.Messages;
 using Business.Services.Base;
 
 namespace Business.Services
@@ -24,13 +25,13 @@ namespace Business.Services
 
             if (limiteOrcamento == null)
             {
-                Notificar("Registro não encontrado");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return null;
             }
 
             if (!AcessoAutorizado(limiteOrcamento.UsuarioId))
             {
-                Notificar("Não é possivel acessar um registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return null;
             }
 
@@ -43,7 +44,7 @@ namespace Business.Services
 
             if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
             {
-                Notificar("Não é possivel definir um limite que excede os recursos disponíveis.");
+                Notificar(Mensagens.SemRecursoDisponivel);
                 return;
             }
             if(!await ValidarPorTipoLimite(limiteOrcamento)) return;
@@ -61,19 +62,19 @@ namespace Business.Services
 
             if (limiteOrcamentoBanco == null)
             {
-                Notificar("Registro não encontrado.");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (!AcessoAutorizado(UsuarioId))
             {
-                Notificar("Não é possível atualizar um registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
             if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
             {   
-                Notificar("Não é possivel definir um limite que excede os recursos disponíveis.");
+                Notificar(Mensagens.SemRecursoDisponivel);
                 return;
             }
 
@@ -93,7 +94,7 @@ namespace Business.Services
 
             if (entity == null)
             {   
-                Notificar("Registro não encontrado");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
@@ -114,7 +115,7 @@ namespace Business.Services
         {
             if (!ExisteLimiteGeral(periodo)) return true;
 
-            Notificar("Já existe um limite geral definido para este período.");
+            Notificar(Mensagens.ExisteLimiteGeral);
             return false;
         }
 

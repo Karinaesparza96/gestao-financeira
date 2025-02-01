@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Business.Messages;
 
 namespace Api.Controllers
 {
@@ -74,7 +75,8 @@ namespace Api.Controllers
                 var loginResponse = await GenerateTokenAsync(loginUser.Email!);
                 return RetornoPadrao(HttpStatusCode.Created, loginResponse);
             }
-            NotificarErro("Usuário ou senha incorretos.");
+
+            NotificarErro(Mensagens.UsuarioEouSenhaIncorretos);
             return RetornoPadrao();
         }
 

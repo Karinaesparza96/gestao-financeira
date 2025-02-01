@@ -5,6 +5,7 @@ using AutoMapper;
 using Business.Entities;
 using Business.FiltrosBusca;
 using Business.Interfaces;
+using Business.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +47,7 @@ namespace Api.Controllers
         {
             if (id != limiteOrcamentoDto.Id)
             {
-                NotificarErro("Os ids fornecidos não são iguais.");
+                NotificarErro(Mensagens.IdsDiferentes);
                 return RetornoPadrao();
             }
 

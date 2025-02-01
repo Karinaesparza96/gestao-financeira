@@ -2,7 +2,7 @@
 using Business.Entities.Validations;
 using Business.FiltrosBusca;
 using Business.Interfaces;
-using Business.Notificacoes;
+using Business.Messages;
 using Business.Services.Base;
 using Business.ValueObjects;
 
@@ -27,13 +27,13 @@ namespace Business.Services
 
             if (transacao == null)
             {
-                Notificar("Registro não encontrado.", TipoNotificacao.Aviso);
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return null;
             }
 
             if (!AcessoAutorizado(transacao.UsuarioId))
             {
-                Notificar("Não é possível acessar o registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return null;
             }
 
@@ -53,7 +53,7 @@ namespace Business.Services
 
             if (categoria == null)
             {
-                Notificar("Categoria precisa ser cadastrada antes de associar a uma transação.");
+                Notificar(Mensagens.CategoriaNaoCadastrada);
                 return;
             }
 
@@ -72,13 +72,13 @@ namespace Business.Services
 
             if (transacaoBanco == null)
             {
-                Notificar("Registro não encontrado.");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                Notificar("Não é possível atualizar o registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
@@ -98,13 +98,13 @@ namespace Business.Services
 
             if (transacaoBanco == null)
             {
-                Notificar("Registro não encontrado.");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                Notificar("Não é possivel excluir registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
