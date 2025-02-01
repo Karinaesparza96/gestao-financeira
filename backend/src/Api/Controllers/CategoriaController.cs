@@ -10,7 +10,7 @@ using Business.Utils;
 
 namespace Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/categorias")]
     public class CategoriaController(ICategoriaService categoriaService, IMapper mapper, INotificador notificador) : MainController(notificador)
     {
@@ -18,20 +18,7 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<CategoriaDto>>> ObterTodos()
         {
             var categorias = await categoriaService.ObterTodos();
-
-            using (TextWriter tw = new StreamWriter("d:\\output.csv"))
-            {
-                // podemos retornar um base64 a partir deste método
-                string lcCsvString = ExportHelper.getCSV<Categoria>(categorias.ToList());
-
-
-                // este método é uma variação para gerar o arquivo fisico e validar sua estrutura.
-                ExportHelper.CreateCSV<Categoria>(categorias.ToList(), "d:\teste4.csv");
-                string content = System.IO.File.ReadAllText(@"d:\teste4.csv");
-            }
-
             return RetornoPadrao(data: mapper.Map<IEnumerable<CategoriaDto>>(categorias));
-            //return tiago;
         }
 
         [HttpGet("{id:int}")]

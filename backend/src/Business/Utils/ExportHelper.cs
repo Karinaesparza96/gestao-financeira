@@ -1,36 +1,20 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Utils
 {
     public static class ExportHelper
-    {        
-        public static void WriteTsv<T>(this IEnumerable<T> data, TextWriter output)
-        {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
-            foreach (PropertyDescriptor prop in props)
-            {
-                output.Write(prop.DisplayName); // header
-                output.Write("\t");
-            }
-            output.WriteLine();
-            foreach (T item in data)
-            {
-                foreach (PropertyDescriptor prop in props)
-                {
-                    output.Write(prop.Converter.ConvertToString(
-                         prop.GetValue(item)));
-                    output.Write("\t");
-                }
-                output.WriteLine();
-            }
+    {
 
-            //return output.ToString();
+        public static string convertBase64(string lcString) {            
+            return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(lcString));
         }
 
         public static string getCSV<T>(this IEnumerable<T> data)
@@ -56,6 +40,31 @@ namespace Business.Utils
             return sb.ToString();
         }
 
+
+        // Outros exemplos de exportação
+        /*
+        public static void WriteTsv<T>(this IEnumerable<T> data, TextWriter output)
+        {
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
+            foreach (PropertyDescriptor prop in props)
+            {
+                output.Write(prop.DisplayName); // header
+                output.Write("\t");
+            }
+            output.WriteLine();
+            foreach (T item in data)
+            {
+                foreach (PropertyDescriptor prop in props)
+                {
+                    output.Write(prop.Converter.ConvertToString(
+                         prop.GetValue(item)));
+                    output.Write("\t");
+                }
+                output.WriteLine();
+            }
+
+            //return output.ToString();
+        }
         public static string CsvLinq<T>(this IEnumerable<T> myList)
         {
             return String.Join(",", myList.Select(x => x.ToString()).ToArray());
@@ -183,6 +192,7 @@ namespace Business.Utils
                 CreateRows(list, sw);
             }
         }
+        */
 
     }
 }
