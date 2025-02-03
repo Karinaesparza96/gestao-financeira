@@ -6,6 +6,7 @@ using AutoMapper;
 using Business.Entities;
 using Business.FiltrosBusca;
 using Business.Interfaces;
+using Business.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(int id)
+        public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(Guid id)
         {
             var limiteOrcamento = await limiteOrcamentoService.ObterPorId(id);
             return RetornoPadrao(data: mapper.Map<LimiteOrcamentoDto>(limiteOrcamento));
@@ -43,11 +44,11 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Atualizar(int id, LimiteOrcamentoDto limiteOrcamentoDto)
+        public async Task<ActionResult> Atualizar(Guid id, LimiteOrcamentoDto limiteOrcamentoDto)
         {
             if (id != limiteOrcamentoDto.Id)
             {
-                NotificarErro("Os ids fornecidos não são iguais.");
+                NotificarErro(Mensagens.IdsDiferentes);
                 return RetornoPadrao();
             }
 
@@ -62,9 +63,9 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Excluir(int id)
+        public async Task<ActionResult> Excluir(Guid id)
         {
-            await limiteOrcamentoService.Exluir(id);
+            await limiteOrcamentoService.Excluir(id);
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }

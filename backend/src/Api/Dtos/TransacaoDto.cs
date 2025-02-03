@@ -6,7 +6,7 @@ namespace Api.Dtos
 {
     public class TransacaoDto
     {
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
         [DisplayName("categoria da transação")]

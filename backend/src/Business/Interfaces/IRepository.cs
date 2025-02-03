@@ -7,7 +7,7 @@ namespace Business.Interfaces
     {
         Task<List<TEntity>> ObterTodos();
 
-        Task<TEntity?> ObterPorId(int id);
+        Task<TEntity?> ObterPorId(Guid id);
 
         Task<IEnumerable<TEntity>> Buscar<TOrderKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TOrderKey>>? orderBy = null);
 

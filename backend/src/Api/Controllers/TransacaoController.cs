@@ -7,6 +7,7 @@ using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Business.Messages;
 
 namespace Api.Controllers
 {
@@ -24,7 +25,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> ObterPorId(int id)
+        public async Task<ActionResult> ObterPorId(Guid id)
         {   
             var transacao = await transacaoService.ObterPorId(id);
 
@@ -53,11 +54,11 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Atualizar(int id, TransacaoDto transacaoDto)
+        public async Task<IActionResult> Atualizar(Guid id, TransacaoDto transacaoDto)
         {
             if (id != transacaoDto.Id)
             {   
-                NotificarErro("Os ids devem ser iguais.");
+                NotificarErro(Mensagens.IdsDiferentes);
                 return RetornoPadrao();
             }
 
@@ -73,9 +74,9 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Excluir(int id)
+        public async Task<IActionResult> Excluir(Guid id)
         {
-            await transacaoService.Exluir(id);
+            await transacaoService.Excluir(id);
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
     }

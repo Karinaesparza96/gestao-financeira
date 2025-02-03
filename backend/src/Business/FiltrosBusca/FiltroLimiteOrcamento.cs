@@ -2,7 +2,7 @@
 {
     public class FiltroLimiteOrcamento
     {
-        public int? CategoriaId { get; set; }
+        public Guid? CategoriaId { get; set; }
 
         public DateOnly? Periodo { get; set; }
 

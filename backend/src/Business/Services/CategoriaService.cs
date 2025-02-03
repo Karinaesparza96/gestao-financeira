@@ -1,6 +1,7 @@
 ﻿using Business.Entities;
 using Business.Entities.Validations;
 using Business.Interfaces;
+using Business.Messages;
 using Business.Services.Base;
 
 namespace Business.Services
@@ -15,19 +16,19 @@ namespace Business.Services
                                                                 orderBy: x => x.Default);
             return categorias;
         }
-        public async Task<Categoria?> ObterPorId(int id)
+        public async Task<Categoria?> ObterPorId(Guid id)
         {   
             var categoria = await categoriaRepository.ObterPorId(id);
 
             if (categoria == null)
             {   
-                Notificar("Registro não encontrado");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return null;
             }
 
             if (!categoria.Default && !AcessoAutorizado(categoria.UsuarioId))
             {
-                Notificar("Não é possivel acessar uma categoria de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return null;
             }
 
@@ -52,19 +53,19 @@ namespace Business.Services
 
             if (categoriaBanco == null)
             {
-               Notificar("Registro não encontrado.");
-               return;
+                Notificar(Mensagens.RegistroNaoEncontrado);
+                return;
             }
 
             if (categoriaBanco.Default)
             {
-                Notificar("Não é possível atualizar uma categoria default.");
+                Notificar(Mensagens.AcaoNaoAutorizadaCategoriaDefault);
                 return;
             }
 
             if (!AcessoAutorizado(categoriaBanco.UsuarioId))
             {
-                Notificar("Não é possível atualizar uma categoria de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
@@ -73,31 +74,31 @@ namespace Business.Services
             await categoriaRepository.Atualizar(categoriaBanco);
         }
 
-        public async Task Exluir(int id)
+        public async Task Excluir(Guid id)
         {
             var categoria = await categoriaRepository.ObterTransacoes(id);
 
             if (categoria == null)
             {
-                Notificar("Registro não encontrado");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (categoria.Default)
             {   
-                Notificar("Não é possível excluir uma categoria default.");
+                Notificar(Mensagens.AcaoNaoAutorizadaCategoriaDefault);
                 return;
             }
 
             if (!AcessoAutorizado(categoria.UsuarioId))
             {
-                Notificar("Não é possível exluir uma categoria de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
             if (categoria.Transacoes?.Count() > 0)
             {
-                Notificar("Não é possivel excluir uma categoria que possui transações lançadas.");
+                Notificar(Mensagens.AcaoNaoAutorizadaExcluirCategoria);
                 return;
             }
 

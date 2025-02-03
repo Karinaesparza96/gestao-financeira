@@ -2,7 +2,7 @@
 using Business.Entities.Validations;
 using Business.FiltrosBusca;
 using Business.Interfaces;
-using Business.Notificacoes;
+using Business.Messages;
 using Business.Services.Base;
 using Business.ValueObjects;
 
@@ -21,19 +21,19 @@ namespace Business.Services
             return transacoesUsuario;
         }
 
-        public async Task<Transacao?> ObterPorId(int id)
+        public async Task<Transacao?> ObterPorId(Guid id)
         {
             var transacao = await transacaoRepository.ObterPorId(id);
 
             if (transacao == null)
             {
-                Notificar("Registro não encontrado.", TipoNotificacao.Aviso);
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return null;
             }
 
             if (!AcessoAutorizado(transacao.UsuarioId))
             {
-                Notificar("Não é possível acessar o registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return null;
             }
 
@@ -53,7 +53,7 @@ namespace Business.Services
 
             if (categoria == null)
             {
-                Notificar("Categoria precisa ser cadastrada antes de associar a uma transação.");
+                Notificar(Mensagens.CategoriaNaoCadastrada);
                 return;
             }
 
@@ -72,13 +72,13 @@ namespace Business.Services
 
             if (transacaoBanco == null)
             {
-                Notificar("Registro não encontrado.");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                Notificar("Não é possível atualizar o registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 
@@ -92,19 +92,19 @@ namespace Business.Services
             await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
         }
 
-        public async Task Exluir(int id)
+        public async Task Excluir(Guid id)
         {   
             var transacaoBanco = await transacaoRepository.ObterPorId(id);
 
             if (transacaoBanco == null)
             {
-                Notificar("Registro não encontrado.");
+                Notificar(Mensagens.RegistroNaoEncontrado);
                 return;
             }
 
             if (!AcessoAutorizado(transacaoBanco.UsuarioId))
             {
-                Notificar("Não é possivel excluir registro de outro usuário.");
+                Notificar(Mensagens.AcaoNaoAutorizada);
                 return;
             }
 

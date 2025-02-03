@@ -20,7 +20,7 @@ namespace Data.Repositories
            return await DbSet.ToListAsync();
         }
 
-        public async Task<TEntity?> ObterPorId(int id)
+        public async Task<TEntity?> ObterPorId(Guid id)
         {
             return await DbSet.FindAsync(id);
         }
