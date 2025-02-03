@@ -1,12 +1,9 @@
-﻿using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Utils
 {
@@ -39,6 +36,39 @@ namespace Business.Utils
             }
             return sb.ToString();
         }
+
+        public static void GetPDF<T>(this IEnumerable<T> data, string outputPath="d:\\output.pdf")
+        {
+            ExportListToPdf(data.ToList(), outputPath);
+        }
+
+        public static void ExportListToPdf<T>(List<T> list, string outputPath)
+        {
+            using (FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                iTextSharp.text.Document document = new iTextSharp.text.Document();
+                PdfWriter writer = PdfWriter.GetInstance(document, fs);
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
+                document.Open();
+
+                foreach (var item in list)
+                {
+                    //document.Add(new Paragraph(item.ToString()));
+                    foreach (PropertyDescriptor prop in props)
+                    {
+
+                        //document.Add(new Paragraph(item.ToString()));
+                        document.Add(new Paragraph(prop.DisplayName + ": " + prop.Converter.ConvertToString(prop.GetValue(item))));
+
+                    }
+                    document.Add(new Paragraph("----------------------------------"));
+                }
+
+                document.Close();
+                writer.Close();
+            }
+        }
+
 
 
         // Outros exemplos de exportação
@@ -154,7 +184,7 @@ namespace Business.Utils
 
             return linie.ToString();
         }    
-    
+
 
         private static void CreateHeader<T>(List<T> list, StreamWriter sw)
         {
