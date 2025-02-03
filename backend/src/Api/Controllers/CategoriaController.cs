@@ -1,4 +1,4 @@
-﻿using Api.Controllers.Base;
+using Api.Controllers.Base;
 using Api.Dtos;
 using AutoMapper;
 using Business.Entities;
@@ -6,6 +6,7 @@ using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Business.Utils;
 using Business.Messages;
 
 namespace Api.Controllers
@@ -36,7 +37,7 @@ namespace Api.Controllers
                 NotificarErro(ModelState);
                 return RetornoPadrao();
             }
-            
+
             await categoriaService.Adicionar(mapper.Map<Categoria>(categoriaDto));
             return RetornoPadrao(HttpStatusCode.Created);
         }
