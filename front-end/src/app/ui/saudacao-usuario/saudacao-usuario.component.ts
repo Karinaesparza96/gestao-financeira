@@ -9,7 +9,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 export class SaudacaoUsuarioComponent implements OnInit, OnDestroy {
   saudacao: string = '';
   icone: string =  '';
-  nomeUsuario: string = 'Karina'
+  nomeUsuario: string = ''
 
   private saudacoes : any = {
     manha: {

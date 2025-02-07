@@ -1,33 +1,33 @@
 <div class="container">
-  <form [formGroup]="formTransacao">
-    <div class="mb-3">
+  <form [formGroup]="formTransacao" (ngSubmit)="submit()">
+    <div class="mb-3 position-relative">
       <label for="descricao" class="form-label">Descrição</label>
       <input type="email" class="form-control" id="descricao" formControlName="descricao">
+      <span class="text-danger py-1" [innerHTML]="erros['descricao']" *ngIf="erros['descricao']"></span>
     </div>
     <div class="row">
-      <div class="mb-3 col">
+      <div class="mb-3 col position-relative">
         <label for="valor" class="form-label">Valor</label>
         <input type="text" class="form-control" id="valor" formControlName="valor">
+        <span class="text-danger py-1" [innerHTML]="erros['valor']" *ngIf="erros['valor']"></span>
       </div>
       <div class="mb-3 col">
         <label for="data" class="form-label">Data</label>
         <input type="date" class="form-control" id="data"  formControlName="data">
+        <span class="text-danger py-1" [innerHTML]="erros['data']" *ngIf="erros['data']"></span>
       </div>
     </div>
-    <div class="mb-3">
-      <label for="" class="form-label">Categoria</label>
-      <select
-        class="form-select form-select-lg"
-        name=""
-        id=""
-      >
-        <option selected>Select one</option>
-        <option value="">New Delhi</option>
-        <option value="">Istanbul</option>
-        <option value="">Jakarta</option>
-      </select>
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Enviar</button>
+      <div class="mb-3 position-relative">
+        <label for="categoria" class="form-label">Categoria</label>
+        <select
+          class="form-select form-select "
+          formControlName="categoria"
+        >
+          <option selected>Selecione</option>
+          <option *ngFor="let categoria of categorias$ | async" [value]="categoria.id">{{categoria.nome}}</option>
+        </select>
+        <span class="text-danger py-1" [innerHTML]="erros['categoria']" *ngIf="erros['categoria']"></span>
+      </div>
+    <button type="submit" class="btn btn-success" [disabled]="!formTransacao.valid">Enviar</button>
   </form>
 </div>

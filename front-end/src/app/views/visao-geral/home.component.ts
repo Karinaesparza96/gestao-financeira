@@ -1,28 +1,48 @@
-import { Component, viewChild, ViewChild } from '@angular/core';
+import { TipoTransacao } from './../../models/TipoTransacao';
+import { Component, viewChild } from '@angular/core';
 import { ModalComponent } from "../../ui/modal/modal.component";
-import { NgTemplateOutlet } from '@angular/common';
 import { SaudacaoUsuarioComponent } from "../../ui/saudacao-usuario/saudacao-usuario.component";
 import { FormularioTransacaoComponent } from "../transacoes/formulario-transacao/formulario-transacao.component";
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { TransacaoService } from '../../services/transacao.service';
+import { Transacao } from '../../models/Transacao';
+import { ResumoFinanceiro } from '../../models/resumoFinanceiro';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent],
+  imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent, CommonModule, CurrencyPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+  showModal: boolean = false
   modal = viewChild(ModalComponent)
-  transacao = {
-    sucesso: true,
-    data: {
-        "totalSaldo": 5140.84,
-        "totalReceita": 5490.74,
-        "totalDespesa": 349.9
-    },
-    mensagens: []
-}
+  options: {label: string, cssClass: 'sucesso'|'falha'} = {label: '', cssClass: 'sucesso'};
+  tipo: TipoTransacao = TipoTransacao.Entrada
+  transacoes: Transacao[] = []
+ 
+  resumoSaldo$: Observable<ResumoFinanceiro>;
+  
+  constructor(private transacaoService: TransacaoService) {
+    this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
+  }
 
-  adicionar(event: any){
-    this.modal()?.toggle(event)
+  novaReceita(){
+    this.options = {
+      label: 'Nova Receita',
+      cssClass: 'sucesso'
+    };
+    this.showModal = true
+    this.tipo = TipoTransacao.Entrada
+  }
+  
+  novaDespesa() {
+    this.options = {
+      label: 'Nova Despesa',
+      cssClass: 'falha'
+    };
+    this.showModal = true
+    this.tipo = TipoTransacao.Saida
   }
 }
