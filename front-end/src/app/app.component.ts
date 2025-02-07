@@ -9,5 +9,5 @@ import { NavbarComponent } from "./ui/navegacao/navbar/navbar.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'front-end';
+  title = 'Gestão Financeira';
 }

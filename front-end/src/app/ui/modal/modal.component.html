@@ -1,11 +1,11 @@
-<div class="modal-container" [ngClass]="{'ativo': showModal}" (click)="toggle($event)" *ngIf="showModal">
-  <div class="modal-box">
-    <button class="fechar" (click)="toggle($event)">X</button>
+<div class="modal-container" [ngClass]="{'ativo': showModal}" (click)="toggle($event)">
+  <div class="modal-box" [ngClass]="cssClass">
+    <button class="btn-close fechar" (click)="toggle($event)"></button>
     <div class="modal-titulo">
-      <h5>{{label}}</h5>
+      <h5>{{ label }}</h5>
     </div>
-   <div class="modal-template">
-    <ng-content></ng-content>
-   </div>
+    <div class="modal-template">
+      <ng-content></ng-content>
+    </div>
   </div>
 </div>

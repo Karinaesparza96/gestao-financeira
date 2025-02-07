@@ -5,11 +5,11 @@
       <div class="resumo-mensal">
         <div class="receita">
           <span>receita mensal</span>
-          <p>R$ {{transacao.data.totalReceita}}</p>
+          <p>{{(resumoSaldo$ | async )?.totalReceita || 0 | currency:'BRL':'symbol':'1.2-2'}} </p>
         </div>
         <div class="despesa">
           <span>despesa mensal</span>
-          <p>R$ {{transacao.data.totalDespesa}}</p>
+          <p>{{(resumoSaldo$ | async )?.totalDespesa || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
         </div>
       </div>
     </div>
@@ -17,25 +17,18 @@
       <div class="acesso-rapido">
         <span>Acesso rápido</span>
         <div class="acoes">
-          <div class="btn-saida" (click)="adicionar($event)"></div>
-          <div class="btn-entrada" (click)="adicionar($event)" style="cursor: pointer;"></div>
+          <div class="btn-saida" (click)="novaDespesa()" style="cursor: pointer;"></div>
+          <div class="btn-entrada" (click)="novaReceita()" style="cursor: pointer;"></div>
         </div>
       </div>
     </div>
   </div>
   <div class="item">
-    <p>saldo geral</p>
-    <p>R$ {{transacao.data.totalSaldo}}</p>
+    <p>saldo total</p>
+    <p>{{(resumoSaldo$ | async )?.totalSaldo || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
   </div>
-  <div class="item">
-    <p>totas as faturas</p>
-    <p>r$5000,00</p>
-  </div>
-  <div class="item">
-    <p>Maiores gastos do mes atual</p>
-    <span>casa</span><span>100,00%</span>
-  </div>
-</div>
-<app-modal [label]="'Nova receita'">
-  <app-formulario-transacao/>
+<app-modal [label]="options.label" [cssClass]="options.cssClass" [showModal]="showModal" (modalChanged)="showModal = false">
+  <ng-container *ngIf="showModal">
+    <app-formulario-transacao [tipo]="tipo"/>
+  </ng-container>
 </app-modal>
