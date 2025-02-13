@@ -1,4 +1,4 @@
-﻿namespace Business.Jwt
+﻿namespace Api.Jwt
 {
     public class JwtSettings
     {
