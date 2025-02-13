@@ -18,6 +18,9 @@ export class ValidationMessageService {
       },
       categoria: {
         required: "O campo categoria é obrigatório."
+      },
+      tipo: {
+        required: "O campo tipo é obrigatório."
       }
     }
   }

@@ -8,6 +8,7 @@ import { Categoria } from '../../../models/categoria';
 import { CategoriaService } from '../../../services/categoria.service';
 import { IDisplayMessage } from '../../../utils/validation/IValidationMessage';
 import { TransacaoService } from '../../../services/transacao.service';
+import { Transacao } from '../../../models/Transacao';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -21,7 +22,14 @@ export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
 categorias$: Observable<Categoria[]>;
 formTransacao!: FormGroup
 erros: IDisplayMessage = {}
+transacao?: Transacao
 
+@Input()
+set id(value: string) {
+  if(value){
+    this.transacaoService.obterPorId(value).subscribe((data) => this.processarSucesso(data))
+  }
+}
   constructor(private fb: FormBuilder, 
               private categoriaService: CategoriaService, 
               private transacaoService: TransacaoService,
@@ -36,8 +44,8 @@ erros: IDisplayMessage = {}
       descricao: ['', [Validators.required]],
       valor: ['', [Validators.required]],
       data: ['', [Validators.required]],
-      categoria: ['', [Validators.required]],
-      tipo: ['']
+      categoriaId: ['', [Validators.required]],
+      tipo: ['', [Validators.required]]
     })
   }
 
@@ -55,13 +63,9 @@ erros: IDisplayMessage = {}
   }
 
   adicionaTipoTransacao(){
-    if (this.tipo == TipoTransacao.Entrada) {
-      this.formTransacao.get('tipo')?.setValue(TipoTransacao.Entrada)
-      return
+    if (this.tipo) {
+      this.formTransacao.patchValue({tipo: this.tipo})
     } 
-    if (this.tipo == TipoTransacao.Saida) {
-      this.formTransacao.get('tipo')?.setValue(TipoTransacao.Saida)
-    }
   }
 
   validar(formGroup: FormGroup) {
@@ -72,7 +76,12 @@ erros: IDisplayMessage = {}
    const form = {...this.formTransacao.value, 
       data: new Date(this.formTransacao.value.data), 
       valor:  this.formTransacao.value.valor.replace(',', '.')}
-   console.log(form)
+      console.log(form)
    this.transacaoService.adicionar(form).subscribe()
+  }
+
+  processarSucesso(response: Transacao) {
+    const dataformatada = response.data.split('T')[0]
+    this.formTransacao.patchValue({...response, data: dataformatada})
   }
 }

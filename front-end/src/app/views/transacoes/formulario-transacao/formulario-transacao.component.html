@@ -1,33 +1,54 @@
-<div class="container">
+<div class="container mt-3">
   <form [formGroup]="formTransacao" (ngSubmit)="submit()">
-    <div class="mb-3 position-relative">
-      <label for="descricao" class="form-label">Descrição</label>
-      <input type="email" class="form-control" id="descricao" formControlName="descricao">
-      <span class="text-danger py-1" [innerHTML]="erros['descricao']" *ngIf="erros['descricao']"></span>
+    <div class="row mb-3">
+      <div class="col-12">
+        <label for="descricao" class="form-label">Descrição</label>
+        <input type="email" class="form-control" id="descricao" formControlName="descricao">
+        <span class="text-danger py-1" [innerHTML]="erros['descricao']" *ngIf="erros['descricao']"></span>
+      </div>
     </div>
-    <div class="row">
-      <div class="mb-3 col position-relative">
+    <div class="row mb-3">
+      <div class="col-md-6">
         <label for="valor" class="form-label">Valor</label>
         <input type="text" class="form-control" id="valor" formControlName="valor">
-        <span class="text-danger py-1" [innerHTML]="erros['valor']" *ngIf="erros['valor']"></span>
+        <div *ngIf="erros['valor']" class="text-danger py-1" [innerHTML]="erros['valor']"></div>
       </div>
-      <div class="mb-3 col">
+      <div class="col-md-6">
         <label for="data" class="form-label">Data</label>
         <input type="date" class="form-control" id="data"  formControlName="data">
-        <span class="text-danger py-1" [innerHTML]="erros['data']" *ngIf="erros['data']"></span>
+        <div *ngIf="erros['data']" class="text-danger py-1" [innerHTML]="erros['data']"></div>
       </div>
     </div>
-      <div class="mb-3 position-relative">
+    <div class="row mb-3">
+      <div class="col-6">
         <label for="categoria" class="form-label">Categoria</label>
         <select
-          class="form-select form-select "
-          formControlName="categoria"
+          class="form-select"
+          formControlName="categoriaId"
         >
-          <option selected>Selecione</option>
+          <option value="" disabled selected>Selecione</option>
           <option *ngFor="let categoria of categorias$ | async" [value]="categoria.id">{{categoria.nome}}</option>
         </select>
-        <span class="text-danger py-1" [innerHTML]="erros['categoria']" *ngIf="erros['categoria']"></span>
+        <div *ngIf="erros['categoria']" class="text-danger py-1" [innerHTML]="erros['categoria']"></div>
       </div>
-    <button type="submit" class="btn btn-success" [disabled]="!formTransacao.valid">Enviar</button>
+      <div class="col-6">
+        <label for="tipo" class="form-label">Tipo</label>
+        <select
+            class="form-select"
+            formControlName="tipo"
+          >
+          <option value="" disabled selected>Selecione</option>
+          <ng-container *ngIf="tipo else listaTipos">
+            <option [value]="tipo">{{tipo == 1 ? 'Receita': 'Despesa'}}</option>
+          </ng-container>
+        </select>
+        <div *ngIf="erros['tipo']" class="text-danger py-1" [innerHTML]="erros['tipo']"></div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success w-100" [disabled]="!formTransacao.valid">Enviar</button>
   </form>
 </div>
+<ng-template #listaTipos>
+  <option value="1">Receita</option>
+  <option value="2">Despesa</option>
+</ng-template>
