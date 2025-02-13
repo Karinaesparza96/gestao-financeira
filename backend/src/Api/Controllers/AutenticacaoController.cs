@@ -2,7 +2,7 @@
 using Api.Dtos;
 using Business.Entities;
 using Business.Interfaces;
-using Business.Jwt;
+using Api.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

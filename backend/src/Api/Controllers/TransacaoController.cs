@@ -24,7 +24,7 @@ namespace Api.Controllers
             return RetornoPadrao(data: mapper.Map<IEnumerable<TransacaoDto>>(transacaos));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:Guid}")]
         public async Task<ActionResult> ObterPorId(Guid id)
         {   
             var transacao = await transacaoService.ObterPorId(id);
@@ -53,7 +53,7 @@ namespace Api.Controllers
             return RetornoPadrao(HttpStatusCode.Created);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Atualizar(Guid id, TransacaoDto transacaoDto)
         {
             if (id != transacaoDto.Id)
@@ -73,7 +73,7 @@ namespace Api.Controllers
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> Excluir(Guid id)
         {
             await transacaoService.Excluir(id);
