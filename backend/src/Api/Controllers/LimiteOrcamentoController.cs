@@ -23,7 +23,7 @@ namespace Api.Controllers
             return RetornoPadrao(data: mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:Guid}")]
         public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(Guid id)
         {
             var limiteOrcamento = await limiteOrcamentoService.ObterPorId(id);
@@ -43,7 +43,7 @@ namespace Api.Controllers
             return RetornoPadrao(HttpStatusCode.Created);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Atualizar(Guid id, LimiteOrcamentoDto limiteOrcamentoDto)
         {
             if (id != limiteOrcamentoDto.Id)
@@ -62,7 +62,7 @@ namespace Api.Controllers
             return RetornoPadrao(HttpStatusCode.NoContent);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Excluir(Guid id)
         {
             await limiteOrcamentoService.Excluir(id);

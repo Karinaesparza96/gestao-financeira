@@ -8,7 +8,7 @@ namespace Api.Configurations
     {
         public static WebApplicationBuilder AddDbContextConfiguration(this WebApplicationBuilder builder)
         {
-            //Debugger.Launch();
+            Debugger.Launch();
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services.AddDbContext<AppDbContext>(opt =>
