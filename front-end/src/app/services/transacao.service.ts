@@ -16,8 +16,12 @@ export class TransacaoService {
     const mockResponse: RetornoPadrao = {
       "sucesso": true,
       "data": {
-          "id": "8902a88d-2a28-45dc-8666-1c3df1dc43f3",
-          "categoriaId": "5f8f9205-1aa7-4caa-8cbd-24c2f84a6dc2",
+          "id": "c10d72e9-31ac-4b0c-be98-8ecfa5fb3321",
+          "categoria": {
+              "id": "e8285697-4a2e-4a48-b415-5c3ad156697d",
+              "nome": "Alimentação",
+              "default": true
+          },
           "tipo": 2,
           "data": "2024-12-28T15:30:00",
           "descricao": "teste",

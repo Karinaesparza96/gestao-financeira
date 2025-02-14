@@ -16,13 +16,15 @@ export class ValidationMessageService {
       data: {
         required: "O campo data é obrigatório."
       },
-      categoria: {
-        required: "O campo categoria é obrigatório."
-      },
       tipo: {
         required: "O campo tipo é obrigatório."
       }
-    }
+    },
+    categoria: {
+      id: {
+        required: "O campo categoria é obrigatório."
+      }
+    },
   }
 
   getMessages(key: string) : IValidationMessage {

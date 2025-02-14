@@ -41,11 +41,16 @@ set id(value: string) {
   
   initForm() {
     this.formTransacao = this.fb.group({
+      id: [''],
       descricao: ['', [Validators.required]],
       valor: ['', [Validators.required]],
       data: ['', [Validators.required]],
-      categoriaId: ['', [Validators.required]],
-      tipo: ['', [Validators.required]]
+      tipo: ['', [Validators.required]],
+      categoria: this.fb.group({
+       id:  ['', [Validators.required]],
+       nome: [''],
+       default: [false]
+      }),
     })
   }
 
@@ -75,13 +80,24 @@ set id(value: string) {
   submit() {
    const form = {...this.formTransacao.value, 
       data: new Date(this.formTransacao.value.data), 
-      valor:  this.formTransacao.value.valor.replace(',', '.')}
+      valor:  this.formTransacao.value.valor}
       console.log(form)
    this.transacaoService.adicionar(form).subscribe()
   }
 
   processarSucesso(response: Transacao) {
-    const dataformatada = response.data.split('T')[0]
-    this.formTransacao.patchValue({...response, data: dataformatada})
+    this.formTransacao.patchValue({
+      id: response.id,
+      descricao: response.descricao,
+      valor: response.valor,
+      data: response.data.split('T')[0],
+      tipo: response.tipo,
+      categoria: {
+        id: response.categoria?.id,
+        nome: response.categoria?.nome,
+        default: response.categoria?.default
+      }
+    })
+  
   }
 }

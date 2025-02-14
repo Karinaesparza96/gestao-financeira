@@ -10,7 +10,7 @@ namespace Api.Dtos
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
         [DisplayName("categoria da transação")]
-        public Guid CategoriaId { get; set; }
+        public CategoriaDto Categoria { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório.")]
         [DisplayName("tipo da transação")]
