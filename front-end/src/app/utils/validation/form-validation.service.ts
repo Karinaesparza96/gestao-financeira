@@ -15,9 +15,9 @@ export class FormValidationService {
     return Object.keys(formGroup.controls).reduce((result, itemAtual) => {
       const formControl = formGroup.controls[itemAtual] 
       const erros = formControl.errors
-
       if (formControl instanceof FormGroup) {
-       result[itemAtual] += {...this.executeValidation(formControl, formName)}
+        let childMessages = this.executeValidation(formControl, itemAtual);
+        result = { ...result, ...childMessages };
       } else {
         if (validationMessages[itemAtual] && (formControl.dirty || formControl.touched) && erros) {
           result[itemAtual] = ''
@@ -28,6 +28,7 @@ export class FormValidationService {
           })
         }
       }
+      console.log(result)
       return result
     }, {} as IDisplayMessage)
   }

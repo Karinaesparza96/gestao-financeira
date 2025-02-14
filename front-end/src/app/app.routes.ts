@@ -16,23 +16,10 @@ export const routes: Routes = [
   //     }
   //   ]
   // },
-  // {
-  //   path: 'transacoes', 
-  //   children: [
-  //     {
-  //       path: 'todos'
-  //     },
-  //     {
-  //       path: 'novo'
-  //     },
-  //     {
-  //       path: 'editar'
-  //     },
-  //     {
-  //       path: 'detalhes/:id'
-  //     }
-  //   ]
-  // },
+  {
+    path: 'transacoes', 
+    loadChildren: () => import('./views/transacoes/transacoes.route').then(m => m.routes)
+  },
   // {
   //   path: 'limites', 
   //   children: [

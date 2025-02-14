@@ -43,7 +43,7 @@ export class SaudacaoUsuarioComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.cleanInterval) {
-      this.cleanInterval(this.cleanInterval)
+      clearInterval(this.cleanInterval)
     }
   }
 

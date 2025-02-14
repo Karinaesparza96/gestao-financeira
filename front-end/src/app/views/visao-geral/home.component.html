@@ -27,6 +27,9 @@
     <p>saldo total</p>
     <p>{{(resumoSaldo$ | async )?.totalSaldo || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
   </div>
+  <div class="item">
+    <app-grafico-transacao [transacoes]="transacoes"/>
+  </div>
 <app-modal [label]="options.label" [cssClass]="options.cssClass" [showModal]="showModal" (modalChanged)="showModal = false">
   <ng-container *ngIf="showModal">
     <app-formulario-transacao [tipo]="tipo"/>
