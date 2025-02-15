@@ -1,0 +1,49 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="text-center mb-4">Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="alert alert-danger" *ngIf="errors.length > 0">
+        <ul>
+          <li *ngFor="let error of errors">{{ error }}</li>
+        </ul>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          id="email"
+          [class.is-invalid]="loginForm.get('email')?.errors && loginForm.get('email')?.touched"
+        >
+        <div class="invalid-feedback" *ngIf="loginForm.get('email')?.errors?.['required'] && loginForm.get('email')?.touched">
+          Email é obrigatório
+        </div>
+        <div class="invalid-feedback" *ngIf="loginForm.get('email')?.errors?.['email'] && loginForm.get('email')?.touched">
+          Email inválido
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="senha"
+          id="senha"
+          [class.is-invalid]="loginForm.get('senha')?.errors && loginForm.get('senha')?.touched"
+        >
+        <div class="invalid-feedback" *ngIf="loginForm.get('senha')?.errors?.['required'] && loginForm.get('senha')?.touched">
+          Senha é obrigatória
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100" [disabled]="!loginForm.valid">
+        Entrar
+      </button>
+
+      <div class="text-center mt-3">
+        <a routerLink="/conta/register">Não tem uma conta? Registre-se</a>
+      </div>
+    </form>
+  </div>
+</div>

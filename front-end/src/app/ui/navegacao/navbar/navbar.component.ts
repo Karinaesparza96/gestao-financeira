@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ContaService } from '../../../services/conta.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,9 +10,30 @@ import { RouterModule } from '@angular/router';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-isMenuOpen = false;
+  isMenuOpen = false;
 
-toggleMenu() {
-  this.isMenuOpen = !this.isMenuOpen;
-}
+  constructor(private router: Router,
+              private contaService: ContaService) {}
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.contaService.LocalStorage.ObterUsuario();
+  }
+
+  getUserEmail(): string {
+    const userData = this.contaService.LocalStorage.ObterUsuario();
+    if (userData) {
+      return JSON.parse(userData).email;
+    }
+    return '';
+  }
+
+  logout(event: Event) {
+    event.preventDefault();
+    this.contaService.LocalStorage.limparDadosLocaisUsuario();
+    this.router.navigate(['/']);
+  }
 }

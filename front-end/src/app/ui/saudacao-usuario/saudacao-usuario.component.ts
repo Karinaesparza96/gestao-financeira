@@ -43,7 +43,7 @@ export class SaudacaoUsuarioComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.cleanInterval) {
-      clearInterval(this.cleanInterval)
+      //clearInterval(this.cleanInterval)
     }
   }
 
@@ -64,7 +64,7 @@ export class SaudacaoUsuarioComponent implements OnInit, OnDestroy {
   isInRange(hora: number, range: [number, number]) {
     const [inicio, fim] = range;
 
-    return inicio < fim 
+    return inicio < fim
       ? hora >= inicio && hora < fim
       : hora >= inicio || hora < fim;
   }

@@ -4,13 +4,14 @@ import { RetornoPadrao } from '../utils/retornoPadrao';
 import { map, Observable, of } from 'rxjs';
 import { Transacao } from '../models/Transacao';
 import { ResumoFinanceiro } from '../models/resumoFinanceiro';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TransacaoService {
+export class TransacaoService extends BaseService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { super(); }
 
   obterPorId(id: string) {
     const mockResponse: RetornoPadrao = {
@@ -37,12 +38,12 @@ export class TransacaoService {
   }
 
   obterResumoTransacoes(): Observable<ResumoFinanceiro> {
-    return this.http.get<RetornoPadrao>('http://localhost:5224/api/transacoes/resumo')
+    return this.http.get<RetornoPadrao>('http://localhost:5224/api/transacoes/resumo', this.ObterAuthHeaderJson())
               .pipe(map(resp => resp.data as ResumoFinanceiro))
   }
 
   adicionar(transacao: Transacao) {
     console.log('adicionar:',transacao)
-    return this.http.post('http://localhost:5224/api/transacoes', transacao)
+    return this.http.post('http://localhost:5224/api/transacoes', transacao, this.ObterAuthHeaderJson())
   }
 }

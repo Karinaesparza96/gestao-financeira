@@ -15,9 +15,9 @@ export class GraficoTransacaoComponent implements OnInit {
   chartOptions: ChartOptions = {
     responsive: true,
   };
-  
+
   chartLabels: any[] = []; // Mês/Ano
-  chartData: ChartData<'bar'> = { 
+  chartData: ChartData<'bar'> = {
     labels: this.chartLabels,
     datasets: []
   };
@@ -31,11 +31,11 @@ export class GraficoTransacaoComponent implements OnInit {
      const dadosMensais = new Map<string, { receita: number, despesa: number }>();
      this.transacoes.forEach(transacao => {
        const mesAno = new Date(transacao.data).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
- 
+
        if (!dadosMensais.has(mesAno)) {
          dadosMensais.set(mesAno, { receita: 0, despesa: 0 });
        }
- 
+
        const valores = dadosMensais.get(mesAno)!;
        if (transacao.tipo === 1) {
          valores.receita += transacao.valor;
@@ -43,12 +43,12 @@ export class GraficoTransacaoComponent implements OnInit {
          valores.despesa += transacao.valor;
        }
      });
- 
+
      // Preencher os dados no gráfico
      this.chartLabels = Array.from(dadosMensais.keys());
      const receitas = Array.from(dadosMensais.values()).map(v => v.receita);
      const despesas = Array.from(dadosMensais.values()).map(v => v.despesa);
- 
+
      this.chartData = {
        labels: this.chartLabels,
        datasets: [
