@@ -35,6 +35,7 @@ export class CategoriaService extends BaseService {
       ],
       "mensagens": []
   }
+
   return of(mock.data)
     return this.http.get<ResponseDefault>('http://localhost:5224/api/categorias', this.ObterAuthHeaderJson()).pipe(map(r => r.data));
   }
