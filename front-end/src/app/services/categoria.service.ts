@@ -3,15 +3,16 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Categoria } from '../models/categoria';
 import { ResponseDefault } from '../models/responseDefault';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CategoriaService {
+export class CategoriaService extends BaseService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { super(); }
 
   obterTodos() : Observable<Categoria[]> {
-    return this.http.get<ResponseDefault>('http://localhost:5224/api/categorias').pipe(map(r => r.data));
+    return this.http.get<ResponseDefault>('http://localhost:5224/api/categorias', this.ObterAuthHeaderJson()).pipe(map(r => r.data));
   }
 }

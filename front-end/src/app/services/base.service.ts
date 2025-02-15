@@ -1,7 +1,9 @@
 import { throwError } from 'rxjs';
 import { HttpErrorResponse, HttpHeaders } from "@angular/common/http";
+import { LocalStorageUtils } from '../utils/localstorage';
 
 export abstract class BaseService {
+  public LocalStorage = new LocalStorageUtils();
   protected UrlService: string = "http://localhost:5224/api";
 
   protected ObterHeaderJson(){
@@ -10,6 +12,15 @@ export abstract class BaseService {
         'Content-Type': 'application/json'
       })
     };
+  }
+
+  protected ObterAuthHeaderJson(){
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.LocalStorage.obterTokenUsuario()}`
+      })
+    }
   }
 
   protected extractData(response: any){
