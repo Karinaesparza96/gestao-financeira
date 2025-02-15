@@ -4,12 +4,15 @@ using Business.Interfaces;
 using Business.ValueObjects;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace Data.Repositories
 {
     public class TransacaoRepository(AppDbContext dbContext) : Repository<Transacao>(dbContext), ITransacaoRepository
     {
+        public new async Task<Transacao?> ObterPorId(Guid id)
+        {
+            return await DbSet.Include(t => t.Categoria).FirstOrDefaultAsync(t => t.Id == id);
+        }
         public async Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtro, string usuarioId)
         {
             var query = DbSet.AsNoTracking().AsQueryable();
@@ -30,6 +33,8 @@ namespace Data.Repositories
             }
 
             query = query.Where(x => x.Usuario.Id == usuarioId);
+
+            query = query.Include(t => t.Categoria);
 
             return await query.ToListAsync();
         }

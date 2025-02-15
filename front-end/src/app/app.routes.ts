@@ -16,8 +16,12 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () => import('./views/visao-geral/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'transacoes',
+    loadChildren: () => import('./views/transacoes/transacoes.route').then(m => m.routes),
+    canActivate: [authGuard]
   }
-
 ];
 
 @NgModule({

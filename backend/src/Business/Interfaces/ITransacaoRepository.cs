@@ -6,6 +6,7 @@ namespace Business.Interfaces
 {
     public interface ITransacaoRepository : IRepository<Transacao>
     {
+        new Task<Transacao?> ObterPorId(Guid id);
         Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtro, string usuarioIdentityId);
 
         decimal ObterSaldoTotal(string usuarioIdentityId);

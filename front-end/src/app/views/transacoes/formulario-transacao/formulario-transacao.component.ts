@@ -8,6 +8,7 @@ import { Categoria } from '../../../models/categoria';
 import { CategoriaService } from '../../../services/categoria.service';
 import { IDisplayMessage } from '../../../utils/validation/IValidationMessage';
 import { TransacaoService } from '../../../services/transacao.service';
+import { Transacao } from '../../../models/Transacao';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -21,7 +22,14 @@ export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
 categorias$: Observable<Categoria[]>;
 formTransacao!: FormGroup
 erros: IDisplayMessage = {}
+transacao?: Transacao
 
+@Input()
+set id(value: string) {
+  if(value){
+    this.transacaoService.obterPorId(value).subscribe((data) => this.processarSucesso(data))
+  }
+}
   constructor(private fb: FormBuilder, 
               private categoriaService: CategoriaService, 
               private transacaoService: TransacaoService,
@@ -33,11 +41,16 @@ erros: IDisplayMessage = {}
   
   initForm() {
     this.formTransacao = this.fb.group({
+      id: [''],
       descricao: ['', [Validators.required]],
       valor: ['', [Validators.required]],
       data: ['', [Validators.required]],
-      categoria: ['', [Validators.required]],
-      tipo: ['']
+      tipo: ['', [Validators.required]],
+      categoria: this.fb.group({
+       id:  ['', [Validators.required]],
+       nome: [''],
+       default: [false]
+      }),
     })
   }
 
@@ -55,13 +68,9 @@ erros: IDisplayMessage = {}
   }
 
   adicionaTipoTransacao(){
-    if (this.tipo == TipoTransacao.Entrada) {
-      this.formTransacao.get('tipo')?.setValue(TipoTransacao.Entrada)
-      return
+    if (this.tipo) {
+      this.formTransacao.patchValue({tipo: this.tipo})
     } 
-    if (this.tipo == TipoTransacao.Saida) {
-      this.formTransacao.get('tipo')?.setValue(TipoTransacao.Saida)
-    }
   }
 
   validar(formGroup: FormGroup) {
@@ -71,8 +80,24 @@ erros: IDisplayMessage = {}
   submit() {
    const form = {...this.formTransacao.value, 
       data: new Date(this.formTransacao.value.data), 
-      valor:  this.formTransacao.value.valor.replace(',', '.')}
-   console.log(form)
+      valor:  this.formTransacao.value.valor}
+      console.log(form)
    this.transacaoService.adicionar(form).subscribe()
+  }
+
+  processarSucesso(response: Transacao) {
+    this.formTransacao.patchValue({
+      id: response.id,
+      descricao: response.descricao,
+      valor: response.valor,
+      data: response.data.split('T')[0],
+      tipo: response.tipo,
+      categoria: {
+        id: response.categoria?.id,
+        nome: response.categoria?.nome,
+        default: response.categoria?.default
+      }
+    })
+  
   }
 }
