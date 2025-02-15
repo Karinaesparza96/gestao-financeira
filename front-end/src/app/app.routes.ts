@@ -1,53 +1,28 @@
-import { Routes } from '@angular/router';
-import { HomeComponent } from './views/visao-geral/home.component';
+import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '', component: HomeComponent
+    path: '',
+    redirectTo: '/conta/login',
+    pathMatch: 'full'
   },
-  // {
-  //   path: 'conta', 
-  //   children: [
-  //     {
-  //       path: 'login'
-  //     },
-  //     {
-  //       path: 'registrar'
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: 'transacoes', 
-  //   children: [
-  //     {
-  //       path: 'todos'
-  //     },
-  //     {
-  //       path: 'novo'
-  //     },
-  //     {
-  //       path: 'editar'
-  //     },
-  //     {
-  //       path: 'detalhes/:id'
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: 'limites', 
-  //   children: [
-  //     {
-  //       path: 'todos'
-  //     },
-  //     {
-  //       path: 'novo'
-  //     },
-  //     {
-  //       path: 'editar'
-  //     },
-  //     {
-  //       path: 'detalhes/:id'
-  //     }
-  //   ]
-  // }
+  {
+    path: 'conta',
+    loadChildren: () => import('./ui/conta/conta.module').then(m => m.ContaModule)
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./views/visao-geral/home.component').then(m => m.HomeComponent),
+    canActivate: [authGuard]
+  }
+
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutes {}
+

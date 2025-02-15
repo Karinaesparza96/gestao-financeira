@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -9,9 +9,29 @@ import { RouterModule } from '@angular/router';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-isMenuOpen = false;
+  isMenuOpen = false;
 
-toggleMenu() {
-  this.isMenuOpen = !this.isMenuOpen;
-}
+  constructor(private router: Router) {}
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
+
+  getUserEmail(): string {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      return JSON.parse(userData).email;
+    }
+    return '';
+  }
+
+  logout(event: Event) {
+    event.preventDefault();
+    localStorage.removeItem('user');
+    this.router.navigate(['/']);
+  }
 }
