@@ -1,26 +1,26 @@
 import { Component, Input, OnInit } from '@angular/core';
-// import { ChartData, ChartOptions } from 'chart.js';
-// import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { Transacao } from '../../../models/Transacao';
 
 @Component({
   selector: 'app-grafico-transacao',
-  //imports: [BaseChartDirective],
+  imports: [BaseChartDirective],
   templateUrl: './grafico-transacao.component.html',
   styleUrl: './grafico-transacao.component.scss'
 })
 export class GraficoTransacaoComponent implements OnInit {
   @Input() transacoes: Transacao[] = [];
 
-  // chartOptions: ChartOptions = {
-  //   responsive: true,
-  // };
+  chartOptions: ChartOptions = {
+    responsive: true,
+  };
 
   chartLabels: any[] = []; // Mês/Ano
-  // chartData: ChartData<'bar'> = {
-  //   labels: this.chartLabels,
-  //   datasets: []
-  // };
+  chartData: ChartData<'bar'> = {
+    labels: this.chartLabels,
+    datasets: []
+  };
 
   ngOnInit(): void {
     this.processarDados()
@@ -49,12 +49,12 @@ export class GraficoTransacaoComponent implements OnInit {
      const receitas = Array.from(dadosMensais.values()).map(v => v.receita);
      const despesas = Array.from(dadosMensais.values()).map(v => v.despesa);
 
-    //  this.chartData = {
-    //    labels: this.chartLabels,
-    //    datasets: [
-    //      { data: receitas, label: 'Receitas', backgroundColor: 'green' },
-    //      { data: despesas, label: 'Despesas', backgroundColor: 'red' }
-    //    ]
-    //  };
+     this.chartData = {
+       labels: this.chartLabels,
+       datasets: [
+         { data: receitas, label: 'Receitas', backgroundColor: 'green' },
+         { data: despesas, label: 'Despesas', backgroundColor: 'red' }
+       ]
+     };
    }
 }
