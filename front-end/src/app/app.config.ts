@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
-    //provideHttpClient(), provideCharts(withDefaultRegisterables()),
+    provideHttpClient(), //provideCharts(withDefaultRegisterables()),
     ContaService, importProvidersFrom(HttpClientModule), provideHttpClient(withFetch())
   ]
 };
