@@ -19,14 +19,15 @@ O objetivo principal é desenvolver uma aplicação full-stack que permite aos u
 O projeto consiste em:
 
 - **Aplicação Angular:** Interface web para interação com o sistema de gestão financeira.
-- **API RESTful:** Exposição dos recursos do blog para integração com outras aplicações ou desenvolvimento de front-ends alternativos.
-- **Autenticação e Autorização:** Implementação de controle de acesso, diferenciando administradores e usuários comuns.
+- **API RESTful:** Exposição dos recursos do sistema de gestão financeira para integração com outras aplicações ou desenvolvimento de front-ends alternativos.
+- **Autenticação e Autorização:** Implementação de controle de acesso com registro e autenticação de usuários.
 - **Acesso a Dados:** Implementação de acesso ao banco de dados através de ORM.
 
 ## **3. Tecnologias Utilizadas**
 
-- **Linguagem de Programação:** C#
+- **Linguagens de Programação:** C#, TypeScript
 - **Frameworks:**
+  - Node.js
   - ASP.NET Core Web API
   - Entity Framework Core
 - **Banco de Dados:** SQL Server e Sqlite
@@ -42,11 +43,11 @@ O projeto consiste em:
 
 A estrutura do projeto é organizada da seguinte forma:
 
-- src/
-  - BlogExpert.Mvc/ - Projeto MVC
+- backend/src/
   - Api/ - API RESTful
-  - Dados/ - Modelos de Dados e Configuração do EF Core
   - Business/ - Serviços de negócios
+  - Data/ - Modelos de Dados e Configuração do EF Core
+- frontend/ - Aplicação em Angular
 - README.md - Arquivo de Documentação do Projeto
 - FEEDBACK.md - Arquivo para Consolidação dos Feedbacks
 - .gitignore - Arquivo de Ignoração do Git
@@ -54,8 +55,8 @@ A estrutura do projeto é organizada da seguinte forma:
 ## **5. Funcionalidades Implementadas**
 
 - **Registro de Usuários:** Permite incluir usuários para utilizar o sistema.
-- **CRUD para Posts e Comentários:** Permite criar, editar, visualizar e excluir posts e comentários.
-- **Autenticação e Autorização:** Diferenciação entre usuários comuns e administradores.
+- **CRUD para Categorias, Limites e Transações:** Permite criar, editar, visualizar e excluir Categorias, Limites e Transações. As categorias padrões não podem ser editadas ou excluídas.
+- **Autenticação e Autorização:** Autenticação e autorização dos usuários registrados.
 - **API RESTful:** Exposição de endpoints para operações CRUD via API.
 - **Documentação da API:** Documentação automática dos endpoints da API utilizando Swagger.
 
