@@ -17,6 +17,9 @@
         </li>
         <ng-container *ngIf="isLoggedIn();">
           <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/categorias']">Categorias</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" [routerLink]="['/transacoes']">Transações</a>
           </li>
           <li class="nav-item">
