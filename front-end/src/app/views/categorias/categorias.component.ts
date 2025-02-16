@@ -116,7 +116,10 @@ export class CategoriasComponent implements OnInit, OnDestroy {
           this.cancelarEdicao();
           this.carregarCategorias();
         },
-        error: () => {} // Erro já tratado no catchError
+        error: (error) => {
+          console.error('Falha na operação:', error)
+          this.erro = 'Ocorreu um erro ao processar a operação. Por favor, tente novamente.'
+        }
       });
   }
 
@@ -159,7 +162,10 @@ export class CategoriasComponent implements OnInit, OnDestroy {
           this.cancelarEdicao();
           this.carregarCategorias();
         },
-        error: () => {} // Erro já tratado no catchError
+        error: (error) => {
+          console.error('Falha na operação:', error)
+          this.erro = 'Ocorreu um erro ao processar a operação. Por favor, tente novamente.'
+        }
       });
   }
 
