@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <!-- Resumo financeiro -->
+  <div class="row my-3">
+    <div class="col-md-3">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Entradas</h5>
+          <p class="card-text">{{ resumo?.totalReceita| currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-danger">
+        <div class="card-body">
+          <h5 class="card-title">Saídas</h5>
+          <p class="card-text">{{ resumo?.totalDespesa| currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white" [ngClass]="resumo?.totalSaldo ? 'bg-primary' : 'bg-warning'">
+        <div class="card-body">
+          <h5 class="card-title">Saldo</h5>
+          <p class="card-text">{{ resumo?.totalSaldo | currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <a [routerLink]="['/transacoes/novo']" routerLinkActive="router-link-active">Novo</a>
+    </div>
+  </div>
+
+  <!-- Tabela de transações -->
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Data</th>
+          <th>Descrição</th>
+          <th>Categoria</th>
+          <th>Valor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transacao of transacoes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ transacao.data | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ transacao.descricao }}</td>
+          <td>{{ transacao.categoria?.nome }}</td>
+          <td [ngClass]="transacao.tipo === 1 ? 'text-success' : 'text-danger'">
+            {{ transacao.valor | currency:'BRL' }}
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-2" (click)="editarTransacao(transacao)">
+              <i class="bi bi-pencil"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="excluirTransacao(transacao)">
+              <i class="bi bi-trash"></i> Excluir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<app-modal [label]="'Editar Transação'" [showModal]="showModalEditar" (modalChanged)="fecharModal()">
+  <ng-container *ngIf="transacao">
+    <app-formulario-transacao [id]="transacao.id" (processouComSucesso)="atualizar()"/>
+  </ng-container>
+</app-modal>
+<app-modal [label]="'Excluir Transação'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()">
+  <ng-container *ngIf="transacao">
+    <span>Tem certeza que deseja excluir a transação: </span>
+    <p>{{transacao.descricao}}</p>
+    <p>{{transacao.categoria?.nome}}</p>
+    <p>{{transacao.data}}</p>
+    <p>{{transacao.tipo}}</p>
+    <p>{{transacao.valor}}</p>
+    <button class="btn btn-danger" (click)="excluir()">Excluir</button>
+    <button class="btn btn-primary" (click)="fecharModal()">Cancelar</button>
+  </ng-container>
+</app-modal>
+<app-toast/>

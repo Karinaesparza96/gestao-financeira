@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { FormValidationService } from '../../../utils/validation/form-validation.service';
@@ -9,6 +9,9 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { IDisplayMessage } from '../../../utils/validation/IValidationMessage';
 import { TransacaoService } from '../../../services/transacao.service';
 import { Transacao } from '../../../models/Transacao';
+import { FormDataUtils } from '../../../utils/formDataUtils';
+import { NotificationService } from '../../../services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -23,17 +26,19 @@ categorias$: Observable<Categoria[]>;
 formTransacao!: FormGroup
 erros: IDisplayMessage = {}
 transacao?: Transacao
-
+errosServer: string[] = []
 @Input()
-set id(value: string) {
-  if(value){
-    this.transacaoService.obterPorId(value).subscribe((data) => this.processarSucesso(data))
+set id(value: any) {
+  if(typeof value == 'string'){
+    this.transacaoService.obterPorId(value).subscribe((data) => this.preencherFormTransacao(data))
   }
 }
+@Output() processouComSucesso = new EventEmitter<boolean>()
   constructor(private fb: FormBuilder, 
               private categoriaService: CategoriaService, 
               private transacaoService: TransacaoService,
-              private formValidation: FormValidationService) 
+              private formValidation: FormValidationService,
+              private router: Router) 
   {
     this.initForm()
     this.categorias$ = this.categoriaService.obterTodos();
@@ -41,16 +46,12 @@ set id(value: string) {
   
   initForm() {
     this.formTransacao = this.fb.group({
-      id: [''],
+      id: [null],
       descricao: ['', [Validators.required]],
       valor: ['', [Validators.required]],
       data: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      categoria: this.fb.group({
-       id:  ['', [Validators.required]],
-       nome: [''],
-       default: [false]
-      }),
+      categoria: [null, [Validators.required]],
     })
   }
 
@@ -78,14 +79,25 @@ set id(value: string) {
   }
 
   submit() {
-   const form = {...this.formTransacao.value, 
+    const form = {...this.formTransacao.value, 
       data: new Date(this.formTransacao.value.data), 
-      valor:  this.formTransacao.value.valor}
-      console.log(form)
-   this.transacaoService.adicionar(form).subscribe()
+      valor: FormDataUtils.formatarValor(this.formTransacao.value.valor)}
+    if(form.id) {
+      this.transacaoService.atualizar(form.id,form)
+      .subscribe({
+        next: (r) => this.processarSucesso(r),
+        error: (e) => this.processarFalha(e)
+      })
+    } else {
+      this.transacaoService.adicionar(form)
+                          .subscribe({
+                            next: (r) => this.processarSucesso(r),
+                            error: (e) => this.processarFalha(e)
+                          })
+    }
   }
 
-  processarSucesso(response: Transacao) {
+  preencherFormTransacao(response: Transacao) {
     this.formTransacao.patchValue({
       id: response.id,
       descricao: response.descricao,
@@ -98,6 +110,13 @@ set id(value: string) {
         default: response.categoria?.default
       }
     })
-  
+  }
+
+  processarSucesso(response: any) {
+    this.errosServer = []
+    this.processouComSucesso.emit(true)
+  }
+  processarFalha(fail: any) {
+    this.errosServer = fail.error.mensagens;
   }
 }

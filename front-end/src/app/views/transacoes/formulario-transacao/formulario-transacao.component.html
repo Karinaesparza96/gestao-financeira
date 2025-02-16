@@ -1,4 +1,11 @@
 <div class="container mt-3">
+  <div class="row" *ngIf="errosServer.length">
+    <div class="col">
+      <span *ngFor="let erro of errosServer">
+        {{erro}}
+      </span>
+    </div>
+  </div>
   <form [formGroup]="formTransacao" (ngSubmit)="submit()">
     <div class="row mb-3">
       <div class="col-12">
@@ -20,16 +27,16 @@
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-6" formGroupName="categoria">
+      <div class="col-6">
         <label for="categoria" class="form-label">Categoria</label>
         <select
           class="form-select"
-          formControlName="id" 
+          formControlName="categoria" 
         >
           <option value="" disabled selected>Selecione</option>
-          <option *ngFor="let categoria of categorias$ | async" [value]="categoria.id">{{categoria.nome}}</option>
+          <option *ngFor="let categoria of categorias$ | async" [ngValue]="categoria">{{categoria.nome}}</option>
         </select>
-        <div *ngIf="erros['id']" class="text-danger py-1" [innerHTML]="erros['id']"></div>
+        <div *ngIf="erros['categoria']" class="text-danger py-1" [innerHTML]="erros['categoria']"></div>
       </div>
       <div class="col-6">
         <label for="tipo" class="form-label">Tipo</label>

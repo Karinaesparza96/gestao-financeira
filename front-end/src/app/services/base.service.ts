@@ -31,6 +31,10 @@ export abstract class BaseService {
     return response.sucesso || {};
   }
 
+  protected extractMensagens(response: any){
+    return response.mensagens || [];
+  }
+
   protected serviceError(response: Response | any){
     let customError: string[] = [];
 
