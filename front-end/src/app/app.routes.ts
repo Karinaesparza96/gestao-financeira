@@ -21,6 +21,11 @@ export const routes: Routes = [
     path: 'transacoes',
     loadChildren: () => import('./views/transacoes/transacoes.route').then(m => m.routes),
     canActivate: [authGuard]
+  },
+  {
+    path: 'categorias',
+    loadComponent: () => import('./views/categorias/categorias.component').then(m => m.CategoriasComponent),
+    canActivate: [authGuard]
   }
 ];
 

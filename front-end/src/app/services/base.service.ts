@@ -24,7 +24,7 @@ export abstract class BaseService {
   }
 
   protected extractData(response: any){
-    return response.data || {};
+    return response?.data || [];
   }
 
   protected extractSucesso(response: any){

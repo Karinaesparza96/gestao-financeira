@@ -24,7 +24,7 @@
         <label for="categoria" class="form-label">Categoria</label>
         <select
           class="form-select"
-          formControlName="id" 
+          formControlName="id"
         >
           <option value="" disabled selected>Selecione</option>
           <option *ngFor="let categoria of categorias$ | async" [value]="categoria.id">{{categoria.nome}}</option>

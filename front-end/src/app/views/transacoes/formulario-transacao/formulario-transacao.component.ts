@@ -30,15 +30,15 @@ set id(value: string) {
     this.transacaoService.obterPorId(value).subscribe((data) => this.processarSucesso(data))
   }
 }
-  constructor(private fb: FormBuilder, 
-              private categoriaService: CategoriaService, 
+  constructor(private fb: FormBuilder,
+              private categoriaService: CategoriaService,
               private transacaoService: TransacaoService,
-              private formValidation: FormValidationService) 
+              private formValidation: FormValidationService)
   {
     this.initForm()
     this.categorias$ = this.categoriaService.obterTodos();
   }
-  
+
   initForm() {
     this.formTransacao = this.fb.group({
       id: [''],
@@ -70,7 +70,7 @@ set id(value: string) {
   adicionaTipoTransacao(){
     if (this.tipo) {
       this.formTransacao.patchValue({tipo: this.tipo})
-    } 
+    }
   }
 
   validar(formGroup: FormGroup) {
@@ -78,8 +78,8 @@ set id(value: string) {
   }
 
   submit() {
-   const form = {...this.formTransacao.value, 
-      data: new Date(this.formTransacao.value.data), 
+   const form = {...this.formTransacao.value,
+      data: new Date(this.formTransacao.value.data),
       valor:  this.formTransacao.value.valor}
       console.log(form)
    this.transacaoService.adicionar(form).subscribe()
@@ -98,6 +98,6 @@ set id(value: string) {
         default: response.categoria?.default
       }
     })
-  
+
   }
 }

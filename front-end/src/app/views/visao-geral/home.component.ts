@@ -59,9 +59,9 @@ export class HomeComponent {
         "valor": 200
     }
 ]
- 
+
   resumoSaldo$: Observable<ResumoFinanceiro>;
-  
+
   constructor(private transacaoService: TransacaoService) {
     this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
   }
@@ -74,7 +74,7 @@ export class HomeComponent {
     this.showModal = true
     this.tipo = TipoTransacao.Entrada
   }
-  
+
   novaDespesa() {
     this.options = {
       label: 'Nova Despesa',
