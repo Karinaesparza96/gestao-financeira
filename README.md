@@ -12,13 +12,13 @@ O objetivo principal é desenvolver uma aplicação full-stack que permite aos u
 - **Jansen Chantal**
 - **Vitor**
 - **Tiago Bittencourt**
-- **Marcelo Santos Menezes**
+- **Marcelo Menezes**
 
 ## **2. Proposta do Projeto**
 
 O projeto consiste em:
 
-- **Aplicação MVC:** Interface web para interação com o blog.
+- **Aplicação Angular:** Interface web para interação com o sistema de gestão financeira.
 - **API RESTful:** Exposição dos recursos do blog para integração com outras aplicações ou desenvolvimento de front-ends alternativos.
 - **Autenticação e Autorização:** Implementação de controle de acesso, diferenciando administradores e usuários comuns.
 - **Acesso a Dados:** Implementação de acesso ao banco de dados através de ORM.
@@ -63,8 +63,9 @@ A estrutura do projeto é organizada da seguinte forma:
 
 ### **Pré-requisitos**
 
+- Node.js v22.14.0 ou superior
 - .NET SDK 8.0 ou superior
-- SQL Server
+- SQL Server (se quiser rodar no modo production)
 - Visual Studio 2022 ou superior (ou qualquer IDE de sua preferência)
 - Git
 
@@ -84,6 +85,14 @@ A estrutura do projeto é organizada da seguinte forma:
    - `dotnet run`
    - Acesse a documentação da API em: http://localhost:5224/swagger/ 
    
+4. **Executar o Frontend:**
+   - `cd frontend`
+   Antes da primeira execução é necessário instalar os pacotes dependentes com o comando abaixo:
+   - `npm install`
+   Em seguida pode executar o frontend em development:
+   - `ng s`
+   - Acesse o frontend em: http://localhost:4200/
+   
 5. **Registrar usuário para usar o sistema:**
    - Para usar o sistema é necessário criar um usuário inicial
 
@@ -95,10 +104,14 @@ A estrutura do projeto é organizada da seguinte forma:
 ## **8. Documentação da API**
 
 A documentação da API está disponível através do Swagger. Após iniciar a API, acesse a documentação em:
-
 http://localhost:5224/swagger/ 
 
-## **9. Avaliação**
+## **9. Aplicação em Angular**
+
+Para executar a aplicação em Angular acesse a seguinte url:
+http://localhost:4200/ 
+
+## **10. Avaliação**
 
 - Este projeto é parte de um curso acadêmico e não aceita contribuições externas. 
 - Para feedbacks ou dúvidas utilize o recurso de Issues
