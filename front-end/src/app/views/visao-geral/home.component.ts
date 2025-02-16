@@ -24,7 +24,7 @@ export class HomeComponent {
   transacoes: Transacao[] = []
  
   resumoSaldo$: Observable<ResumoFinanceiro>;
-  
+
   constructor(private transacaoService: TransacaoService) {
     this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
     this.transacaoService.obterTodos().subscribe(x => this.transacoes = x)
@@ -38,7 +38,7 @@ export class HomeComponent {
     this.showModal = true
     this.tipo = TipoTransacao.Entrada
   }
-  
+
   novaDespesa() {
     this.options = {
       label: 'Nova Despesa',

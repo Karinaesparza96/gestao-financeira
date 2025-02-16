@@ -1,0 +1,67 @@
+// Estilos específicos do componente serão adicionados aqui
+
+:host {
+  display: block;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 56px); // Altura total menos a navbar
+  padding: 1rem 0;
+}
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+.table {
+  margin-bottom: 0;
+
+  th {
+    font-weight: 600;
+    border-top: none;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+}
+
+.btn-link {
+  padding: 0.25rem;
+
+  &:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.bi {
+  vertical-align: -0.125em;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+// Animação para o formulário de edição
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: slideDown 0.3s ease-out;
+}

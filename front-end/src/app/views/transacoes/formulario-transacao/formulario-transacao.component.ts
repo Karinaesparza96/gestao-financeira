@@ -37,13 +37,12 @@ set id(value: any) {
   constructor(private fb: FormBuilder, 
               private categoriaService: CategoriaService, 
               private transacaoService: TransacaoService,
-              private formValidation: FormValidationService,
-              private router: Router) 
+              private formValidation: FormValidationService) 
   {
     this.initForm()
     this.categorias$ = this.categoriaService.obterTodos();
   }
-  
+
   initForm() {
     this.formTransacao = this.fb.group({
       id: [null],
@@ -71,7 +70,7 @@ set id(value: any) {
   adicionaTipoTransacao(){
     if (this.tipo) {
       this.formTransacao.patchValue({tipo: this.tipo})
-    } 
+    }
   }
 
   validar(formGroup: FormGroup) {
@@ -79,25 +78,14 @@ set id(value: any) {
   }
 
   submit() {
-    const form = {...this.formTransacao.value, 
+   const form = {...this.formTransacao.value, 
       data: new Date(this.formTransacao.value.data), 
-      valor: FormDataUtils.formatarValor(this.formTransacao.value.valor)}
-    if(form.id) {
-      this.transacaoService.atualizar(form.id,form)
-      .subscribe({
-        next: (r) => this.processarSucesso(r),
-        error: (e) => this.processarFalha(e)
-      })
-    } else {
-      this.transacaoService.adicionar(form)
-                          .subscribe({
-                            next: (r) => this.processarSucesso(r),
-                            error: (e) => this.processarFalha(e)
-                          })
-    }
+      valor:  this.formTransacao.value.valor}
+      console.log(form)
+   this.transacaoService.adicionar(form).subscribe()
   }
 
-  preencherFormTransacao(response: Transacao) {
+  processarSucesso(response: Transacao) {
     this.formTransacao.patchValue({
       id: response.id,
       descricao: response.descricao,
@@ -110,13 +98,6 @@ set id(value: any) {
         default: response.categoria?.default
       }
     })
-  }
-
-  processarSucesso(response: any) {
-    this.errosServer = []
-    this.processouComSucesso.emit(true)
-  }
-  processarFalha(fail: any) {
-    this.errosServer = fail.error.mensagens;
+  
   }
 }
