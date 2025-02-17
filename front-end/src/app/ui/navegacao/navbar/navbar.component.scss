@@ -12,3 +12,38 @@
   }
 }
 
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #2E312D; 
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 4px;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #249E3F; 
+}
+
+.nav-link.ativo {
+  color: #249E3F; 
+  font-weight: bold;
+}
+
+.nav-link.ativo::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background-color: #249E3F;
+  transform: translateX(-50%);
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link.ativo:hover::after {
+  width: 80%;
+}
+

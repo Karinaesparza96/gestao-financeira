@@ -1,65 +1,63 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light">
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
   <div class="container-fluid">
-    <a href="#" class="navbar-brand">Gestão Financeira</a>
+    <a href="#" class="navbar-brand fw-bold">Gestão Financeira</a>
+
     <button
-    class="navbar-toggler"
-    type="button"
-    (click)="toggleMenu()"
-    [attr.aria-expanded]="isMenuOpen"
-    aria-label="Toggle navigation"
-  >
-    <span class="navbar-toggler-icon"></span>
-  </button>
-    <div class="collapse navbar-collapse justify-content-md-around" [class.show]="isMenuOpen">
-      <ul class="navbar-nav text-center">
+      class="navbar-toggler"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-between" [class.show]="isMenuOpen">
+      <ul class="navbar-nav mx-auto text-center gap-3">
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/']" routerLinkActive="link-primary">Home</a>
+          <a class="nav-link" [routerLink]="['/home']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Home</a>
         </li>
         <ng-container *ngIf="isLoggedIn();">
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/categorias']">Categorias</a>
+            <a class="nav-link" [routerLink]="['/categorias']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Categorias</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/transacoes']">Transações</a>
+            <a class="nav-link" [routerLink]="['/transacoes']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Transações</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/limites']">Limites</a>
+            <a class="nav-link" [routerLink]="['/limites']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Limites</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/relatorios']">Relatórios</a>
+            <a class="nav-link" [routerLink]="['/relatorios']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Relatórios</a>
           </li>
-      </ng-container>
+        </ng-container>
       </ul>
-        <ul class="navbar-nav text-center">
-          <ng-container *ngIf="!isLoggedIn(); else loggedInMenu">
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" routerLink="/conta/login" routerLinkActive="active">
-                <i class="bi bi-box-arrow-in-right me-1"></i>
-                Entrar
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" routerLink="/conta/register" routerLinkActive="active">
-                <i class="bi bi-person-plus me-1"></i>
-                Registro
-              </a>
-            </li>
-          </ng-container>
-          <ng-template #loggedInMenu>
-            <li class="nav-item">
-              <span class="nav-link d-flex align-items-center">
-                <i class="bi bi-person-circle me-1"></i>
-                Olá, {{ getUserEmail() }}
-              </span>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link d-flex align-items-center" [routerLink]="['/']" (click)="logout($event)">
-                <i class="bi bi-box-arrow-right me-1"></i>
-                Sair
-              </a>
-            </li>
-          </ng-template>
-        </ul>
+      <ul class="navbar-nav text-center gap-3">
+        <ng-container *ngIf="!isLoggedIn(); else loggedInMenu">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" routerLink="/conta/login" routerLinkActive="active">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" routerLink="/conta/register" routerLinkActive="active">
+              <i class="bi bi-person-plus me-1"></i> Registro
+            </a>
+          </li>
+        </ng-container>
+
+        <ng-template #loggedInMenu>
+          <li class="nav-item d-flex align-items-center gap-2 text-muted">
+            <i class="bi bi-person-circle fs-5"></i>
+            <span>Olá, <strong>{{ getUserEmail() }}</strong></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center text-danger" [routerLink]="['/']" (click)="logout($event)">
+              <i class="bi bi-box-arrow-right me-1"></i> Sair
+            </a>
+          </li>
+        </ng-template>
+      </ul>
     </div>
   </div>
 </nav>

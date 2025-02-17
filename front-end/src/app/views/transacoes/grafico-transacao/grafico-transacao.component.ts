@@ -22,9 +22,34 @@ export class GraficoTransacaoComponent implements OnInit {
     return this._transacoes;
   }
 
-  chartOptions: ChartOptions = {
+  chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: {
+          display: false, 
+        },
+      },
+      y: {
+        grid: {
+          color: '#f0f0f0',
+        },
+        ticks: {
+          precision: 0, 
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'top', 
+        labels: {
+          color: '#333',
+        }
+      }
+    }
   };
+  
 
   chartLabels: any[] = [];
   chartData: ChartData<'bar'> = {
