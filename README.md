@@ -94,7 +94,12 @@ A estrutura do projeto é organizada da seguinte forma:
    - `ng s`
    - Acesse o frontend em: http://localhost:4200/
    
-5. **Registrar usuário para usar o sistema:**
+5. **Usuário de teste:**
+   - Na carga inicial é criado um usuário para testes. Caso queira utilizá-lo use os seguintes dados:
+   - Usuário: teste@teste.com
+   - Senha: Teste@123
+   
+6. **Registrar usuário para usar o sistema:**
    - Para usar o sistema é necessário criar um usuário inicial
 
 ## **7. Instruções de Configuração**
