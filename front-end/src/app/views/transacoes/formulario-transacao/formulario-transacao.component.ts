@@ -9,9 +9,6 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { IDisplayMessage } from '../../../utils/validation/IValidationMessage';
 import { TransacaoService } from '../../../services/transacao.service';
 import { Transacao } from '../../../models/Transacao';
-import { FormDataUtils } from '../../../utils/formDataUtils';
-import { NotificationService } from '../../../services/notification.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -20,25 +17,24 @@ import { Router } from '@angular/router';
   styleUrl: './formulario-transacao.component.scss'
 })
 export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
-@Input() tipo!: TipoTransacao;
-@ViewChildren(FormControlName, { read: ElementRef }) formControls?: ElementRef[]
-categorias$: Observable<Categoria[]>;
-formTransacao!: FormGroup
-erros: IDisplayMessage = {}
-transacao?: Transacao
-errosServer: string[] = []
-@Input()
-set id(value: any) {
-  if(typeof value == 'string'){
-    this.transacaoService.obterPorId(value).subscribe((data) => this.preencherFormTransacao(data))
+  @Input() tipo!: TipoTransacao;
+  @ViewChildren(FormControlName, { read: ElementRef }) formControls?: ElementRef[]
+  categorias$: Observable<Categoria[]>;
+  formTransacao!: FormGroup
+  erros: IDisplayMessage = {}
+  transacao?: Transacao
+  errosServer: string[] = []
+  @Input()
+  set id(value: any) {
+    if (typeof value == 'string') {
+      this.transacaoService.obterPorId(value).subscribe((data) => this.preencherFormTransacao(data))
+    }
   }
-}
-@Output() processouComSucesso = new EventEmitter<boolean>()
-  constructor(private fb: FormBuilder, 
-              private categoriaService: CategoriaService, 
-              private transacaoService: TransacaoService,
-              private formValidation: FormValidationService) 
-  {
+  @Output() processouComSucesso = new EventEmitter<boolean>()
+  constructor(private fb: FormBuilder,
+    private categoriaService: CategoriaService,
+    private transacaoService: TransacaoService,
+    private formValidation: FormValidationService) {
     this.initForm()
     this.categorias$ = this.categoriaService.obterTodos();
   }
@@ -50,7 +46,11 @@ set id(value: any) {
       valor: ['', [Validators.required]],
       data: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      categoria: [null, [Validators.required]],
+      categoria: this.fb.group({
+        id: [null, [Validators.required]],
+        nome: '',
+        default: false
+      }),
     })
   }
 
@@ -67,25 +67,72 @@ set id(value: any) {
       })
   }
 
-  adicionaTipoTransacao(){
+  adicionaTipoTransacao() {
     if (this.tipo) {
-      this.formTransacao.patchValue({tipo: this.tipo})
+      this.formTransacao.patchValue({ tipo: this.tipo })
     }
   }
 
   validar(formGroup: FormGroup) {
-   return this.formValidation.executeValidation(formGroup, 'transacao')
+    return this.formValidation.executeValidation(formGroup, 'transacao')
+  }
+
+  onCategoriaChange(id: string) {
+    this.categorias$.subscribe(categorias => {
+      const categoriaSelecionada = categorias.find(c => c.id === id);
+      if (categoriaSelecionada) {
+        this.formTransacao.patchValue({
+          categoria: {
+            id: categoriaSelecionada.id,
+            nome: categoriaSelecionada.nome
+          }
+        });
+      }
+    });
+  }
+
+  formatarValor() {
+    let valor = this.formTransacao.get('valor')?.value + '';
+    if (valor) {
+      valor = valor.replace(/\./g, '').replace(',', '.');
+      const valorDecimal = parseFloat(valor);
+
+      if (!isNaN(valorDecimal)) {
+        this.formTransacao.patchValue({ valor: valorDecimal });
+        this.erros['valor'] = '';
+        this.formTransacao.get('valor')?.setErrors(null);
+      } else {
+        this.erros['valor'] = 'O valor inserido não é válido';
+        this.formTransacao.get('valor')?.setErrors({ invalidValue: true });
+      }
+    }
   }
 
   submit() {
-   const form = {...this.formTransacao.value, 
-      data: new Date(this.formTransacao.value.data), 
-      valor:  this.formTransacao.value.valor}
-      console.log(form)
-   this.transacaoService.adicionar(form).subscribe()
+    this.formatarValor()
+    if (!this.formTransacao.valid) {
+      return
+    }
+    const transacao = {
+      ...this.formTransacao.value,
+      data: new Date(this.formTransacao.value.data)
+    }
+    if (transacao.id) {
+      this.transacaoService.atualizar(transacao.id, transacao)
+        .subscribe({
+          next: (r) => this.processarSucesso(r),
+          error: (e) => this.processarFalha(e)
+        })
+    } else {
+      this.transacaoService.adicionar(transacao)
+        .subscribe({
+          next: (r) => this.processarSucesso(r),
+          error: (e) => this.processarFalha(e)
+        })
+    }
   }
 
-  processarSucesso(response: Transacao) {
+  preencherFormTransacao(response: Transacao) {
     this.formTransacao.patchValue({
       id: response.id,
       descricao: response.descricao,
@@ -98,6 +145,13 @@ set id(value: any) {
         default: response.categoria?.default
       }
     })
-  
+  }
+
+  processarSucesso(response: any) {
+    this.errosServer = []
+    this.processouComSucesso.emit(true)
+  }
+  processarFalha(fail: any) {
+    this.errosServer = fail.error.mensagens;
   }
 }

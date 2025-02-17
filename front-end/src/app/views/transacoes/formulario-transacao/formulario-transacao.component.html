@@ -1,7 +1,7 @@
 <div class="container mt-3">
   <div class="row" *ngIf="errosServer.length">
     <div class="col">
-      <span *ngFor="let erro of errosServer">
+      <span *ngFor="let erro of errosServer" class="text-danger py-1">
         {{erro}}
       </span>
     </div>
@@ -27,16 +27,17 @@
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-6">
+      <div class="col-6" formGroupName="categoria">
         <label for="categoria" class="form-label">Categoria</label>
         <select
           class="form-select"
-          formControlName="categoria" 
+          formControlName="id" 
+          (change)="onCategoriaChange($any($event.target).value)"
         >
           <option value="" disabled selected>Selecione</option>
-          <option *ngFor="let categoria of categorias$ | async" [ngValue]="categoria">{{categoria.nome}}</option>
+          <option *ngFor="let categoria of categorias$ | async" [value]="categoria.id">{{categoria.nome}}</option>
         </select>
-        <div *ngIf="erros['categoria']" class="text-danger py-1" [innerHTML]="erros['categoria']"></div>
+        <div *ngIf="erros['id']" class="text-danger py-1" [innerHTML]="erros['id']"></div>
       </div>
       <div class="col-6">
         <label for="tipo" class="form-label">Tipo</label>

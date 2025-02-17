@@ -1,5 +1,5 @@
 import { TipoTransacao } from './../../models/TipoTransacao';
-import { Component, viewChild } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { ModalComponent } from "../../ui/modal/modal.component";
 import { SaudacaoUsuarioComponent } from "../../ui/saudacao-usuario/saudacao-usuario.component";
 import { FormularioTransacaoComponent } from "../transacoes/formulario-transacao/formulario-transacao.component";
@@ -10,13 +10,15 @@ import { ResumoFinanceiro } from '../../models/resumoFinanceiro';
 import { Observable } from 'rxjs';
 import { GraficoTransacaoComponent } from '../transacoes/grafico-transacao/grafico-transacao.component';
 
+import { NotificacaoService } from '../../utils/notificacao.service';
+
 @Component({
   selector: 'app-home',
   imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent, CommonModule, CurrencyPipe, GraficoTransacaoComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit{
   showModal: boolean = false
   modal = viewChild(ModalComponent)
   options: {label: string, cssClass: 'sucesso'|'falha'} = {label: '', cssClass: 'sucesso'};
@@ -25,9 +27,14 @@ export class HomeComponent {
  
   resumoSaldo$: Observable<ResumoFinanceiro>;
 
-  constructor(private transacaoService: TransacaoService) {
+  constructor(private transacaoService: TransacaoService,
+              private notificacao: NotificacaoService
+  ) {
     this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
-    this.transacaoService.obterTodos().subscribe(x => this.transacoes = x)
+  }
+
+  ngOnInit(): void {
+    this.transacaoService.obterTodos().subscribe((x) => this.transacoes = x)
   }
 
   novaReceita(){
@@ -46,5 +53,10 @@ export class HomeComponent {
     };
     this.showModal = true
     this.tipo = TipoTransacao.Saida
+  }
+
+  processarSucesso() {
+    this.showModal = false
+    this.notificacao.mostrarMensagem('Operação realizada com sucesso!')
   }
 }

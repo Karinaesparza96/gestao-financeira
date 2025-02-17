@@ -10,13 +10,23 @@ import { Transacao } from '../../../models/Transacao';
   styleUrl: './grafico-transacao.component.scss'
 })
 export class GraficoTransacaoComponent implements OnInit {
-  @Input() transacoes: Transacao[] = [];
+  private _transacoes?: Transacao[];
+
+  @Input()
+  set transacoes(value: Transacao[] | undefined) {
+    this._transacoes = value;
+    this.processarDados();
+  }
+
+  get transacoes(): Transacao[] | undefined {
+    return this._transacoes;
+  }
 
   chartOptions: ChartOptions = {
     responsive: true,
   };
 
-  chartLabels: any[] = []; // Mês/Ano
+  chartLabels: any[] = [];
   chartData: ChartData<'bar'> = {
     labels: this.chartLabels,
     datasets: []
@@ -27,9 +37,8 @@ export class GraficoTransacaoComponent implements OnInit {
   }
 
   processarDados() {
-     // Agrupar por mês
      const dadosMensais = new Map<string, { receita: number, despesa: number }>();
-     this.transacoes.forEach(transacao => {
+     this.transacoes?.forEach(transacao => {
        const mesAno = new Date(transacao.data).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
 
        if (!dadosMensais.has(mesAno)) {
@@ -44,7 +53,6 @@ export class GraficoTransacaoComponent implements OnInit {
        }
      });
 
-     // Preencher os dados no gráfico
      this.chartLabels = Array.from(dadosMensais.keys());
      const receitas = Array.from(dadosMensais.values()).map(v => v.receita);
      const despesas = Array.from(dadosMensais.values()).map(v => v.despesa);

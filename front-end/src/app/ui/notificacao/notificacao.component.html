@@ -1,0 +1,3 @@
+<div *ngIf="option?.mensagem" class="notificacao" [ngClass]="{'sucesso': option?.tipo == 'sucesso', 'erfalharo': option?.tipo == 'falha'}">
+  {{ option?.mensagem }}
+</div>
