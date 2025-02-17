@@ -31,14 +31,22 @@ export abstract class BaseService {
     return response.sucesso || {};
   }
 
+  protected extractMensagens(response: any){
+    return response.mensagens || [];
+  }
+
   protected serviceError(response: Response | any){
     let customError: string[] = [];
 
     if (response instanceof HttpErrorResponse){
       if (response.statusText === "Unknown Error"){
         customError.push("Ocorreu um erro desconhecido");
-        response.error.mensagens = customError;
       }
+
+      if (response.status === 500) {
+        customError.push("Ocorreu um erro tente novamente ou nos contate");
+      }
+      response.error.mensagens = customError;
     }
 
     console.error(response);

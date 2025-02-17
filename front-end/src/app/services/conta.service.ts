@@ -4,7 +4,7 @@ import { Usuario } from "../models/usuario";
 import { catchError, map, Observable } from "rxjs";
 import { BaseService } from "./base.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ContaService extends BaseService{
   constructor(private http: HttpClient){ super(); }
 

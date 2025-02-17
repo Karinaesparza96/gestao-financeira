@@ -1,37 +1,47 @@
-<div class="container-grid">
-  <div class="header item">
-    <div class="header-col">
-      <app-saudacao-usuario/>
-      <div class="resumo-mensal">
-        <div class="receita">
-          <span>receita mensal</span>
-          <p>{{(resumoSaldo$ | async )?.totalReceita || 0 | currency:'BRL':'symbol':'1.2-2'}} </p>
-        </div>
-        <div class="despesa">
-          <span>despesa mensal</span>
-          <p>{{(resumoSaldo$ | async )?.totalDespesa || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
-        </div>
+<div class="dashboard">
+  <!-- Cabeçalho -->
+  <div class="dashboard-header">
+    <app-saudacao-usuario />
+    <div class="dashboard-summary">
+      <div class="summary-card receita">
+        <span>Receita Mensal</span>
+        <p>{{ (resumoSaldo$ | async)?.totalReceita || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
       </div>
-    </div>
-    <div class="header-col">
-      <div class="acesso-rapido">
-        <span>Acesso rápido</span>
-        <div class="acoes">
-          <div class="btn-saida" (click)="novaDespesa()" style="cursor: pointer;"></div>
-          <div class="btn-entrada" (click)="novaReceita()" style="cursor: pointer;"></div>
-        </div>
+      <div class="summary-card despesa">
+        <span>Despesa Mensal</span>
+        <p>{{ (resumoSaldo$ | async)?.totalDespesa || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-card saldo">
+        <span>Saldo Total</span>
+        <p>{{ (resumoSaldo$ | async)?.totalSaldo || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
       </div>
     </div>
   </div>
-  <div class="item">
-    <p>saldo total</p>
-    <p>{{(resumoSaldo$ | async )?.totalSaldo || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
+
+  <!-- Ações Rápidas -->
+  <div class="quick-actions">
+    <span>Acesso Rápido</span>
+    <div class="action-buttons">
+      <button class="btn-action entrada" (click)="novaReceita()" title="Nova Receita">
+        <i class="fa-solid fa-circle-plus"></i>
+      </button>
+      <button class="btn-action saida" (click)="novaDespesa()" title="Nova Despesa">
+        <i class="fa-solid fa-wallet"></i>
+      </button>
+    </div>
   </div>
-  <div class="item">
-    <app-grafico-transacao [transacoes]="transacoes"/>
+  
+  
+
+  <!-- Gráfico -->
+  <div class="dashboard-chart">
+    <app-grafico-transacao [transacoes]="transacoes" />
   </div>
+</div>
+
+<!-- Modal -->
 <app-modal [label]="options.label" [cssClass]="options.cssClass" [showModal]="showModal" (modalChanged)="showModal = false">
   <ng-container *ngIf="showModal">
-    <app-formulario-transacao [tipo]="tipo"/>
+    <app-formulario-transacao [tipo]="tipo" (processouComSucesso)="processarSucesso()"/>
   </ng-container>
 </app-modal>

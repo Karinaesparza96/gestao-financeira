@@ -11,7 +11,7 @@ namespace Data.Repositories
     {
         public new async Task<Transacao?> ObterPorId(Guid id)
         {
-            return await DbSet.Include(t => t.Categoria).FirstOrDefaultAsync(t => t.Id == id);
+            return await DbSet.Include(t => t.Categoria).AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
         }
         public async Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtro, string usuarioId)
         {
