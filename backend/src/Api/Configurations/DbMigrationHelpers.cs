@@ -32,7 +32,11 @@ namespace Api.Configurations
         }
 
         private static async Task InserirDadosIniciais(AppDbContext context)
-        {   
+        {
+            var dataAgora = DateTime.Now;
+            var dataOnlyPrimeiroDiaDoMes = new DateOnly(dataAgora.Year, dataAgora.Month, 1);
+            var dataPrimeiroDiaDoMes = new DateTime(dataAgora.Year, dataAgora.Month, 1);
+
             if (context.Users.Any() || context.Set<Usuario>().Any()) return;
            
             var userIdentity = new IdentityUser()
@@ -43,7 +47,7 @@ namespace Api.Configurations
                 NormalizedEmail = "TESTE@TESTE.COM",
                 UserName = "teste@teste.com",
                 AccessFailedCount = 0,
-                PasswordHash = "AQAAAAIAAYagAAAAEF/nmfwFGPa8pnY9AvZL8HKI7r7l+aM4nryRB+Y3Ktgo6d5/0d25U2mhixnO4h/K5w==",
+                PasswordHash = "AQAAAAIAAYagAAAAEEIsmFcI2MWZaRj7qTXrXoXatvLIeahf+yFJbb3pAI6SbmCFjHJtKz1Nxv0XOvhuQQ==",
                 NormalizedUserName = "TESTE@TESTE.COM",
             };
 
@@ -71,15 +75,78 @@ namespace Api.Configurations
                 Nome = "Transporte"
             };
 
-            var transacao = new Transacao
+            var categoria4 = new Categoria
+            {
+                Default = true,
+                Nome = "Salário"
+            };
+
+            var limite1 = new LimiteOrcamento()
+            {
+                Periodo = dataOnlyPrimeiroDiaDoMes,
+                TipoLimite = TipoLimite.Geral,
+                Limite = 2000,
+                PorcentagemAviso = 50,
+                UsuarioId = userIdentity.Id
+            };
+
+            var transacao1 = new Transacao
+            {
+                UsuarioId = userIdentity.Id,
+                CategoriaId = categoria4.Id,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Entrada,
+                Descricao = "Remuneração fixa mensal",
+                Valor = 1437.85M,
+                Categoria = categoria4,
+                Usuario = usuario,
+            };
+
+            var transacao2 = new Transacao
             {
                 UsuarioId = userIdentity.Id,
                 CategoriaId = categoria1.Id,
-                Data = DateTime.Now,
-                Tipo = TipoTransacao.Entrada,
-                Descricao = "teste",
-                Valor = 1000.59M,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Saida,
+                Descricao = "Compras de supermercado",
+                Valor = 435.72M,
                 Categoria = categoria1,
+                Usuario = usuario,
+            };
+
+            var transacao3 = new Transacao
+            {
+                UsuarioId = userIdentity.Id,
+                CategoriaId = categoria1.Id,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Saida,
+                Descricao = "Compras na feira",
+                Valor = 237.54M,
+                Categoria = categoria1,
+                Usuario = usuario,
+            };
+
+            var transacao4 = new Transacao
+            {
+                UsuarioId = userIdentity.Id,
+                CategoriaId = categoria2.Id,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Saida,
+                Descricao = "Plano de saúde",
+                Valor = 215.37M,
+                Categoria = categoria2,
+                Usuario = usuario,
+            };
+
+            var transacao5 = new Transacao
+            {
+                UsuarioId = userIdentity.Id,
+                CategoriaId = categoria3.Id,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Saida,
+                Descricao = "Uber - ida ao trabalho",
+                Valor = 18.94M,
+                Categoria = categoria3,
                 Usuario = usuario,
             };
 
@@ -87,10 +154,11 @@ namespace Api.Configurations
 
             await context.Set<Usuario>().AddAsync(usuario);
 
-            await context.Set<Categoria>().AddRangeAsync([categoria1, categoria2, categoria3]);
+            await context.Set<Categoria>().AddRangeAsync([categoria1, categoria2, categoria3, categoria4]);
 
-            await context.Set<Transacao>().AddAsync(transacao);
+            await context.Set<LimiteOrcamento>().AddAsync(limite1);
 
+            await context.Set<Transacao>().AddRangeAsync([transacao1, transacao2, transacao3, transacao4, transacao5]);
 
             await context.SaveChangesAsync();
         }
