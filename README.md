@@ -99,8 +99,8 @@ A estrutura do projeto é organizada da seguinte forma:
    - Usuário: teste@teste.com
    - Senha: Teste@123
    
-6. **Registrar usuário para usar o sistema:**
-   - Para usar o sistema é necessário criar um usuário inicial
+6. **Registrar novo usuário ou usar o usuário de teste para acessar o sistema:**
+   - Para acessar o sistema use o usuário de teste ou crie um novo usuário usando a opção Registrar.
 
 ## **7. Instruções de Configuração**
 
