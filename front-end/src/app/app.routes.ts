@@ -26,7 +26,12 @@ export const routes: Routes = [
     path: 'categorias',
     loadComponent: () => import('./views/categorias/categorias.component').then(m => m.CategoriasComponent),
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'limites',
+    loadChildren: () => import('./views/limites/limites.route').then(m => m.routes),
+    canActivate: [authGuard]
+  },
 ];
 
 @NgModule({
