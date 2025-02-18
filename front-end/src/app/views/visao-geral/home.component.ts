@@ -57,6 +57,6 @@ export class HomeComponent implements OnInit{
 
   processarSucesso() {
     this.showModal = false
-    this.notificacao.mostrarMensagem('Operação realizada com sucesso!')
+    this.notificacao.mostrarMensagem('Operação realizada com sucesso!','sucesso')
   }
 }

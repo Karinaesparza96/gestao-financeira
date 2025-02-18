@@ -9,6 +9,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { IDisplayMessage } from '../../../utils/validation/IValidationMessage';
 import { TransacaoService } from '../../../services/transacao.service';
 import { Transacao } from '../../../models/Transacao';
+import { NotificacaoService } from '../../../utils/notificacao.service';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -34,7 +35,8 @@ export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
   constructor(private fb: FormBuilder,
     private categoriaService: CategoriaService,
     private transacaoService: TransacaoService,
-    private formValidation: FormValidationService) {
+    private formValidation: FormValidationService,
+    private notificacao: NotificacaoService) {
     this.initForm()
     this.categorias$ = this.categoriaService.obterTodos();
   }
@@ -120,7 +122,7 @@ export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
     if (transacao.id) {
       this.transacaoService.atualizar(transacao.id, transacao)
         .subscribe({
-          next: (r) => this.processarSucesso(r),
+          next: (r) => this.processarSucesso(r as string[]),
           error: (e) => this.processarFalha(e)
         })
     } else {
@@ -147,8 +149,12 @@ export class FormularioTransacaoComponent implements OnInit, AfterViewInit {
     })
   }
 
-  processarSucesso(response: any) {
+  processarSucesso(response: string[]) {
     this.errosServer = []
+    if (response.length) {
+      let avisos = response.join('<br />')
+      this.notificacao.mostrarMensagem(avisos, 'alerta')
+    }
     this.processouComSucesso.emit(true)
   }
   processarFalha(fail: any) {

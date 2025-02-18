@@ -61,10 +61,10 @@ export class ListaTransacoesComponent implements OnInit {
   processarSucesso() {
     this.atualizar()
     this.fecharModal()
-    this.notificacao.mostrarMensagem('Operação realizada com sucesso!', 3000)
+    this.notificacao.mostrarMensagem('Operação realizada com sucesso!', 'sucesso')
   }
 
   processarErro() {
-    this.notificacao.mostrarMensagem('Ops! Houve um erro', 3000)
+    this.notificacao.mostrarMensagem('Ops! Houve um erro', 'falha')
   }
 }
