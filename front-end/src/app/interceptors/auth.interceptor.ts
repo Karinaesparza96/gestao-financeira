@@ -18,7 +18,7 @@ localStorageUtil = new LocalStorageUtils();
 
       if (error instanceof HttpErrorResponse) {
           if (error.status === 500) {
-            this.notificacao.mostrarMensagem('Ops! Ocorreu um erro, tente novamente ou nos contate.')
+            this.notificacao.mostrarMensagem('Ops! Ocorreu um erro, tente novamente ou nos contate.', 'falha')
           }
           if (error.status === 401) {
               this.localStorageUtil.limparDadosLocaisUsuario();
