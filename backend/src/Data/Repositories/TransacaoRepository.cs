@@ -41,7 +41,7 @@ namespace Data.Repositories
 
         public decimal ObterSaldoTotal(string usuarioId)
         {
-           var result = DbSet.Where(x => x.UsuarioId == usuarioId).Sum(x => x.Valor);
+           var result = DbSet.Where(x => x.UsuarioId == usuarioId).ToList().Sum(x => x.Valor);
            return result;
         }
 

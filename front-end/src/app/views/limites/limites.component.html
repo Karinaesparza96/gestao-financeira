@@ -1,18 +1,26 @@
 <div class="container py-5">
   <div class="row mb-4">
-    <form (submit)="submit()" [formGroup]="limiteOrcamentoForm" class="row">
+    <form class="row align-items-end">
       <div class="col-md-4">
         <label for="periodo" class="form-label">
           <i class="fa fa-calendar-alt me-2"></i> Período
         </label>
-        <input type="month" id="periodo" class="form-control" formControlName="periodo">
+        <input
+          type="month"
+          id="periodo"
+          class="form-control"
+        />
       </div>
       <div class="col-md-4">
         <label for="categoria" class="form-label">
           <i class="fa fa-list-alt me-2"></i> Categoria
         </label>
-        <select id="categoria" class="form-select" formControlName="categoriaId">
-          <!-- <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nome }}</option> -->
+        <select
+          id="categoria"
+          class="form-select"
+        > 
+        <option value="" disabled selected>Selecione</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nome }}</option>
         </select>
       </div>
       <div class="col-md-4">
@@ -22,7 +30,7 @@
       </div>
     </form>
   </div>
-  
+
   <div class="col-12 text-center mt-3">
     <a class="btn btn-success px-4 py-2">
       <i class="bi bi-plus-lg"></i> Novo Limite
@@ -41,9 +49,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let limite of limites">
-          <td>{{ limite.categoria?.nome || 'Geral' }}</td>
-          <td>R$ {{ limite.limite | number: '1.2-2' }}</td>
-          <td>{{ limite.tipoLimite === 1 ? 'Geral' : 'Categoria' }}</td>
+          <td>{{ limite.categoria?.nome || "Geral" }}</td>
+          <td>R$ {{ limite.limite | number : "1.2-2" }}</td>
+          <td>{{ limite.tipoLimite === 1 ? "Geral" : "Categoria" }}</td>
           <td>{{ limite.porcentagemAviso }}%</td>
           <td class="text-center">
             <button class="btn btn-warning btn-sm">
@@ -57,9 +65,6 @@
       </tbody>
     </table>
   </div>
-  <div class="text-center py-5" *ngIf="limites.length === 0">
-    <i class="bi bi-inbox fs-1 text-muted"></i>
-    <p class="mt-2 text-muted">Você ainda não registrou nenhum limite. Que tal começar agora?</p>
-  </div>
+  <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Você ainda não registrou nenhum limite. Que tal começar agora?'"/>
 </div>
-
+<!-- <app-modal> </app-modal> -->

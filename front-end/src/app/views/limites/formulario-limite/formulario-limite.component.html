@@ -1,6 +1,6 @@
-<div class="container mt-3">
-  <app-error-list [erros]="errosServer" />
-  <form [formGroup]="formGroup" (ngSubmit)="submit()">
+<!-- <div class="container mt-3">
+  <app-error-list [erros]="[]" />
+  <form [formGroup]="formLimite" (ngSubmit)="submit()">
     <div class="row mb-3">
       <div class="col-12">
         <label for="descricao" class="form-label">Descrição</label>
@@ -25,7 +25,6 @@
           class="form-control"
           id="valor"
           formControlName="valor"
-          (input)="formatCurrency($event)"
         />
         <div
           *ngIf="erros['valor']"
@@ -53,20 +52,21 @@
         <label for="categoria" class="form-label">Categoria</label>
         <select
           class="form-select"
-          formControlName="idCategoria"
+          formControlName="id"
+          (change)="onCategoriaChange($any($event.target).value)"
         >
           <option value="" disabled selected>Selecione</option>
           <option
-            *ngFor="let categoria of categorias"
+            *ngFor="let categoria of categorias$ | async"
             [value]="categoria.id"
           >
             {{ categoria.nome }}
           </option>
         </select>
         <div
-          *ngIf="erros['idCategoria']"
+          *ngIf="erros['id']"
           class="text-danger py-1"
-          [innerHTML]="erros['idCategoria']"
+          [innerHTML]="erros['id']"
         ></div>
       </div>
       <div class="col-6">
@@ -89,7 +89,7 @@
     <button
       type="submit"
       class="btn btn-success w-100"
-      [disabled]="!formGroup.valid"
+      [disabled]="!formTransacao.valid"
     >
       Enviar
     </button>
@@ -98,4 +98,4 @@
 <ng-template #listaTipos>
   <option value="1">Receita</option>
   <option value="2">Despesa</option>
-</ng-template>
+</ng-template> -->

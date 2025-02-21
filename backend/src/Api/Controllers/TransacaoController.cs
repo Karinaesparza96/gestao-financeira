@@ -70,7 +70,7 @@ namespace Api.Controllers
 
             await transacaoService.Atualizar(mapper.Map<Transacao>(transacaoDto));
 
-            return RetornoPadrao(HttpStatusCode.NoContent);
+            return RetornoPadrao(HttpStatusCode.Created);
         }
 
         [HttpDelete("{id:Guid}")]

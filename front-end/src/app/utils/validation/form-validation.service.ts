@@ -1,35 +1,35 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ValidationMessageService } from './validation-message.service';
-import { IDisplayMessage } from './IValidationMessage';
+import { IDisplayMessage, IValidationMessage } from './IValidationMessage';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class FormValidationService {
-  constructor(private validationMessage: ValidationMessageService) { }
+  constructor(private mensagensValidacao: IValidationMessage) { }
 
-  executeValidation(formGroup: FormGroup, formName: string) {
-    const validationMessages = this.validationMessage.getMessages(formName)
+  executeValidation(formGroup?: FormGroup): IDisplayMessage {
+    if (!formGroup) return {};
 
-    return Object.keys(formGroup.controls).reduce((result, itemAtual) => {
-      const formControl = formGroup.controls[itemAtual] 
-      const erros = formControl.errors
+    return this.validateFormGroup(formGroup, this.mensagensValidacao);
+  }
+
+  private validateFormGroup(formGroup: FormGroup, validationMessages: any): IDisplayMessage {
+    return Object.keys(formGroup.controls).reduce((result, controlName) => {
+      const formControl = formGroup.controls[controlName];
+      const errors = formControl.errors;
       if (formControl instanceof FormGroup) {
-        let childMessages = this.executeValidation(formControl, itemAtual);
+        const childMessages = this.validateFormGroup(formControl, validationMessages);
         result = { ...result, ...childMessages };
       } else {
-        if (validationMessages[itemAtual] && (formControl.dirty || formControl.touched) && erros) {
-          result[itemAtual] = ''
-          Object.keys(erros).map( (errorKey) => {
-            if (validationMessages[itemAtual][errorKey]) {
-              result[itemAtual] += validationMessages[itemAtual][errorKey] + '<br />'
+        if (validationMessages[controlName] && (formControl.dirty || formControl.touched) && errors) {
+          result[controlName] = '';
+          Object.keys(errors).forEach(errorKey => {
+            if (validationMessages[controlName][errorKey]) {
+              result[controlName] += validationMessages[controlName][errorKey] + '<br />';
             }
-          })
+          });
         }
       }
-      console.log(result)
-      return result
-    }, {} as IDisplayMessage)
+
+      return result;
+    }, {} as IDisplayMessage);
   }
 }

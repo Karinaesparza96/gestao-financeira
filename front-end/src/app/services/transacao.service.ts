@@ -38,7 +38,6 @@ export class TransacaoService extends BaseService {
   }
 
   adicionar(transacao: Transacao) {
-    console.log('adicionar:',transacao)
     return this.http.post(`${this.UrlService}/transacoes`, transacao, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractMensagens),
@@ -47,9 +46,9 @@ export class TransacaoService extends BaseService {
   }
 
   atualizar(id:string, transacao: Transacao) {
-    console.log('atualizar:',transacao)
     return this.http.put(`${this.UrlService}/transacoes/${id}`, transacao, this.ObterAuthHeaderJson())
                     .pipe(
+                      map(this.extractMensagens),
                       catchError(this.serviceError)
                     )
   }
