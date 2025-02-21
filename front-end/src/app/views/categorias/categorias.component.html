@@ -7,12 +7,11 @@
           <i class="bi bi-tags-fill me-2 text-primary"></i>
           Categorias
         </h2>
-        <button class="btn btn-primary d-flex align-items-center"
+        <button class="btn btn-success px-4 py-2"
                 (click)="iniciarNovaCategoria()"
                 *ngIf="!modoEdicao"
                 [disabled]="carregando">
-          <i class="bi bi-plus-circle me-2"></i>
-          Nova Categoria
+          <i class="bi bi-plus-lg"></i> Nova Categoria
         </button>
       </div>
 
@@ -49,16 +48,16 @@
                        required
                        placeholder="Digite o nome da categoria">
               </div>
-              <div class="mb-4 form-check">
+              <!-- <div class="mb-4 form-check">
                 <input type="checkbox"
                        class="form-check-input"
                        id="default"
                        [(ngModel)]="categoriaEmEdicao.default"
                        name="default">
                 <label class="form-check-label" for="default">Categoria Padrão</label>
-              </div>
+              </div> -->
               <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary px-4">
+                <button type="submit" class="btn btn-success px-4 py-2">
                   <i class="bi bi-check-circle me-2"></i>
                   Salvar
                 </button>
@@ -94,6 +93,7 @@
                   <td class="text-end px-4">
                     <button class="btn btn-link text-primary me-2"
                             (click)="editarCategoria(categoria)"
+                            [disabled]="categoria.default"
                             title="Editar">
                       <i class="bi bi-pencil-square fs-5"></i>
                     </button>
