@@ -28,28 +28,32 @@ export abstract class BaseService {
   }
 
   protected extractSucesso(response: any){
-    return response.sucesso || {};
+    return response?.sucesso || {};
   }
 
   protected extractMensagens(response: any){
-    return response.mensagens || [];
+    return response?.mensagens || [];
   }
 
-  protected serviceError(response: Response | any){
+  protected serviceError(response: Response | any) {
     let customError: string[] = [];
+    let customResponse: { error: { mensagens: string[] }} = { error: { mensagens: [] }}
 
-    if (response instanceof HttpErrorResponse){
-      if (response.statusText === "Unknown Error"){
-        customError.push("Ocorreu um erro desconhecido");
-      }
+    if (response instanceof HttpErrorResponse) {
 
-      if (response.status === 500) {
-        customError.push("Ocorreu um erro tente novamente ou nos contate");
-      }
-      response.error.mensagens = customError;
+        if (response.statusText === "Unknown Error") {
+            customError.push("Ocorreu um erro desconhecido");
+            response.error.mensagens = customError;
+        }
+    }
+    if (response.status === 500) {
+        customError.push("Ocorreu um erro no processamento, tente novamente mais tarde ou contate o nosso suporte.");
+                    
+        customResponse.error.mensagens = customError;
+        return throwError(() => customResponse);
     }
 
     console.error(response);
-    return throwError(response);
-  }
+    return throwError(() => response);
+}
 }
