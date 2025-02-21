@@ -7,19 +7,9 @@
           <i class="bi bi-arrow-up-circle text-success me-3 fs-3"></i>
           <div>
             <h6 class="text-muted mb-1">Entradas</h6>
-            <p class="fw-bold text-success m-0">{{ resumo?.totalReceita || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 bg-light rounded-3">
-        <div class="card-body d-flex align-items-center">
-          <i class="bi bi-arrow-down-circle text-danger me-3 fs-3"></i>
-          <div>
-            <h6 class="text-muted mb-1">Saídas</h6>
-            <p class="fw-bold text-danger m-0">{{ resumo?.totalDespesa || 0 | currency:'BRL':'symbol':'1.2-2' }}</p>
+            <p class="fw-bold text-success m-0">
+              {{ resumo?.totalReceita || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
+            </p>
           </div>
         </div>
       </div>
@@ -28,11 +18,28 @@
     <div class="col-md-4">
       <div class="card shadow-sm border-0 bg-light rounded-3">
         <div class="card-body d-flex align-items-center">
-          <i class="bi bi-wallet2 me-3 fs-3" [ngClass]="resumo?.totalSaldo ? 'text-primary' : 'text-warning'"></i>
+          <i class="bi bi-arrow-down-circle text-danger me-3 fs-3"></i>
+          <div>
+            <h6 class="text-muted mb-1">Saídas</h6>
+            <p class="fw-bold text-danger m-0">
+              {{ resumo?.totalDespesa || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 bg-light rounded-3">
+        <div class="card-body d-flex align-items-center">
+          <i
+            class="bi bi-wallet2 me-3 fs-3"
+            [ngClass]="resumo?.totalSaldo ? 'text-primary' : 'text-warning'"
+          ></i>
           <div>
             <h6 class="text-muted mb-1">Saldo</h6>
             <p class="fw-bold m-0" [ngClass]="resumo?.totalSaldo ? 'text-primary' : 'text-warning'">
-              {{ resumo?.totalSaldo || 0 | currency:'BRL':'symbol':'1.2-2' }}
+              {{ resumo?.totalSaldo || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
             </p>
           </div>
         </div>
@@ -62,18 +69,26 @@
       <tbody>
         <tr *ngFor="let transacao of transacoes; let i = index">
           <td>{{ i + 1 }}</td>
-          <td>{{ transacao.data | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ transacao.data | date : "dd/MM/yyyy" }}</td>
           <td>{{ transacao.descricao }}</td>
           <td>{{ transacao.categoria?.nome }}</td>
-          <td class="text-end fw-bold" 
-              [ngClass]="transacao.tipo === 1 ? 'text-success' : 'text-danger'">
-            {{ transacao.valor | currency:'BRL' }}
+          <td
+            class="text-end fw-bold"
+            [ngClass]="transacao.tipo === 1 ? 'text-success' : 'text-danger'"
+          >
+            {{ transacao.valor | currency : "BRL" }}
           </td>
           <td class="text-center">
-            <button class="btn btn-sm btn-outline-primary me-1" (click)="editarTransacao(transacao)">
+            <button
+              class="btn btn-sm btn-outline-primary me-1"
+              (click)="editarTransacao(transacao)"
+            >
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="excluirTransacao(transacao)">
+            <button
+              class="btn btn-sm btn-outline-danger"
+              (click)="excluirTransacao(transacao)"
+            >
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -81,65 +96,21 @@
       </tbody>
     </table>
   </div>
-  <div class="text-center py-5" *ngIf="transacoes.length === 0">
-    <i class="bi bi-inbox fs-1 text-muted"></i>
-    <p class="mt-2 text-muted">Você ainda não registrou nenhuma transação. Que tal começar agora?</p>
-  </div>
+  <app-empty-state [condicao]="transacoes.length === 0" [conteudo]="'Você ainda não registrou nenhuma transação. Que tal começar agora?'"/>
 </div>
-
 
 <app-modal [label]="'Editar Transação'" [showModal]="showModalEditar" (modalChanged)="fecharModal()">
   <ng-container *ngIf="transacao">
     <app-formulario-transacao [id]="transacao.id" (processouComSucesso)="processarSucesso()"/>
   </ng-container>
 </app-modal>
+
 <app-modal [label]="'Excluir Transação'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()">
-  <ng-container *ngIf="transacao">
-    <div class="text-center">
-      <p class="fw-bold text-danger mb-4">Tem certeza que deseja excluir essa transação?</p>
-  
-      <div class="card p-3 mb-4 shadow-sm bg-light">
-        <div class="d-flex justify-content-between mb-3">
-          <span><strong>Descrição:</strong></span>
-          <span>{{ transacao.descricao }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-          <span><strong>Categoria:</strong></span>
-          <span>{{ transacao.categoria?.nome }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-          <span><strong>Data:</strong></span>
-          <span>{{ transacao.data | date: 'dd/MM/yyyy' }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-          <span><strong>Tipo:</strong></span>
-          <span>
-            <span [class.text-success]="transacao.tipo === 1" [class.text-danger]="transacao.tipo !== 1">
-              {{ transacao.tipo === 1 ? 'Receita' : 'Despesa' }}
-            </span>
-          </span>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-          <span><strong>Valor:</strong></span>
-          <span class="fw-bold text-primary">R$ {{ transacao.valor | number:'1.2-2' }}</span>
-        </div>
-      </div>
-  
-      <div class="d-flex justify-content-center gap-3">
-        <button class="btn btn-danger px-4" (click)="excluir()">
-          <i class="bi bi-trash"></i> Excluir
-        </button>
-        <button class="btn btn-secondary px-4" (click)="fecharModal()">
-          <i class="bi bi-x"></i> Cancelar
-        </button>
-      </div>
-    </div>
-  </ng-container>
-  
-  
+  <app-confirmacao-excluir [transacao]="transacao" (changed)="corresponderAcaoExcluir($event)"/>
 </app-modal>
+
 <app-modal [label]="'Nova Transação'" [showModal]="showModalNovo" (modalChanged)="fecharModal()">
   <ng-container *ngIf="showModalNovo">
-    <app-formulario-transacao (processouComSucesso)="processarSucesso()"/>
+    <app-formulario-transacao (processouComSucesso)="processarSucesso()" />
   </ng-container>
 </app-modal>

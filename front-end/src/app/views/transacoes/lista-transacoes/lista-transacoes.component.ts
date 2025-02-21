@@ -7,10 +7,12 @@ import { CommonModule } from '@angular/common';
 import { ModalComponent } from "../../../ui/modal/modal.component";
 import { FormularioTransacaoComponent } from "../formulario-transacao/formulario-transacao.component";
 import { RouterModule } from '@angular/router';
+import { EmptyStateComponent } from "../../../ui/empty-state/empty-state.component";
+import { ConfirmacaoExcluirComponent } from "../confirmacao-excluir/confirmacao-excluir.component";
 
 @Component({
   selector: 'app-lista-transacoes',
-  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule],
+  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ConfirmacaoExcluirComponent],
   templateUrl: './lista-transacoes.component.html',
   styleUrl: './lista-transacoes.component.scss'
 })
@@ -56,6 +58,10 @@ export class ListaTransacoesComponent implements OnInit {
           next: () => this.processarSucesso(),
           error: () => this.processarErro()
         })
+  }
+
+  corresponderAcaoExcluir(confirmou: boolean) {
+    confirmou ? this.excluir() : this.fecharModal()
   }
 
   processarSucesso() {

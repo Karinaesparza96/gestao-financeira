@@ -39,6 +39,7 @@ export class LimiteService extends BaseService {
   atualizar(id: string, limite: LimiteOrcamento) {
     return this.http.put(`${this.UrlService}/limites/${id}`, limite, this.ObterAuthHeaderJson())
                     .pipe(
+                      map(this.extractMensagens),
                       catchError(this.serviceError)
                     )
   }
