@@ -1,8 +1,8 @@
-import { ElementRef } from "@angular/core"
+import { ElementRef, QueryList } from "@angular/core"
 import { IDisplayMessage, IValidationMessage } from "../utils/validation/IValidationMessage"
-import { FormControlName, FormGroup } from "@angular/forms"
-import { fromEvent, merge, Observable } from "rxjs"
+import { fromEvent, merge } from "rxjs"
 import { FormValidationService } from "../utils/validation/form-validation.service"
+import { FormGroup } from "@angular/forms"
 
 export abstract class BaseFormComponent {
   erros: IDisplayMessage = {}
@@ -12,17 +12,20 @@ export abstract class BaseFormComponent {
 
   constructor() { }
 
-  protected configurarMensagensValidacaoBase(validationMessages: IValidationMessage) {
+  protected configurarMensagensValidacao(validationMessages: IValidationMessage) {
     this.formValidation = new FormValidationService(validationMessages);
   }
 
-  protected validateForm(formGroup: FormGroup, formControls: ElementRef[]) {
+  protected validateForm(formGroup:FormGroup, formControls: QueryList<ElementRef>) {
     merge(...this.initializeBlurEvents(formControls)).subscribe(() => {
-      this.erros = this.formValidation.executeValidation(formGroup)
+      this.erros = this.executeValidation(formGroup)
     })
   }
 
-  private initializeBlurEvents(formControls: ElementRef[]) {
+  protected executeValidation(formGroup:FormGroup) {
+    return this.formValidation.executeValidation(formGroup)
+  }
+  private initializeBlurEvents(formControls: QueryList<ElementRef>) {
     return (formControls ?? []).map((fc: ElementRef) => fromEvent(fc.nativeElement, 'blur'))
   }
 

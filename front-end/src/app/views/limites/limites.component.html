@@ -16,7 +16,7 @@
           <i class="fa fa-list-alt me-2"></i> Categoria
         </label>
         <select
-          id="categoria"
+          id="categoriaId"
           class="form-select"
         > 
         <option value="" disabled selected>Selecione</option>
@@ -32,32 +32,38 @@
   </div>
 
   <div class="col-12 text-center mt-3">
-    <a class="btn btn-success px-4 py-2">
+    <a class="btn btn-success px-4 py-2" (click)="showModalNovo = true">
       <i class="bi bi-plus-lg"></i> Novo Limite
     </a>
   </div>
   <div class="table-responsive mt-4">
-    <table class="table table-striped table-hover">
+    <table class="table table-hover align-middle">
       <thead>
         <tr>
+          <th scope="col">#</th>
+          <th scope="col">Periodo</th>
+          <th scope="col">Tipo</th>
           <th scope="col">Categoria</th>
           <th scope="col">Limite</th>
-          <th scope="col">Tipo</th>
           <th scope="col">% Aviso</th>
           <th scope="col" class="text-center">Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let limite of limites">
+          <td>
+           <app-clip-board [content]="limite.id!"/>
+          </td>
+          <td>{{ limite.periodo | date : "MM/yyyy" }}</td>
+          <td>{{ limite.tipoLimite == 1 ? "Geral" : "Categoria" }}</td>
           <td>{{ limite.categoria?.nome || "Geral" }}</td>
-          <td>R$ {{ limite.limite | number : "1.2-2" }}</td>
-          <td>{{ limite.tipoLimite === 1 ? "Geral" : "Categoria" }}</td>
+          <td>R$ {{ limite.limite | brCurrency }}</td>
           <td>{{ limite.porcentagemAviso }}%</td>
           <td class="text-center">
-            <button class="btn btn-warning btn-sm">
+            <button class="btn btn-sm btn-outline-primary me-1" (click)="editarLimite(limite.id)">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-danger btn-sm">
+            <button class="btn btn-sm btn-outline-danger" (click)="excluirLimite(limite.id)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -67,4 +73,13 @@
   </div>
   <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Você ainda não registrou nenhum limite. Que tal começar agora?'"/>
 </div>
-<!-- <app-modal> </app-modal> -->
+<app-modal [label]="'Novo Limite'" [showModal]="showModalNovo" (modalChanged)="fecharModal()"> 
+  <ng-container *ngIf="showModalNovo">
+    <app-formulario-limite (processouComSucesso)="processarSucesso()"/>
+  </ng-container>
+</app-modal>
+<app-modal [label]="'Editar Limite'" [showModal]="showModalEditar" (modalChanged)="fecharModal()"> 
+  <ng-container *ngIf="limiteId">
+    <app-formulario-limite [id]="limiteId" (processouComSucesso)="processarSucesso()"/>
+  </ng-container>
+</app-modal>
