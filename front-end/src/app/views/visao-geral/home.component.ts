@@ -11,10 +11,11 @@ import { Observable } from 'rxjs';
 import { GraficoTransacaoComponent } from '../transacoes/grafico-transacao/grafico-transacao.component';
 
 import { NotificacaoService } from '../../utils/notificacao.service';
+import { BrCurrencyPipe } from "../../utils/pipes/br-currency.pipe";
 
 @Component({
   selector: 'app-home',
-  imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent, CommonModule, CurrencyPipe, GraficoTransacaoComponent],
+  imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent, CommonModule, GraficoTransacaoComponent, BrCurrencyPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
