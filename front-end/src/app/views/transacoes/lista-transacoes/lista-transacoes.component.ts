@@ -9,10 +9,12 @@ import { FormularioTransacaoComponent } from "../formulario-transacao/formulario
 import { RouterModule } from '@angular/router';
 import { EmptyStateComponent } from "../../../ui/empty-state/empty-state.component";
 import { ConfirmacaoExcluirComponent } from "../confirmacao-excluir/confirmacao-excluir.component";
+import { BrCurrencyPipe } from "../../../utils/pipes/br-currency.pipe";
+import { ClipBoardComponent } from "../../../ui/clip-board/clip-board.component";
 
 @Component({
   selector: 'app-lista-transacoes',
-  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ConfirmacaoExcluirComponent],
+  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ConfirmacaoExcluirComponent, BrCurrencyPipe, ClipBoardComponent],
   templateUrl: './lista-transacoes.component.html',
   styleUrl: './lista-transacoes.component.scss'
 })
@@ -67,7 +69,7 @@ export class ListaTransacoesComponent implements OnInit {
   processarSucesso() {
     this.atualizar()
     this.fecharModal()
-    this.notificacao.mostrarMensagem('Operação realizada com sucesso!', 'sucesso')
+    this.notificacao.mostrarMensagem('Operação realizada com sucesso!')
   }
 
   processarErro() {

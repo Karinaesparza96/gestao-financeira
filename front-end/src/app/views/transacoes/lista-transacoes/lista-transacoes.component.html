@@ -8,7 +8,7 @@
           <div>
             <h6 class="text-muted mb-1">Entradas</h6>
             <p class="fw-bold text-success m-0">
-              {{ resumo?.totalReceita || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
+              {{ resumo?.totalReceita | brCurrency }}
             </p>
           </div>
         </div>
@@ -22,7 +22,7 @@
           <div>
             <h6 class="text-muted mb-1">Saídas</h6>
             <p class="fw-bold text-danger m-0">
-              {{ resumo?.totalDespesa || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
+              {{ resumo?.totalDespesa | brCurrency }}
             </p>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <div>
             <h6 class="text-muted mb-1">Saldo</h6>
             <p class="fw-bold m-0" [ngClass]="resumo?.totalSaldo ? 'text-primary' : 'text-warning'">
-              {{ resumo?.totalSaldo || 0 | currency : "BRL" : "symbol" : "1.2-2" }}
+              {{ resumo?.totalSaldo | brCurrency }}
             </p>
           </div>
         </div>
@@ -68,7 +68,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let transacao of transacoes; let i = index">
-          <td>{{ i + 1 }}</td>
+          <td>
+           <app-clip-board [content]="transacao.id!"/>
+          </td>
           <td>{{ transacao.data | date : "dd/MM/yyyy" }}</td>
           <td>{{ transacao.descricao }}</td>
           <td>{{ transacao.categoria?.nome }}</td>
@@ -76,7 +78,7 @@
             class="text-end fw-bold"
             [ngClass]="transacao.tipo === 1 ? 'text-success' : 'text-danger'"
           >
-            {{ transacao.valor | currency : "BRL" }}
+            {{ transacao.valor | brCurrency }}
           </td>
           <td class="text-center">
             <button
