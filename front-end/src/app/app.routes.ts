@@ -32,6 +32,11 @@ export const routes: Routes = [
     loadChildren: () => import('./views/limites/limites.route').then(m => m.routes),
     canActivate: [authGuard]
   },
+  {
+    path: 'relatorios',
+    loadComponent: () => import('./views/relatorios/relatorios.component').then(m => m.RelatoriosComponent),
+    canActivate: [authGuard]
+  },
 ];
 
 @NgModule({
