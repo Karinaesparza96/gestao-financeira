@@ -3,6 +3,7 @@ import { BaseService } from './base.service';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map } from 'rxjs';
 import { LimiteOrcamento } from '../models/limiteOrcamento';
+import { FiltroBuscaLimite } from '../models/filtroBusca';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,15 @@ export class LimiteService extends BaseService {
                       map(this.extractData),
                       catchError(this.serviceError)
                     )
+  }
+
+  obterTodosComFiltro(filtro: FiltroBuscaLimite) {
+    const params = Object.entries(filtro).map(key => key.join('=')).join('&');
+    return this.http.get(`${this.UrlService}/limites-orcamentos?${params}`, this.ObterAuthHeaderJson())
+                    .pipe(
+                      map(this.extractData),
+                      catchError(this.serviceError)
+                    );
   }
 
   obterPorId(id: string) {

@@ -1,9 +1,8 @@
 <div style="width: 100%; height: auto;">
   <canvas baseChart
           [data]="chartData"
-          [labels]="chartLabels"
+          [labels]="chartData?.labels"
           [options]="chartOptions"
-          [legend]="true"
-          chartType="bar">
+          [legend]="true">
   </canvas>
 </div>

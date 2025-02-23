@@ -17,7 +17,6 @@
     </div>
   </div>
 
-  <!-- Ações Rápidas -->
   <div class="quick-actions">
     <span>Acesso Rápido</span>
     <div class="action-buttons">
@@ -29,13 +28,14 @@
       </button>
     </div>
   </div>
-  <!-- Gráfico -->
-  <div class="dashboard-chart">
-    <app-grafico-transacao [transacoes]="transacoes" />
+  <div class="dashboard-chart" *ngIf="entradasEDespesas">
+    <app-grafico-transacao [chartData]="entradasEDespesas" />
+  </div>
+  <div class="dashboard-chart" *ngIf="maioresGastos">
+    <app-grafico-transacao [chartData]="maioresGastos" />
   </div>
 </div>
 
-<!-- Modal -->
 <app-modal [label]="options.label" [cssClass]="options.cssClass" [showModal]="showModal" (modalChanged)="showModal = false">
   <ng-container *ngIf="showModal">
     <app-formulario-transacao [tipo]="tipo" (processouComSucesso)="processarSucesso()"/>

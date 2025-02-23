@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { TransacaoService } from '../../../services/transacao.service';
 import { NotificacaoService } from './../../../utils/notificacao.service';
 import { Transacao } from '../../../models/Transacao';
@@ -13,19 +13,24 @@ import { ResumoFinanceiroComponent } from "../resumo-financeiro/resumo-financeir
 import { TabelaComponent } from '../../../ui/tabela/tabela.component';
 import { DetalheComponent } from "../detalhe/detalhe.component";
 import { ConfirmacaoExcluirComponent } from "../../../ui/confirmacao-excluir/confirmacao-excluir.component";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CategoriaService } from '../../../services/categoria.service';
+import { Categoria } from '../../../models/categoria';
 
 @Component({
   selector: 'app-lista-transacoes',
-  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ResumoFinanceiroComponent, TabelaComponent, DetalheComponent, ConfirmacaoExcluirComponent],
+  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ResumoFinanceiroComponent, TabelaComponent, DetalheComponent, ConfirmacaoExcluirComponent, ReactiveFormsModule],
   templateUrl: './lista-transacoes.component.html',
 })
 export class ListaTransacoesComponent implements OnInit {
-  transacoes: any[] = []
+  transacoes?: any[]
   resumo?: ResumoFinanceiro
   transacao?: Transacao | null
   showModalEditar: boolean = false
   showModalExcluir: boolean = false
   showModalNovo: boolean = false
+  filtroForm!: FormGroup
+  categorias: Categoria[] = []
   tabela = {
     colunas: [
       { campo: 'id', titulo: '#', classe: '', pipe: 'id' },
@@ -39,10 +44,17 @@ export class ListaTransacoesComponent implements OnInit {
       { icone: 'bi-trash', classe: 'btn-outline-danger', acao: this.excluirTransacao.bind(this) }
     ]
   }
-  constructor(private transacaoService: TransacaoService, private notificacao: NotificacaoService) { }
+  constructor(private fb: FormBuilder, private categoriaService: CategoriaService, private transacaoService: TransacaoService, private notificacao: NotificacaoService) {
+    this.filtroForm = this.fb.group({
+      data: [''],
+      categoriaId: [''],
+      tipoTransacao: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.atualizar()
+    this.categoriaService.obterTodos().subscribe(x => this.categorias = x)
   }
 
   editarTransacao(transacao: Transacao) {
@@ -64,12 +76,7 @@ export class ListaTransacoesComponent implements OnInit {
 
   atualizar() {
     this.transacaoService.obterResumoTransacoes().subscribe(x => this.resumo = x)
-    this.transacaoService.obterTodos().pipe(
-      map((x: Transacao[]) => x.map(y => ({
-        ...y,
-        categoria: y.categoria?.nome
-      })))
-    ).subscribe(x => this.transacoes = x)
+    this.obterTodosComFiltro().subscribe(x => this.transacoes = x)
   }
 
   excluir() {
@@ -93,5 +100,19 @@ export class ListaTransacoesComponent implements OnInit {
 
   processarErro() {
     this.notificacao.mostrarMensagem('Ops! Houve um erro', 'falha')
+  }
+
+  filtrar() {
+    this.obterTodosComFiltro().subscribe(x => this.transacoes = x)
+  }
+
+  obterTodosComFiltro() {
+    const filtro = this.filtroForm.value
+    return this.transacaoService.obterTodosComFiltro(filtro).pipe(
+      map((x: Transacao[]) => x.map(y => ({
+        ...y,
+        categoria: y.categoria?.nome
+      })))
+    )
   }
 }
