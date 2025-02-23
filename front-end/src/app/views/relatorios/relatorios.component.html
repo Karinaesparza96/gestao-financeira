@@ -1,11 +1,85 @@
 <div class="quick-actions">
   <span>Relatório Categorias</span>
   <div class="action-buttons">
-    <button class="btn-action entrada" (click)="downloadReportCSV()" title="CSV">
+    <button class="btn-action entrada" (click)="downloadReportCategoria('csv')" title="CSV">
       <i class="bi bi-file-earmark-check"></i>
     </button>
-    <button class="btn-action saida" (click)="downloadReportPDF()" title="PDF">
+    <button class="btn-action saida" (click)="downloadReportCategoria('pdf')" title="PDF">
       <i class="bi bi-file-earmark-check"></i>
     </button>
   </div>
+</div>
+<div class="quick-actions">
+  <span>Relatório Transações</span>
+  <div class="container py-5">
+    <div class="row mb-4">
+      <form class="row align-items-end">
+        <!-- Mensagem de erro -->
+        <div class="alert alert-danger" *ngIf="erro">
+          {{ erro }}
+        </div>
+        <div class="col-md-3">
+          <label for="periodo" class="form-label">
+            <i class="fa fa-calendar-alt me-2"></i> Data
+          </label>
+          <input
+            type="date"
+            id="periodo"
+            class="form-control"
+            #periodoInput
+          />
+        </div>
+        <div class="col-md-3">
+          <label for="categoria" class="form-label">
+            <i class="fa fa-list-alt me-2"></i> Categoria
+          </label>
+          <select
+            id="categoria"
+            class="form-select"
+            #categoriaSelect
+          >
+          <option value="" disabled selected>Selecione</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nome }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="tipoTransacao" class="form-label">
+            <i class="fa fa-list-alt me-2"></i> Tipo Transação
+          </label>
+          <select
+            id="tipoTransacao"
+            class="form-select"
+            #tipoTransacaoSelect
+          >
+          <option value="" disabled selected>Selecione</option>
+          <option *ngFor="let tipoTransacao of options" [value]="tipoTransacao.value">{{ tipoTransacao.label }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="tipoRelatorio" class="form-label">
+            <i class="fa fa-list-alt me-2"></i> Tipo Relatório
+          </label>
+          <select
+            id="tipoRelatorio"
+            class="form-select"
+            #tipoRelatorioSelect
+          >
+          <option value="" disabled selected>Selecione</option>
+          <option *ngFor="let tipoRelatorio of optionsRelatorio" [value]="tipoRelatorio.value">{{ tipoRelatorio.label }}</option>
+          </select>
+        </div>
+      </form>
+      <div class="quick-actions">
+        <div class="action-buttons">
+          <button class="btn btn-success px-4 py-2" (click)="downloadReportTransacao({
+            categoriaId: categoriaSelect.value,
+            data: periodoInput.value,
+            tipoTransacao: tipoTransacaoSelect.value,
+            tipoRelatorio: tipoRelatorioSelect.value
+          })">
+            <i class="bi bi-file-earmark-check"></i> Relatório
+          </button>
+        </div>
+      </div>
+    </div>
 </div>

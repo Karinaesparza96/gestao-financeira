@@ -171,9 +171,9 @@ export class CategoriasComponent implements OnInit, OnDestroy {
 
   // Cancelar edição
   cancelarEdicao(): void {
-    this.modoEdicao = false; // Desativa o modo de edição // Desativa o modo de edição
-    this.ehNovaCategoria = false; // Desativa a flag de nova categoria // Desativa a flag de nova categoria
-    this.categoriaEmEdicao = {} as Categoria; // Reseta a categoria em edição // Reseta a categoria em edição
-    this.erro = null; // Reseta o erro // Reseta o erro
+    this.modoEdicao = false;
+    this.ehNovaCategoria = false;
+    this.categoriaEmEdicao = {} as Categoria;
+    this.erro = null;
   }
 }
