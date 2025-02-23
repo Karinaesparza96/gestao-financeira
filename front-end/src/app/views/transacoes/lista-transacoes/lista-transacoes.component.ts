@@ -1,30 +1,44 @@
-import { NotificacaoService } from './../../../utils/notificacao.service';
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { map } from 'rxjs';
 import { TransacaoService } from '../../../services/transacao.service';
+import { NotificacaoService } from './../../../utils/notificacao.service';
 import { Transacao } from '../../../models/Transacao';
 import { ResumoFinanceiro } from '../../../models/resumoFinanceiro';
-import { CommonModule } from '@angular/common';
 import { ModalComponent } from "../../../ui/modal/modal.component";
 import { FormularioTransacaoComponent } from "../formulario-transacao/formulario-transacao.component";
-import { RouterModule } from '@angular/router';
 import { EmptyStateComponent } from "../../../ui/empty-state/empty-state.component";
-import { ConfirmacaoExcluirComponent } from "../confirmacao-excluir/confirmacao-excluir.component";
-import { BrCurrencyPipe } from "../../../utils/pipes/br-currency.pipe";
-import { ClipBoardComponent } from "../../../ui/clip-board/clip-board.component";
+import { ResumoFinanceiroComponent } from "../resumo-financeiro/resumo-financeiro.component";
+import { TabelaComponent } from '../../../ui/tabela/tabela.component';
+import { DetalheComponent } from "../detalhe/detalhe.component";
+import { ConfirmacaoExcluirComponent } from "../../../ui/confirmacao-excluir/confirmacao-excluir.component";
 
 @Component({
   selector: 'app-lista-transacoes',
-  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ConfirmacaoExcluirComponent, BrCurrencyPipe, ClipBoardComponent],
+  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ResumoFinanceiroComponent, TabelaComponent, DetalheComponent, ConfirmacaoExcluirComponent],
   templateUrl: './lista-transacoes.component.html',
-  styleUrl: './lista-transacoes.component.scss'
 })
 export class ListaTransacoesComponent implements OnInit {
-  transacoes: Transacao[] = []
+  transacoes: any[] = []
   resumo?: ResumoFinanceiro
   transacao?: Transacao | null
   showModalEditar: boolean = false
   showModalExcluir: boolean = false
   showModalNovo: boolean = false
+  tabela = {
+    colunas: [
+      { campo: 'id', titulo: '#', classe: '', pipe: 'id' },
+      { campo: 'data', titulo: 'Data', classe: '', pipe: 'date' },
+      { campo: 'descricao', titulo: 'Descrição', classe: '' },
+      { campo: 'categoria', titulo: 'Categoria', classe: '' },
+      { campo: 'valor', titulo: 'Valor', classe: 'text-end fw-bold', pipe: 'currency' }
+    ],
+    acoes: [
+      { icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarTransacao.bind(this) },
+      { icone: 'bi-trash', classe: 'btn-outline-danger', acao: this.excluirTransacao.bind(this) }
+    ]
+  }
   constructor(private transacaoService: TransacaoService, private notificacao: NotificacaoService) { }
 
   ngOnInit(): void {
@@ -50,7 +64,12 @@ export class ListaTransacoesComponent implements OnInit {
 
   atualizar() {
     this.transacaoService.obterResumoTransacoes().subscribe(x => this.resumo = x)
-    this.transacaoService.obterTodos().subscribe(x => this.transacoes = x)
+    this.transacaoService.obterTodos().pipe(
+      map((x: Transacao[]) => x.map(y => ({
+        ...y,
+        categoria: y.categoria?.nome
+      })))
+    ).subscribe(x => this.transacoes = x)
   }
 
   excluir() {

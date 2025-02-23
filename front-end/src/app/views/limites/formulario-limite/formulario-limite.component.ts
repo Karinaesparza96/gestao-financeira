@@ -63,24 +63,8 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
     return TipoLimite.geral.toString()
   }
 
-  podeMostrarLista() {
-    debugger
-    return this.tipoLimite?.value == null || this.tipoLimite.value == TipoLimite.categoria
-  }
-
   get tipoLimite() {
     return this.limiteOrcamentoForm.get('tipoLimite')
-  }
-
-  removerValidacaoCategoria() {
-    this.limiteOrcamentoForm.get('categoriaId')?.clearValidators()
-    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
-    this.limiteOrcamentoForm.get('categoriaId')?.setValue(null)
-    this.erros['categoriaId'] = ''
-  }
-  adicionarValidacaoCategoria() {
-    this.limiteOrcamentoForm.get('categoriaId')?.setValidators([Validators.required])
-    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
   }
 
   ngAfterViewInit(): void {
@@ -93,11 +77,22 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
     });
   }
   
-
   submit() { 
     if (this.limiteOrcamentoForm.invalid) return;
     const { id, ...limiteOrcamento } = this.obterLimiteDeForm();
     id ? this.atualizarLimite(id, {...limiteOrcamento, id}) : this.adicionarLimite(limiteOrcamento);
+  }
+
+  adicionarValidacaoCategoria() {
+    this.limiteOrcamentoForm.get('categoriaId')?.setValidators([Validators.required])
+    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
+  }
+
+  removerValidacaoCategoria() {
+    this.limiteOrcamentoForm.get('categoriaId')?.clearValidators()
+    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
+    this.limiteOrcamentoForm.get('categoriaId')?.setValue(null)
+    this.erros['categoriaId'] = ''
   }
 
   obterLimiteDeForm() {
@@ -147,6 +142,11 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
       ...response,
       periodo: response.periodo.toString().substring(0, 7)
     });
+  }
+
+  formatarValor({target: {value}}: any) {
+    const valor = parseFloat(value.replace(/\D/g, '')) / 100;
+    this.limiteOrcamentoForm.get('limite')?.setValue(valor.toFixed(2));
   }
 
   private processarSucesso(response: string[]): void {

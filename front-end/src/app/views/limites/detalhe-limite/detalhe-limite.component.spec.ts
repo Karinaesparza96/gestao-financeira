@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListaTransacoesComponent } from './lista-transacoes.component';
+import { DetalheLimiteComponent } from './detalhe-limite.component';
 
-describe('ListaTransacoesComponent', () => {
-  let component: ListaTransacoesComponent;
-  let fixture: ComponentFixture<ListaTransacoesComponent>;
+describe('DetalheLimiteComponent', () => {
+  let component: DetalheLimiteComponent;
+  let fixture: ComponentFixture<DetalheLimiteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListaTransacoesComponent]
+      imports: [DetalheLimiteComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ListaTransacoesComponent);
+    fixture = TestBed.createComponent(DetalheLimiteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

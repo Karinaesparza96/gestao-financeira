@@ -25,6 +25,8 @@ namespace Data.Repositories
 
             query = query.Where(x => x.UsuarioId == usuarioIdentityId);
 
+            query = query.Include(x => x.Categoria);
+
             return await query.ToListAsync();
         }
     }

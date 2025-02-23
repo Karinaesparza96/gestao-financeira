@@ -9,22 +9,38 @@ import { NotificacaoService } from '../../utils/notificacao.service';
 import { BaseFormComponent } from '../../base-components/BaseFormComponent';
 import { Categoria } from '../../models/categoria';
 import { FormularioLimiteComponent } from "./formulario-limite/formulario-limite.component";
-import { BrCurrencyPipe } from "../../utils/pipes/br-currency.pipe";
-import { ClipBoardComponent } from "../../ui/clip-board/clip-board.component";
+import { TabelaComponent } from "../../ui/tabela/tabela.component";
+import { map } from 'rxjs';
+import { ConfirmacaoExcluirComponent } from "../../ui/confirmacao-excluir/confirmacao-excluir.component";
+import { DetalheLimiteComponent } from "./detalhe-limite/detalhe-limite.component";
 
 @Component({
   selector: 'app-limites',
-  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, BrCurrencyPipe, ClipBoardComponent],
+  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, TabelaComponent, ConfirmacaoExcluirComponent, DetalheLimiteComponent],
   templateUrl: './limites.component.html',
   styleUrl: './limites.component.scss'
 })
 export class LimitesComponent extends BaseFormComponent implements OnInit {
-  limites: LimiteOrcamento[] = []
+  limites: any[] = []
   categorias: Categoria[] = []
   showModalNovo: boolean = false;
   showModalEditar: boolean = false;
   showModalExcluir: boolean = false;
-  limiteId?: string;
+  limite?: LimiteOrcamento;
+  tabela = {
+    colunas: [
+      {campo: 'id', titulo: '#', classe: '', pipe: 'id'},
+      {campo: 'periodo', titulo: 'Periodo', classe: '', pipe: 'date'},
+      {campo: 'tipoLimite', titulo: 'Tipo', classe: ''},
+      {campo: 'categoria', titulo: 'Categoria', classe: ''},
+      {campo: 'limite', titulo: 'Limite', classe: 'text-end', pipe: 'currency'},
+      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'}
+    ],
+    acoes: [
+      {icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarLimite.bind(this)},
+      {icone: 'bi-trash', classe: 'btn-outline-danger', acao: this.excluirLimite.bind(this)}
+    ]
+  }
   
     constructor(
       private categoriaService: CategoriaService,
@@ -36,16 +52,16 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    this.limiteService.obterTodos().subscribe((r) => this.limites = r)
+   this.atualizar();
   }
   
-  editarLimite(limiteId: string) {
-    this.limiteId = limiteId;
+  editarLimite(limite: LimiteOrcamento) {
+    this.limite = limite;
     this.showModalEditar = true;
   }
 
-  excluirLimite(limiteId: string) {
-    this.limiteId = limiteId;
+  excluirLimite(limite: LimiteOrcamento) {
+    this.limite = limite;
     this.showModalExcluir = true;
   }
 
@@ -53,11 +69,17 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     this.showModalNovo = false;
     this.showModalEditar = false;
     this.showModalExcluir = false;
-    this.limiteId = undefined;
+    this.limite = undefined;
   }
 
   atualizar() {
-    this.limiteService.obterTodos().subscribe((r) => this.limites = r)
+    this.limiteService.obterTodos().pipe(map((x: LimiteOrcamento[]) => x.map((y: LimiteOrcamento) => {
+      return {
+        ...y,
+        tipoLimite: y.tipoLimite == 1 ? 'Geral' : 'Categoria',
+        categoria: y.categoriaNome || 'Geral'
+      }
+    }))).subscribe((r) => this.limites = r)
     this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
   }
 
@@ -65,6 +87,24 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     this.atualizar();
     this.fecharModal();
     this.notificacao.mostrarMensagem("Operação realizada com sucesso.")
+  }
+
+  processarErro() {
+    this.notificacao.mostrarMensagem('Ops! Houve um erro', 'falha')
+  }
+
+  confirmarExcluir() {
+    if (this.limite?.id) {
+      this.limiteService.excluir(this.limite?.id)
+        .subscribe({
+          next: () => this.processarSucesso(),
+          error: () => this.processarErro()
+        })
+    }
+  }
+
+  corresponderAcaoExcluir(confirmou: boolean) {
+    confirmou ? this.confirmarExcluir() : this.fecharModal()
   }
 
 }

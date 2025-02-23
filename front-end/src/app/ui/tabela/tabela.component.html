@@ -1,0 +1,32 @@
+<div class="table-responsive mt-4">
+  <table class="table table-hover align-middle">
+    <thead class="bg-dark text-white">
+      <tr>
+        <th *ngFor="let coluna of colunas" [ngClass]="coluna.classe">{{ coluna.titulo }}</th>
+        <th class="text-center">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of dados">
+        <td *ngFor="let coluna of colunas" [ngClass]="coluna.classe">
+          <ng-container *ngIf="coluna?.pipe; else noPipe">
+            <ng-container [ngSwitch]="coluna.pipe">
+              <span *ngSwitchCase="'id'"><app-clip-board [content]="item[coluna.campo]"/></span>
+              <span *ngSwitchCase="'currency'">R$ {{ item[coluna.campo] | brCurrency }}</span>
+              <span *ngSwitchCase="'date'">{{ item[coluna.campo] | date:'dd/MM/yyyy' }}</span>
+              <span *ngSwitchCase="'percent'">{{ item[coluna.campo] }}%</span>
+            </ng-container>
+          </ng-container>
+          <ng-template #noPipe>
+            {{ item[coluna.campo] }}
+          </ng-template>
+        </td>
+        <td class="text-center">
+          <button *ngFor="let acao of acoes" class="btn btn-sm" [ngClass]="acao.classe" (click)="acao.acao(item)">
+            <i class="bi" [ngClass]="acao.icone"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

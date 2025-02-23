@@ -36,41 +36,7 @@
       <i class="bi bi-plus-lg"></i> Novo Limite
     </a>
   </div>
-  <div class="table-responsive mt-4">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Periodo</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Categoria</th>
-          <th scope="col">Limite</th>
-          <th scope="col">% Aviso</th>
-          <th scope="col" class="text-center">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let limite of limites">
-          <td>
-           <app-clip-board [content]="limite.id!"/>
-          </td>
-          <td>{{ limite.periodo | date : "MM/yyyy" }}</td>
-          <td>{{ limite.tipoLimite == 1 ? "Geral" : "Categoria" }}</td>
-          <td>{{ limite.categoria?.nome || "Geral" }}</td>
-          <td>R$ {{ limite.limite | brCurrency }}</td>
-          <td>{{ limite.porcentagemAviso }}%</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-outline-primary me-1" (click)="editarLimite(limite.id)">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="excluirLimite(limite.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes"/>
   <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Você ainda não registrou nenhum limite. Que tal começar agora?'"/>
 </div>
 <app-modal [label]="'Novo Limite'" [showModal]="showModalNovo" (modalChanged)="fecharModal()"> 
@@ -79,7 +45,14 @@
   </ng-container>
 </app-modal>
 <app-modal [label]="'Editar Limite'" [showModal]="showModalEditar" (modalChanged)="fecharModal()"> 
-  <ng-container *ngIf="limiteId">
-    <app-formulario-limite [id]="limiteId" (processouComSucesso)="processarSucesso()"/>
+  <ng-container *ngIf="limite">
+    <app-formulario-limite [id]="limite.id" (processouComSucesso)="processarSucesso()"/>
   </ng-container>
+</app-modal>
+<app-modal [label]="'Excluir Limite'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()"> 
+   <app-confirmacao-excluir (changed)="corresponderAcaoExcluir($event)">
+    <ng-container *ngIf="limite">
+     <app-detalhe-limite [limite]="limite" />
+    </ng-container>
+    </app-confirmacao-excluir>
 </app-modal>
