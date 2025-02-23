@@ -7,6 +7,8 @@ namespace Api.Dtos
         public Guid? Id { get; set; }
         public string? CategoriaId { get; set; }
 
+        public string? CategoriaNome { get; set; }
+
         [Required(ErrorMessage = "Campo {0} é obrigatório.")]
         public DateOnly Periodo { get; set; }
 
