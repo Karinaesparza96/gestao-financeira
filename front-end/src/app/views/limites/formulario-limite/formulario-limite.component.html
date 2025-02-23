@@ -58,6 +58,7 @@
           id="limite"
           formControlName="limite"
           placeholder="R$ 0,00"
+          (input)="formatarValor($event)"
         />
         <div
           *ngIf="erros['limite']"

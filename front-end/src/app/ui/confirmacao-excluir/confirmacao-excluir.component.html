@@ -1,0 +1,16 @@
+<div class="text-center">
+  <p class="fw-bold text-danger mb-4">
+    Tem certeza que deseja excluir esse registro?
+  </p>
+
+ <ng-content></ng-content>
+
+  <div class="d-flex justify-content-center gap-3">
+    <button class="btn btn-danger px-4" (click)="confirmar()">
+      <i class="bi bi-trash"></i> Excluir
+    </button>
+    <button class="btn btn-secondary px-4" (click)="cancelar()">
+      <i class="bi bi-x"></i> Cancelar
+    </button>
+  </div>
+</div>

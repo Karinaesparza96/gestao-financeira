@@ -1,19 +1,18 @@
 <div class="dashboard">
-  <!-- Cabeçalho -->
   <div class="dashboard-header">
     <app-saudacao-usuario />
     <div class="dashboard-summary">
       <div class="summary-card receita">
         <span>Receita Mensal</span>
-        <p>{{ (resumoSaldo$ | async)?.totalReceita | brCurrency}}</p>
+        <p>R$ {{ (resumoSaldo$ | async)?.totalReceita | brCurrency}}</p>
       </div>
       <div class="summary-card despesa">
         <span>Despesa Mensal</span>
-        <p>{{ (resumoSaldo$ | async)?.totalDespesa | brCurrency }}</p>
+        <p>R$ {{ (resumoSaldo$ | async)?.totalDespesa | brCurrency }}</p>
       </div>
       <div class="summary-card saldo">
         <span>Saldo Total</span>
-        <p>{{ (resumoSaldo$ | async)?.totalSaldo | brCurrency }}</p>
+        <p>R$ {{ (resumoSaldo$ | async)?.totalSaldo | brCurrency }}</p>
       </div>
     </div>
   </div>
@@ -30,9 +29,6 @@
       </button>
     </div>
   </div>
-  
-  
-
   <!-- Gráfico -->
   <div class="dashboard-chart">
     <app-grafico-transacao [transacoes]="transacoes" />

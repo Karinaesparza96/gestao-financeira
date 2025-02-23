@@ -72,9 +72,8 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
 
   submit(): void {
     if (!this.formGroup.valid) return;
-
-    const {id, ...transacao} = this.obterTransacaoDeForm();
-    id ? this.atualizarTransacao(id, transacao) : this.adicionarTransacao(transacao);
+    const {id, ...transacao} = this.criarTransacaoDeForm();
+    id ? this.atualizarTransacao(id, {...transacao, id}) : this.adicionarTransacao(transacao);
 }
 
   private criarForm(): FormGroup {
@@ -104,7 +103,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     }
   }
 
-  private obterTransacaoDeForm(): Transacao {
+  private criarTransacaoDeForm(): Transacao {
   const categoria = this.categorias.find(x => x.id === this.formGroup.get('categoria.idCategoria')?.value);
       return {
           ...this.formGroup.value,
@@ -146,12 +145,9 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     });
   }
 
-  formatCurrency(event: any) {
-    let value = event.target.value;
-    value = value.replace(/\D/g, '');
-    value = (Number(value) / 100).toFixed(2);
-    event.target.value = value;
-    this.formGroup.get('valor')?.setValue(value);
+  formatarValor({target: {value}}: any): void {
+    const valor = parseFloat(value.replace(/\D/g, '')) / 100;
+    this.formGroup.get('valor')?.setValue(valor.toFixed(2));
   }
 
   private processarSucesso(response: string[]): void {

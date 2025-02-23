@@ -1,5 +1,3 @@
-import { JsonPipe } from "@angular/common";
-
 export class LocalStorageUtils {
 
   public ObterUsuario(){
