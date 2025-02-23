@@ -1,17 +1,58 @@
 <div class="container mt-4">
   <app-resumo-financeiro [dados]="resumo"/>
-  <div class="col-12 text-center mt-3">
+  <div class="col-12 text-center mt-4">
     <a (click)="showModalNovo = true" class="btn btn-success px-4 py-2">
       <i class="bi bi-plus-lg"></i> Nova Transação
     </a>
   </div>
+  <form [formGroup]="filtroForm" class="row align-items-end mt-4" (ngSubmit)="filtrar()">
+    <div class="col-md-3">
+      <label for="periodo" class="form-label">
+        <i class="fa fa-calendar-alt me-2"></i> Data
+      </label>
+      <input
+        type="date"
+        id="data"
+        class="form-control"
+        formControlName="data"
+      />
+    </div>
+    <div class="col-md-3">
+      <label for="periodo" class="form-label">
+        <i class="fa fa-calendar-alt me-2"></i> Tipo
+      </label>
+      <select id="tipoTransacao" class="form-select" formControlName="tipoTransacao">
+        <option value="" selected>Selecione</option>
+        <option value="1">Receita</option>
+        <option value="2">Despesa</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="categoria" class="form-label">
+        <i class="fa fa-list-alt me-2"></i> Categoria
+      </label>
+      <select
+        id="categoriaId"
+        class="form-select"
+        formControlName="categoriaId"
+      > 
+      <option value="" selected>Selecione</option>
+      <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nome }}</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-outline-primary rounded-pill px-4" type="submit">
+        <i class="fa fa-filter me-2"></i> Filtrar
+      </button>
+    </div>
+  </form>
   <app-tabela
     [colunas]="tabela.colunas"
-    [dados]="transacoes"
+    [dados]="transacoes ?? []"
     [acoes]="tabela.acoes"
   ></app-tabela>
 
-  <app-empty-state [condicao]="transacoes.length === 0" [conteudo]="'Você ainda não registrou nenhuma transação. Que tal começar agora?'"/>
+  <app-empty-state [condicao]="transacoes?.length === 0" [conteudo]="'Sem registros para listar'"/>
 </div>
 
 <app-modal [label]="'Editar Transação'" [showModal]="showModalEditar" (modalChanged)="fecharModal()">
@@ -21,7 +62,7 @@
 </app-modal>
 
 <app-modal [label]="'Excluir Transação'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()">
-  <app-confirmacao-excluir (changed)="corresponderAcaoExcluir($event)">
+  <app-confirmacao-excluir (changed)="corresponderAcaoExcluir($event)" (cancelou)="fecharModal()">
     <ng-container *ngIf="transacao">
       <app-detalhe [transacao]="transacao" />
     </ng-container>

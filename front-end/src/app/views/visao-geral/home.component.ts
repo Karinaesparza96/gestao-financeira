@@ -38,11 +38,7 @@ export class HomeComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.transacaoService.obterTodos().subscribe((x) => this.transacoes = x)
-    this.graficoService.obterDados().subscribe(({entradasEDespesas, maioresGastos}) => {
-      this.entradasEDespesas = entradasEDespesas
-      this.maioresGastos = maioresGastos
-    })
+    this.atualizar()
   }
 
   novaReceita(){
@@ -63,7 +59,16 @@ export class HomeComponent implements OnInit{
     this.tipo = TipoTransacao.Saida
   }
 
+  atualizar() {
+    this.transacaoService.obterTodos().subscribe((x) => this.transacoes = x)
+    this.graficoService.obterDados().subscribe(({entradasEDespesas, maioresGastos}) => {
+      this.entradasEDespesas = entradasEDespesas
+      this.maioresGastos = maioresGastos
+    })
+  }
+
   processarSucesso() {
+    this.atualizar()
     this.showModal = false
     this.notificacao.mostrarMensagem('Operação realizada com sucesso!','sucesso')
   }

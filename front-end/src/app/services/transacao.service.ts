@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RetornoPadrao } from '../utils/retornoPadrao';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Transacao } from '../models/Transacao';
 import { ResumoFinanceiro } from '../models/resumoFinanceiro';
 import { BaseService } from './base.service';
+import { FiltroBuscaTransacao } from '../models/filtroBusca';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,15 @@ export class TransacaoService extends BaseService {
 
   obterTodos(): Observable<Transacao[]> {
     return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes`, this.ObterAuthHeaderJson())
+                    .pipe(
+                      map(this.extractData),
+                      catchError(this.serviceError)
+                    )
+  }
+
+  obterTodosComFiltro(filtro: FiltroBuscaTransacao): Observable<Transacao[]> {
+    const params = Object.entries(filtro).map(key => key.join('=')).join('&');
+    return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes?${params}`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData),
                       catchError(this.serviceError)

@@ -28,10 +28,10 @@
       </button>
     </div>
   </div>
-  <div class="dashboard-chart">
+  <div class="dashboard-chart" *ngIf="entradasEDespesas">
     <app-grafico-transacao [chartData]="entradasEDespesas" />
   </div>
-  <div class="dashboard-chart">
+  <div class="dashboard-chart" *ngIf="maioresGastos">
     <app-grafico-transacao [chartData]="maioresGastos" />
   </div>
 </div>

@@ -13,10 +13,11 @@ import { TabelaComponent } from "../../ui/tabela/tabela.component";
 import { map } from 'rxjs';
 import { ConfirmacaoExcluirComponent } from "../../ui/confirmacao-excluir/confirmacao-excluir.component";
 import { DetalheLimiteComponent } from "./detalhe-limite/detalhe-limite.component";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-limites',
-  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, TabelaComponent, ConfirmacaoExcluirComponent, DetalheLimiteComponent],
+  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, TabelaComponent, ConfirmacaoExcluirComponent, DetalheLimiteComponent, ReactiveFormsModule],
   templateUrl: './limites.component.html',
   styleUrl: './limites.component.scss'
 })
@@ -27,6 +28,7 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   showModalEditar: boolean = false;
   showModalExcluir: boolean = false;
   limite?: LimiteOrcamento;
+  filtroForm!: FormGroup;
   tabela = {
     colunas: [
       {campo: 'id', titulo: '#', classe: '', pipe: 'id'},
@@ -43,12 +45,17 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   }
   
     constructor(
+      private fb: FormBuilder,
       private categoriaService: CategoriaService,
       private limiteService: LimiteService,
       private notificacao: NotificacaoService
     ) {
       super();
       this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
+      this.filtroForm = this.fb.group({
+        periodo: [''],
+        categoriaId: ['']
+      });
     }
 
   ngOnInit(): void {
@@ -73,13 +80,7 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   }
 
   atualizar() {
-    this.limiteService.obterTodos().pipe(map((x: LimiteOrcamento[]) => x.map((y: LimiteOrcamento) => {
-      return {
-        ...y,
-        tipoLimite: y.tipoLimite == 1 ? 'Geral' : 'Categoria',
-        categoria: y.categoriaNome || 'Geral'
-      }
-    }))).subscribe((r) => this.limites = r)
+    this.filtrar();
     this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
   }
 
@@ -105,6 +106,17 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
 
   corresponderAcaoExcluir(confirmou: boolean) {
     confirmou ? this.confirmarExcluir() : this.fecharModal()
+  }
+
+  filtrar() {
+    const filtro = this.filtroForm.value;
+    this.limiteService.obterTodosComFiltro(filtro).pipe(map((x: LimiteOrcamento[]) => x.map((y: LimiteOrcamento) => {
+      return {
+        ...y,
+        tipoLimite: y.tipoLimite == 1 ? 'Geral' : 'Categoria',
+        categoria: y.categoriaNome || 'Geral'
+      }
+    }))).subscribe((r) => this.limites = r)
   }
 
 }
