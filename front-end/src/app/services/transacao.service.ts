@@ -13,7 +13,7 @@ export class TransacaoService extends BaseService {
 
   constructor(private http: HttpClient) { super(); }
 
-  obterTodos() {
+  obterTodos(): Observable<Transacao[]> {
     return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData),
@@ -21,7 +21,7 @@ export class TransacaoService extends BaseService {
                     )
   }
 
-  obterPorId(id: string) {
+  obterPorId(id: string): Observable<Transacao> {
     return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes/${id}`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData), 

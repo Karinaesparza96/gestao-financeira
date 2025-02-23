@@ -1,23 +1,24 @@
 import { TipoTransacao } from './../../models/TipoTransacao';
 import { Component, OnInit, viewChild } from '@angular/core';
 import { ModalComponent } from "../../ui/modal/modal.component";
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { SaudacaoUsuarioComponent } from "../../ui/saudacao-usuario/saudacao-usuario.component";
 import { FormularioTransacaoComponent } from "../transacoes/formulario-transacao/formulario-transacao.component";
-import { CommonModule, CurrencyPipe } from '@angular/common';
 import { TransacaoService } from '../../services/transacao.service';
 import { Transacao } from '../../models/Transacao';
 import { ResumoFinanceiro } from '../../models/resumoFinanceiro';
-import { Observable } from 'rxjs';
 import { GraficoTransacaoComponent } from '../transacoes/grafico-transacao/grafico-transacao.component';
-
 import { NotificacaoService } from '../../utils/notificacao.service';
 import { BrCurrencyPipe } from "../../utils/pipes/br-currency.pipe";
+import { GraficoService } from '../../services/grafico.service';
 
 @Component({
   selector: 'app-home',
   imports: [ModalComponent, SaudacaoUsuarioComponent, FormularioTransacaoComponent, CommonModule, GraficoTransacaoComponent, BrCurrencyPipe],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
+  providers: [GraficoService]
 })
 export class HomeComponent implements OnInit{
   showModal: boolean = false
@@ -25,17 +26,23 @@ export class HomeComponent implements OnInit{
   options: {label: string, cssClass: 'sucesso'|'falha'} = {label: '', cssClass: 'sucesso'};
   tipo: TipoTransacao = TipoTransacao.Entrada
   transacoes: Transacao[] = []
- 
+  entradasEDespesas: any
+  maioresGastos: any
   resumoSaldo$: Observable<ResumoFinanceiro>;
 
   constructor(private transacaoService: TransacaoService,
-              private notificacao: NotificacaoService
+              private notificacao: NotificacaoService,
+              private graficoService: GraficoService
   ) {
     this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
   }
 
   ngOnInit(): void {
     this.transacaoService.obterTodos().subscribe((x) => this.transacoes = x)
+    this.graficoService.obterDados().subscribe(({entradasEDespesas, maioresGastos}) => {
+      this.entradasEDespesas = entradasEDespesas
+      this.maioresGastos = maioresGastos
+    })
   }
 
   novaReceita(){
