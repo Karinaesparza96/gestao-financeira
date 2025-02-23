@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
+import { FormBuilder, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ErrorListComponent } from "../../../ui/error-list/error-list.component";
 import { BaseFormComponent } from '../../../base-components/BaseFormComponent';
 import { Categoria } from '../../../models/categoria';
-import { LimiteOrcamento } from '../../../models/limiteOrcamento';
+import { LimiteOrcamento, TipoLimite } from '../../../models/limiteOrcamento';
 import { CategoriaService } from '../../../services/categoria.service';
 import { LimiteService } from '../../../services/limite.service';
 import { NotificacaoService } from '../../../utils/notificacao.service';
@@ -16,15 +16,16 @@ import { IValidationMessage } from '../../../utils/validation/IValidationMessage
   templateUrl: './formulario-limite.component.html',
   styleUrl: './formulario-limite.component.scss'
 })
-export class FormularioLimiteComponent extends BaseFormComponent {
-
-  limites: LimiteOrcamento[] = []
+export class FormularioLimiteComponent extends BaseFormComponent implements OnInit, AfterViewInit {
+  @ViewChildren(FormControlName, { read: ElementRef }) formControls!: QueryList<ElementRef>
+  @Input() id?: string
+  @Output() processouComSucesso = new EventEmitter<void>();
   limiteOrcamentoForm!: FormGroup
   categorias: Categoria[] = []
 
   mensagens: IValidationMessage = { 
-    descricao: {
-      required: "O campo descrição é obrigatório."
+    categoriaId: {
+      required: "O campo categoria é obrigatório.",
     },
     limite: {
       required: "O campo limite é obrigatório.",
@@ -48,21 +49,117 @@ export class FormularioLimiteComponent extends BaseFormComponent {
     private notificacao: NotificacaoService
   ) {
     super();
-    this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
     this.limiteOrcamentoForm = this.criarForm();
-    this.configurarMensagensValidacaoBase(this.mensagens)
+    this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
+    this.configurarMensagensValidacao(this.mensagens)
   }
 
 
   ngOnInit(): void {
-    this.limiteService.obterTodos().subscribe((r) => this.limites = r)
+   this.carregarLimiteParaEdicao()
+   }
+
+  get tipoLimiteGeral() {
+    return TipoLimite.geral.toString()
   }
 
-  submit() { }
+  get tipoLimite() {
+    return this.limiteOrcamentoForm.get('tipoLimite')
+  }
 
-  private criarForm(): FormGroup {
+  ngAfterViewInit(): void {
+    this.formControls.changes.subscribe(() => {
+      this.validateForm(this.limiteOrcamentoForm, this.formControls);
+    });
+  
+    this.limiteOrcamentoForm.get('tipoLimite')?.valueChanges.subscribe((tipo) => {
+      tipo == TipoLimite.categoria ? this.adicionarValidacaoCategoria() : this.removerValidacaoCategoria();
+    });
+  }
+  
+  submit() { 
+    if (this.limiteOrcamentoForm.invalid) return;
+    const { id, ...limiteOrcamento } = this.obterLimiteDeForm();
+    id ? this.atualizarLimite(id, {...limiteOrcamento, id}) : this.adicionarLimite(limiteOrcamento);
+  }
+
+  adicionarValidacaoCategoria() {
+    this.limiteOrcamentoForm.get('categoriaId')?.setValidators([Validators.required])
+    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
+  }
+
+  removerValidacaoCategoria() {
+    this.limiteOrcamentoForm.get('categoriaId')?.clearValidators()
+    this.limiteOrcamentoForm.get('categoriaId')?.updateValueAndValidity()
+    this.limiteOrcamentoForm.get('categoriaId')?.setValue(null)
+    this.erros['categoriaId'] = ''
+  }
+
+  obterLimiteDeForm() {
+    return {
+      ...this.limiteOrcamentoForm.value,
+      limite: parseFloat(this.limiteOrcamentoForm.value.limite),
+      porcentagemAviso: parseFloat(this.limiteOrcamentoForm.value.porcentagemAviso),
+      periodo: `${this.limiteOrcamentoForm.value.periodo}-01`
+    }
+  }
+
+  adicionarLimite(limite: LimiteOrcamento) {
+    this.limiteService.adicionar(limite).subscribe({
+      next: (r) => this.processarSucesso(r),
+      error: (error) => this.processarFalha(error)
+    });
+  }
+
+  atualizarLimite(id: string, limite: LimiteOrcamento) {
+    this.limiteService.atualizar(id, limite).subscribe({
+      next: (r) => this.processarSucesso(r),
+      error: (error) => this.processarFalha(error)
+    });
+  }
+
+  criarForm() {
     return this.fb.group({
-
-    })
+      id: [null],
+      categoriaId: [null],
+      periodo: [null, [Validators.required]],
+      limite: [null, [Validators.required, Validators.min(0.01)]],
+      tipoLimite: [null, [Validators.required]],
+      porcentagemAviso: [null, [Validators.required]],
+    });
   }
+
+  carregarLimiteParaEdicao() {
+    if(this.id) {
+      this.limiteService.obterPorId(this.id).subscribe((r) => {
+        this.preencherFormLimite(r)
+      })
+    }
+  }
+
+  preencherFormLimite(response: LimiteOrcamento) {
+    this.limiteOrcamentoForm.patchValue({
+      ...response,
+      periodo: response.periodo.toString().substring(0, 7)
+    });
+  }
+
+  formatarValor({target: {value}}: any) {
+    const valor = parseFloat(value.replace(/\D/g, '')) / 100;
+    this.limiteOrcamentoForm.get('limite')?.setValue(valor.toFixed(2));
+  }
+
+  private processarSucesso(response: string[]): void {
+    this.errosServer = [];
+    if (response.length) {
+      const avisos = response.join('<br />');
+      this.notificacao.mostrarMensagem(avisos, 'alerta');
+    }
+    this.processouComSucesso.emit();
+  }
+
+  private processarFalha(fail: any): void {
+    this.errosServer = fail.error.mensagens;
+  }
+
 }

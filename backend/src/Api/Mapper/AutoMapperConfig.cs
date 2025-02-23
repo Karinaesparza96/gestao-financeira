@@ -10,7 +10,8 @@ namespace Api.Mapper
         {
             CreateMap<TransacaoDto, Transacao>().ReverseMap();
             CreateMap<CategoriaDto, Categoria>().ReverseMap();
-            CreateMap<LimiteOrcamentoDto, LimiteOrcamento>().ReverseMap();
+            CreateMap<LimiteOrcamentoDto, LimiteOrcamento>();
+            CreateMap<LimiteOrcamento, LimiteOrcamentoDto>().ForMember(dest => dest.CategoriaNome, src => src.MapFrom(x => x.Categoria.Nome));
         }
     }
 }

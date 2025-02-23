@@ -1,101 +1,91 @@
-<!-- <div class="container mt-3">
-  <app-error-list [erros]="[]" />
-  <form [formGroup]="formLimite" (ngSubmit)="submit()">
+<div class="container mt-3">
+  <app-error-list [erros]="errosServer" />
+  <form [formGroup]="limiteOrcamentoForm" (ngSubmit)="submit()">
     <div class="row mb-3">
-      <div class="col-12">
-        <label for="descricao" class="form-label">Descrição</label>
+      <div class="col-12 mb-3 mx-auto">
+        <label for="periodo" class="form-label">Periodo:</label>
         <input
-          type="email"
+          type="month"
           class="form-control"
-          id="descricao"
-          formControlName="descricao"
+          id="periodo"
+          formControlName="periodo"
         />
+        <div
+          *ngIf="erros['periodo']"
+          class="text-danger py-1"
+          [innerHTML]="erros['periodo']"
+        ></div>
+      </div>
+      <div class="col-12">
+        <label for="tipoLimite" class="form-label">Tipo</label>
+        <select class="form-select" formControlName="tipoLimite" #tipoLimite>
+          <option value="" disabled selected>Selecione</option>
+          <option value="1">Geral</option>
+          <option value="2">Categoria</option>
+        </select>
         <span
           class="text-danger py-1"
-          [innerHTML]="erros['descricao']"
-          *ngIf="erros['descricao']"
+          [innerHTML]="erros['tipoLimite']"
+          *ngIf="erros['tipoLimite']"
         ></span>
       </div>
     </div>
-    <div class="row mb-3">
+    <div class="col-12 mb-3" *ngIf="tipoLimite.value == '2'">
+      <label for="categoria" class="form-label">Categoria</label>
+      <select
+        class="form-select"
+        formControlName="categoriaId">
+        <option value="" disabled selected>Selecione</option>
+        <option
+          *ngFor="let categoria of categorias"
+          [value]="categoria.id"
+        >
+          {{ categoria.nome }}
+        </option>
+      </select>
+      <div
+        *ngIf="erros['categoriaId']"
+        class="text-danger py-1"
+        [innerHTML]="erros['categoriaId']"
+      ></div>
+    </div>
+    <div class="row mb-4">
       <div class="col-md-6">
         <label for="valor" class="form-label">Valor</label>
         <input
           type="text"
           class="form-control"
-          id="valor"
-          formControlName="valor"
+          id="limite"
+          formControlName="limite"
+          placeholder="R$ 0,00"
+          (input)="formatarValor($event)"
         />
         <div
-          *ngIf="erros['valor']"
+          *ngIf="erros['limite']"
           class="text-danger py-1"
-          [innerHTML]="erros['valor']"
-        ></div>
-      </div>
-      <div class="col-md-6">
-        <label for="data" class="form-label">Data</label>
-        <input
-          type="date"
-          class="form-control"
-          id="data"
-          formControlName="data"
-        />
-        <div
-          *ngIf="erros['data']"
-          class="text-danger py-1"
-          [innerHTML]="erros['data']"
-        ></div>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-6" formGroupName="categoria">
-        <label for="categoria" class="form-label">Categoria</label>
-        <select
-          class="form-select"
-          formControlName="id"
-          (change)="onCategoriaChange($any($event.target).value)"
-        >
-          <option value="" disabled selected>Selecione</option>
-          <option
-            *ngFor="let categoria of categorias$ | async"
-            [value]="categoria.id"
-          >
-            {{ categoria.nome }}
-          </option>
-        </select>
-        <div
-          *ngIf="erros['id']"
-          class="text-danger py-1"
-          [innerHTML]="erros['id']"
+          [innerHTML]="erros['limite']"
         ></div>
       </div>
       <div class="col-6">
-        <label for="tipo" class="form-label">Tipo</label>
-        <select class="form-select" formControlName="tipo">
-          <option value="" disabled selected>Selecione</option>
-          <ng-container *ngIf="tipo; else listaTipos">
-            <option [value]="tipo">
-              {{ tipo == 1 ? "Receita" : "Despesa" }}
-            </option>
-          </ng-container>
+        <label for="porcentagemAviso" class="form-label" title="Porcentagem de aviso de limite atingido">Avisar quando atingir:</label>
+        <select class="form-select" formControlName="porcentagemAviso">
+          <option value="100" selected>100%</option>
+          <option value="50">50%</option>
+          <option value="30">30%</option>
         </select>
         <div
-          *ngIf="erros['tipo']"
+          *ngIf="erros['porcentagemAviso']"
           class="text-danger py-1"
-          [innerHTML]="erros['tipo']"
+          [innerHTML]="erros['porcentagemAviso']"
         ></div>
       </div>
     </div>
     <button
       type="submit"
       class="btn btn-success w-100"
-      [disabled]="!formTransacao.valid"
+      [disabled]="!limiteOrcamentoForm.valid"
     >
       Enviar
     </button>
   </form>
 </div>
-<ng-template #listaTipos>
-  <option value="1">Receita</option>
-  <option value="2">Despesa</option>
-</ng-template> -->

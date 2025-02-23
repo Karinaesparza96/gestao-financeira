@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TipoTransacao } from '../../../models/TipoTransacao';
 import { Categoria } from '../../../models/categoria';
@@ -18,7 +18,7 @@ import { IValidationMessage } from '../../../utils/validation/IValidationMessage
   styleUrl: './formulario-transacao.component.scss'
 })
 export class FormularioTransacaoComponent extends BaseFormComponent implements OnInit, AfterViewInit {
-  @ViewChildren(FormControlName, { read: ElementRef }) formControls?: ElementRef[]
+  @ViewChildren(FormControlName, { read: ElementRef }) formControls?: QueryList<ElementRef>
   formGroup!: FormGroup
 
   @Input() tipo!: TipoTransacao;
@@ -56,7 +56,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     super();
     this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
     this.formGroup = this.criarForm();
-    this.configurarMensagensValidacaoBase(this.mensagens)
+    this.configurarMensagensValidacao(this.mensagens)
   }
 
   ngOnInit(): void {
@@ -72,13 +72,8 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
 
   submit(): void {
     if (!this.formGroup.valid) return;
-
-    const transacao = this.criarTransacaoDeForm();
-    if (transacao.id) {
-        this.atualizarTransacao(transacao);
-    } else {
-        this.adicionarTransacao(transacao);
-    }
+    const {id, ...transacao} = this.criarTransacaoDeForm();
+    id ? this.atualizarTransacao(id, {...transacao, id}) : this.adicionarTransacao(transacao);
 }
 
   private criarForm(): FormGroup {
@@ -121,8 +116,8 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
       };
   }
 
-  private atualizarTransacao(transacao: Transacao): void {
-      this.transacaoService.atualizar(transacao.id!, transacao).subscribe({
+  private atualizarTransacao(id: string, transacao: Transacao): void {
+      this.transacaoService.atualizar(id, transacao).subscribe({
           next: r => this.processarSucesso(r as string[]),
           error: e => this.processarFalha(e)
       });
@@ -150,12 +145,9 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     });
   }
 
-  formatCurrency(event: any) {
-    let value = event.target.value;
-    value = value.replace(/\D/g, '');
-    value = (Number(value) / 100).toFixed(2);
-    event.target.value = value;
-    this.formGroup.get('valor')?.setValue(value);
+  formatarValor({target: {value}}: any): void {
+    const valor = parseFloat(value.replace(/\D/g, '')) / 100;
+    this.formGroup.get('valor')?.setValue(valor.toFixed(2));
   }
 
   private processarSucesso(response: string[]): void {

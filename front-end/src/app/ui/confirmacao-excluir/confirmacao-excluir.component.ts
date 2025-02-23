@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Transacao } from '../../../models/Transacao';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,7 +8,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './confirmacao-excluir.component.scss'
 })
 export class ConfirmacaoExcluirComponent {
-  @Input() transacao?: Transacao | null
   @Output() changed = new EventEmitter<boolean>()
 
   confirmar() {

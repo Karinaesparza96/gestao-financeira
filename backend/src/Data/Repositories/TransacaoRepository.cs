@@ -56,7 +56,7 @@ namespace Data.Repositories
                 query = query.Where(t => t.CategoriaId == categoriaId);
             }
                 
-            var result = query.Sum(t => t.Valor);
+            var result = query.ToList().Sum(t => t.Valor);
             return result;
         }
 

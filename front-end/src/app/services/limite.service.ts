@@ -12,7 +12,7 @@ export class LimiteService extends BaseService {
   constructor(private http: HttpClient) { super() }
 
   obterTodos() {
-    return this.http.get(`${this.UrlService}/limites`, this.ObterAuthHeaderJson())
+    return this.http.get(`${this.UrlService}/limites-orcamentos`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData),
                       catchError(this.serviceError)
@@ -20,7 +20,7 @@ export class LimiteService extends BaseService {
   }
 
   obterPorId(id: string) {
-    return this.http.get(`${this.UrlService}/limites/${id}`, this.ObterAuthHeaderJson())
+    return this.http.get(`${this.UrlService}/limites-orcamentos/${id}`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData), 
                       catchError(this.serviceError)
@@ -28,7 +28,7 @@ export class LimiteService extends BaseService {
   }
 
   adicionar(limite: LimiteOrcamento) {
-    return this.http.post(`${this.UrlService}/limites`, limite, this.ObterAuthHeaderJson())
+    return this.http.post(`${this.UrlService}/limites-orcamentos`, limite, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractMensagens), 
                       catchError(this.serviceError)
@@ -37,7 +37,7 @@ export class LimiteService extends BaseService {
   }
 
   atualizar(id: string, limite: LimiteOrcamento) {
-    return this.http.put(`${this.UrlService}/limites/${id}`, limite, this.ObterAuthHeaderJson())
+    return this.http.put(`${this.UrlService}/limites-orcamentos/${id}`, limite, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractMensagens),
                       catchError(this.serviceError)
@@ -45,7 +45,7 @@ export class LimiteService extends BaseService {
   }
 
   excluir(id: string) {
-    return this.http.delete(`${this.UrlService}/limites/${id}`, this.ObterAuthHeaderJson())
+    return this.http.delete(`${this.UrlService}/limites-orcamentos/${id}`, this.ObterAuthHeaderJson())
                     .pipe(
                       catchError(this.serviceError)
                     )
