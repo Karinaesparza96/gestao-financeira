@@ -4,13 +4,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Text;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Business.Utils
 {
     public static class ExportHelper
     {
 
-        public static string convertBase64(string lcString) {            
+        public static string convertBase64(string lcString)
+        {
             return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(lcString));
         }
 
@@ -37,7 +39,7 @@ namespace Business.Utils
             return sb.ToString();
         }
 
-        public static void GetPDF<T>(this IEnumerable<T> data, string outputPath="d:\\output.pdf")
+        public static void GetPDF<T>(this IEnumerable<T> data, string outputPath = "d:\\output.pdf")
         {
             ExportListToPdf(data.ToList(), outputPath);
         }
@@ -51,17 +53,24 @@ namespace Business.Utils
                 PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
                 document.Open();
 
-                foreach (var item in list)
+                if (list != null && list.Count > 0)
                 {
-                    //document.Add(new Paragraph(item.ToString()));
-                    foreach (PropertyDescriptor prop in props)
+                    foreach (var item in list)
                     {
-
                         //document.Add(new Paragraph(item.ToString()));
-                        document.Add(new Paragraph(prop.DisplayName + ": " + prop.Converter.ConvertToString(prop.GetValue(item))));
+                        foreach (PropertyDescriptor prop in props)
+                        {
 
+                            //document.Add(new Paragraph(item.ToString()));
+                            document.Add(new Paragraph(prop.DisplayName + ": " + prop.Converter.ConvertToString(prop.GetValue(item))));
+
+                        }
+                        document.Add(new Paragraph("----------------------------------"));
                     }
-                    document.Add(new Paragraph("----------------------------------"));
+                }
+                else
+                {
+                    document.Add(new Paragraph("Relatório sem retorno de dados após consulta"));
                 }
 
                 document.Close();
