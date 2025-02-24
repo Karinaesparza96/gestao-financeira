@@ -6,11 +6,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Usuario } from '../../../models/usuario';
 import { ContaService } from '../../../services/conta.service';
+import { ErrorListComponent } from "../../error-list/error-list.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorListComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

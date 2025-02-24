@@ -2,11 +2,7 @@
   <div class="register-box">
     <h2 class="text-center mb-4">Registro</h2>
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="alert alert-danger" *ngIf="errors.length > 0">
-        <ul>
-          <li *ngFor="let error of errors">{{ error }}</li>
-        </ul>
-      </div>
+     <app-error-list [erros]="errors"/>
       <div class="mb-3">
         <label for="nome" class="form-label">Nome</label>
         <input
