@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-export const authGuard = () => {
+export const authGuard = (route: any, state: any) => {
   const router = inject(Router);
 
   const userData = localStorage.getItem('user');
@@ -9,6 +9,6 @@ export const authGuard = () => {
     return true;
   }
 
-  router.navigate(['/conta/login']);
+  router.navigate(['/conta/login'], { queryParams: { returnUrl: state.url } });
   return false;
 };

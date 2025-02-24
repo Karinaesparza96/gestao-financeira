@@ -2,11 +2,7 @@
   <div class="login-box">
     <h2 class="text-center mb-4">Login</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="alert alert-danger" *ngIf="errors.length > 0">
-        <ul>
-          <li *ngFor="let error of errors">{{ error }}</li>
-        </ul>
-      </div>
+      <app-error-list [erros]="errors"/>
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <input

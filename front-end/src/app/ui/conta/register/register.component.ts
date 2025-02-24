@@ -6,11 +6,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ContaService } from '../../../services/conta.service';
 import { Usuario } from '../../../models/usuario';
+import { ErrorListComponent } from "../../error-list/error-list.component";
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorListComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })

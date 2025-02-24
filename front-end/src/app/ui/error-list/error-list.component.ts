@@ -5,12 +5,10 @@ import { Component, Input } from '@angular/core';
   selector: 'app-error-list',
   imports: [CommonModule],
   template: `
-    <div class="row" *ngIf="erros.length">
-    <div class="col">
-      <span *ngFor="let erro of erros" class="text-danger py-1">
-        {{erro}}
-      </span>
-    </div>
+  <div class="alert alert-danger" *ngIf="erros.length > 0">
+    <ul>
+      <li *ngFor="let error of erros">{{ error }}</li>
+    </ul>
   </div>
   `,
 })

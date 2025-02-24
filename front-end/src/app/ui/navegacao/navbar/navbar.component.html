@@ -14,34 +14,20 @@
 
     <div class="collapse navbar-collapse justify-content-between" [class.show]="isMenuOpen">
       <ul class="navbar-nav mx-auto text-center gap-3">
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/home']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-        </li>
         <ng-container *ngIf="isLoggedIn();">
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/categorias']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Categorias</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/transacoes']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Transações</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/limites']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Limites</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/relatorios']" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }">Relatórios</a>
+          <li class="nav-item" *ngFor="let route of routes">
+            <a class="nav-link" 
+              [routerLink]="[route.url]" 
+              [routerLinkActive]="route.classActive" 
+              [routerLinkActiveOptions]="{exact: route.exact}">{{route.linkName}}</a>
           </li>
         </ng-container>
       </ul>
       <ul class="navbar-nav text-center gap-3">
         <ng-container *ngIf="!isLoggedIn(); else loggedInMenu">
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" routerLink="/conta/login" routerLinkActive="active">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center" routerLink="/conta/register" routerLinkActive="active">
-              <i class="bi bi-person-plus me-1"></i> Registro
+          <li class="nav-item" *ngFor="let rota of rotasConta">
+            <a class="nav-link d-flex align-items-center" [routerLink]="rota.url" [routerLinkActive]="rota.classActive" [routerLinkActiveOptions]="{ exact: rota.exact }">
+              <i class="bi bi-box-arrow-in-right me-1"></i> {{rota.linkName}}
             </a>
           </li>
         </ng-container>

@@ -13,8 +13,18 @@ export class NavbarComponent {
   isMenuOpen = false;
 
   constructor(private router: Router,
-              private contaService: ContaService) {}
-
+    private contaService: ContaService) { }
+  routes = [
+    { linkName: 'Home', url: '/home', exact: true, classActive: 'ativo' },
+    { linkName: 'Categorias', url: '/categorias', exact: true, classActive: 'ativo' },
+    { linkName: 'Transações', url: '/transacoes', exact: true, classActive: 'ativo' },
+    { linkName: 'Limites', url: '/limites', exact: true, classActive: 'ativo' },
+    { linkName: 'Relatórios', url: '/relatorios', exact: true, classActive: 'ativo' },
+  ];
+  rotasConta = [
+    { linkName: 'Entrar', url: '/conta/login', exact: false, classActive: 'ativo' },
+    { linkName: 'Registrar', url: '/conta/register', exact: false, classActive: 'ativo' },
+  ]
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
@@ -34,6 +44,6 @@ export class NavbarComponent {
   logout(event: Event) {
     event.preventDefault();
     this.contaService.LocalStorage.limparDadosLocaisUsuario();
-    this.router.navigate(['/']);
+    this.router.navigate(['/conta/login']);
   }
 }

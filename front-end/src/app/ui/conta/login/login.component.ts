@@ -1,38 +1,43 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Usuario } from '../../../models/usuario';
 import { ContaService } from '../../../services/conta.service';
+import { ErrorListComponent } from "../../error-list/error-list.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorListComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errors: any[] = [];
   @Input() usuario!: Usuario;
+  defaultUrl: string = '/home';
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private contaService: ContaService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
 
-    // Se já estiver logado, redireciona para home
+  ngOnInit(): void {
     if (this.contaService.LocalStorage.ObterUsuario()) {
       this.router.navigate(['/home']);
     }
+    this.defaultUrl = this.route.snapshot.queryParams['returnUrl'] ?? this.defaultUrl;
   }
 
   onSubmit() {
@@ -51,7 +56,7 @@ export class LoginComponent {
     this.loginForm.reset();
     this.errors = [];
     this.contaService.LocalStorage.salvarDadosLocaisUsuario(response);
-    this.router.navigate(['/home']);
+    this.router.navigateByUrl(this.defaultUrl);
   }
 
   processarFalha(fail: any){
