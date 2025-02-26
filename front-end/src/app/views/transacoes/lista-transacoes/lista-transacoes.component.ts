@@ -95,11 +95,11 @@ export class ListaTransacoesComponent implements OnInit {
   processarSucesso() {
     this.atualizar()
     this.fecharModal()
-    this.notificacao.mostrarMensagem('Operação realizada com sucesso!')
+    this.notificacao.show('Operação realizada com sucesso!')
   }
 
   processarErro() {
-    this.notificacao.mostrarMensagem('Ops! Houve um erro', 'falha')
+    this.notificacao.show('Ops! Houve um erro', 'falha')
   }
 
   filtrar() {

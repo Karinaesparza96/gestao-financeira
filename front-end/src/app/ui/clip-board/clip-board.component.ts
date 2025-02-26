@@ -32,6 +32,6 @@ export class ClipBoardComponent {
 
   copiarTexto(texto: string) {
     navigator.clipboard.writeText(texto)
-    this.notificacao.mostrarMensagem('Texto copiado para a área de transferência!', 'alerta')
+    this.notificacao.show('Texto copiado para a área de transferência!', 'alerta')
   }
 }
