@@ -7,15 +7,36 @@ import { TipoMensagem } from '../../models/tipoMensagem';
   selector: 'app-notificacao',
   imports: [CommonModule],
   templateUrl: './notificacao.component.html',
-  styleUrl: './notificacao.component.scss'
+  styleUrl: './notificacao.component.scss',
 })
 export class NotificacaoComponent {
-  option: {mensagem: string, tipo: TipoMensagem} | null = null;
+  option: { mensagem: string; tipo: TipoMensagem } | null = null;
+  show = true;
+  idTimeout: any;
   constructor(private notificacaoService: NotificacaoService) {}
 
   ngOnInit() {
-    this.notificacaoService.mensagem$.subscribe(notificacao => {
+    this.notificacaoService.mensagem$.subscribe((notificacao) => {
+      if (!notificacao) return;
       this.option = notificacao;
+      this.show = true;
+      this.idTimeout = setTimeout(() => {
+        this.show = false;
+      }, 5000);
     });
+  }
+
+  onmouseenter() {
+    clearTimeout(this.idTimeout);
+  }
+
+  onmouseleave() {
+    setTimeout(() => {
+      this.show = false;
+    }, 1000);
+  }
+
+  fechar() {
+    this.show = false;
   }
 }

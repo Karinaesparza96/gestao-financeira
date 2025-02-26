@@ -1,7 +1,7 @@
-<div *ngIf="option?.mensagem" class="notificacao" 
+<div *ngIf="show" class="notificacao" 
     [ngClass]="{'sucesso': option?.tipo == 'sucesso', 
                 'falha': option?.tipo == 'falha',
-                'alerta': option?.tipo == 'alerta'}"
->
+                'alerta': option?.tipo == 'alerta'}" (mouseenter)="onmouseenter()" (mouseleave)="onmouseleave()">
+                <button class="btn-close" (click)="fechar()"></button>
   <p [innerHTML]="option?.mensagem"></p>
 </div>

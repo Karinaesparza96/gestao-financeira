@@ -6,15 +6,10 @@ import { TipoMensagem } from '../models/tipoMensagem';
   providedIn: 'root'
 })
 export class NotificacaoService {
-
   private mensagemSubject = new BehaviorSubject<{mensagem: string, tipo: TipoMensagem} | null>(null);
   mensagem$ = this.mensagemSubject.asObservable();
 
-  mostrarMensagem(mensagem: string,  tipo: TipoMensagem = 'sucesso', duracaoMs: number = 3000) {
+  show(mensagem: string,  tipo: TipoMensagem = 'sucesso') {
     this.mensagemSubject.next({mensagem, tipo});
-
-    setTimeout(() => {
-      this.mensagemSubject.next(null);
-    }, duracaoMs);
   }
 }

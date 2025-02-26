@@ -154,7 +154,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     this.errosServer = [];
     if (response.length) {
       const avisos = response.join('<br />');
-      this.notificacao.mostrarMensagem(avisos, 'alerta');
+      this.notificacao.show(avisos, 'alerta');
     }
     this.processouComSucesso.emit(true);
   }
