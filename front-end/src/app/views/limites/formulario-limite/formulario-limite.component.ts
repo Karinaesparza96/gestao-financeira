@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ErrorListComponent } from "../../../ui/error-list/error-list.component";
+import { ErrorListComponent } from "../../../components/error-list/error-list.component";
 import { BaseFormComponent } from '../../../base-components/BaseFormComponent';
 import { Categoria } from '../../../models/categoria';
 import { LimiteOrcamento, TipoLimite } from '../../../models/limiteOrcamento';

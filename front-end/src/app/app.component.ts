@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from "./ui/navegacao/navbar/navbar.component";
-import { NotificacaoComponent } from "./ui/notificacao/notificacao.component";
+import { NavbarComponent } from "./components/navegacao/navbar/navbar.component";
+import { NotificacaoComponent } from "./components/notificacao/notificacao.component";
 
 @Component({
   selector: 'app-root',

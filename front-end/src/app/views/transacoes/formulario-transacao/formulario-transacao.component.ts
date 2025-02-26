@@ -7,7 +7,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { TransacaoService } from '../../../services/transacao.service';
 import { Transacao } from '../../../models/Transacao';
 import { NotificacaoService } from '../../../utils/notificacao.service';
-import { ErrorListComponent } from "../../../ui/error-list/error-list.component";
+import { ErrorListComponent } from "../../../components/error-list/error-list.component";
 import { BaseFormComponent } from '../../../base-components/BaseFormComponent';
 import { IValidationMessage } from '../../../utils/validation/IValidationMessage';
 

@@ -1,9 +1,9 @@
 import { TipoTransacao } from './../../models/TipoTransacao';
 import { Component, OnInit, viewChild } from '@angular/core';
-import { ModalComponent } from "../../ui/modal/modal.component";
+import { ModalComponent } from "../../components/modal/modal.component";
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { SaudacaoUsuarioComponent } from "../../ui/saudacao-usuario/saudacao-usuario.component";
+import { SaudacaoUsuarioComponent } from "../../components/saudacao-usuario/saudacao-usuario.component";
 import { FormularioTransacaoComponent } from "../transacoes/formulario-transacao/formulario-transacao.component";
 import { TransacaoService } from '../../services/transacao.service';
 import { Transacao } from '../../models/Transacao';
