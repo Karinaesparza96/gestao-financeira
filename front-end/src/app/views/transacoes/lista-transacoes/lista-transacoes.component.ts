@@ -23,7 +23,7 @@ import { Categoria } from '../../../models/categoria';
   templateUrl: './lista-transacoes.component.html',
 })
 export class ListaTransacoesComponent implements OnInit {
-  transacoes?: any[]
+  transacoes?: any[] = []
   resumo?: ResumoFinanceiro
   transacao?: Transacao | null
   showModalEditar: boolean = false
