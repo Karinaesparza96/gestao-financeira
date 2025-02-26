@@ -11,7 +11,7 @@ import { TipoMensagem } from '../../models/tipoMensagem';
 })
 export class NotificacaoComponent {
   option: { mensagem: string; tipo: TipoMensagem } | null = null;
-  show = true;
+  show = false;
   idTimeout: any;
   constructor(private notificacaoService: NotificacaoService) {}
 
