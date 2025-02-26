@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ReportService } from '../../services/relatorio.services';
 import { CategoriaService } from '../../services/categoria.service';
 import { Categoria } from '../../models/categoria';
