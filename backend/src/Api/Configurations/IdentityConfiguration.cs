@@ -1,4 +1,5 @@
-﻿using Data.Context;
+﻿using Api.Extensions;
+using Data.Context;
 using Microsoft.AspNetCore.Identity;
 
 namespace Api.Configurations
@@ -9,7 +10,9 @@ namespace Api.Configurations
         {
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddErrorDescriber<IdentityMensagensPortugues>()
+                .AddDefaultTokenProviders();
 
             return builder;
         }
