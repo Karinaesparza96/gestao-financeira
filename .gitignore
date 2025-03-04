@@ -2,6 +2,3 @@
 /backend/src/Api/dev.db
 /backend/src/Api/dev.db-shm
 .vs/
-/backend/src/Api/dev.db
-/backend/src/Api/dev.db-shm
-/backend/src/Api/dev.db-wal
