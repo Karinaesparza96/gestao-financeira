@@ -6,7 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Usuario } from '../../../models/usuario';
 import { ContaService } from '../../../services/conta.service';
-import { ErrorListComponent } from "../../error-list/error-list.component";
+import { ErrorListComponent } from '../../../components/error-list/error-list.component';
+
 
 @Component({
   selector: 'app-login',

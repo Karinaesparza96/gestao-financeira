@@ -10,7 +10,7 @@ export const routes: Routes = [
   },
   {
     path: 'conta',
-    loadChildren: () => import('./components/conta/conta.module').then(m => m.ContaModule)
+    loadChildren: () => import('./views/conta/conta.module').then(m => m.ContaModule)
   },
   {
     path: 'home',
