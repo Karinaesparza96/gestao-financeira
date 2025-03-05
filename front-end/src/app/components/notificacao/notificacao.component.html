@@ -3,5 +3,5 @@
                 'falha': option?.tipo == 'falha',
                 'alerta': option?.tipo == 'alerta'}" (mouseenter)="onmouseenter()" (mouseleave)="onmouseleave()">
                 <button class="btn-close" (click)="fechar()"></button>
-  <p [innerHTML]="option?.mensagem"></p>
+  <p [innerHTML]="option?.mensagem" class="mt-3"></p>
 </div>

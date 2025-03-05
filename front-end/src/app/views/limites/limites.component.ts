@@ -87,7 +87,6 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   processarSucesso() {
     this.atualizar();
     this.fecharModal();
-    this.notificacao.show("Operação realizada com sucesso!")
   }
 
   processarErro() {

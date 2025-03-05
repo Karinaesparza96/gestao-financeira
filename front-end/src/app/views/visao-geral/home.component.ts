@@ -70,6 +70,5 @@ export class HomeComponent implements OnInit{
   processarSucesso() {
     this.atualizar()
     this.showModal = false
-    this.notificacao.show('Operação realizada com sucesso!','sucesso')
   }
 }

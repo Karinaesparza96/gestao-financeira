@@ -149,11 +149,13 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
     this.limiteOrcamentoForm.get('limite')?.setValue(valor.toFixed(2));
   }
 
-  private processarSucesso(response: string[]): void {
+  private processarSucesso(mensagens: string[]): void {
     this.errosServer = [];
-    if (response.length) {
-      const avisos = response.join('<br />');
+    if (mensagens.length) {
+      const avisos = mensagens.join('<br />');
       this.notificacao.show(avisos, 'alerta');
+    } else {
+      this.notificacao.show("Operação realizada com sucesso!")
     }
     this.processouComSucesso.emit();
   }
