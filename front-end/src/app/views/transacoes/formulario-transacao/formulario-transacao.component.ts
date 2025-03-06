@@ -10,6 +10,7 @@ import { NotificacaoService } from '../../../utils/notificacao.service';
 import { ErrorListComponent } from "../../../components/error-list/error-list.component";
 import { BaseFormComponent } from '../../../base-components/BaseFormComponent';
 import { IValidationMessage } from '../../../utils/validation/IValidationMessage';
+import { CurrencyUtils } from '../../../utils/currency-utils';
 
 @Component({
   selector: 'app-formulario-transacao',
@@ -80,7 +81,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     return this.fb.group({
       id: [null],
       descricao: ['', [Validators.required]],
-      valor: ['', [Validators.required, Validators.min(0.01)]],
+      valor: ['0,00', [Validators.required, Validators.min(0.01)]],
       data: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
       categoria: this.fb.group({
@@ -117,6 +118,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
   }
 
   private atualizarTransacao(id: string, transacao: Transacao): void {
+      transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
       this.transacaoService.atualizar(id, transacao).subscribe({
           next: r => this.processarSucesso(r as string[]),
           error: e => this.processarFalha(e)
@@ -124,6 +126,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
   }
 
   private adicionarTransacao(transacao: Transacao): void {
+      transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
       this.transacaoService.adicionar(transacao).subscribe({
           next: r => this.processarSucesso(r),
           error: e => this.processarFalha(e)
@@ -134,7 +137,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
     this.formGroup.patchValue({
       id: response.id,
       descricao: response.descricao,
-      valor: response.valor,
+      valor: CurrencyUtils.DecimalParaString(response.valor),
       data: response.data.split('T')[0],
       tipo: response.tipo,
       categoria: {
@@ -147,7 +150,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
 
   formatarValor({target: {value}}: any): void {
     const valor = parseFloat(value.replace(/\D/g, '')) / 100;
-    this.formGroup.get('valor')?.setValue(valor.toFixed(2));
+    this.formGroup.get('valor')?.setValue(valor.toFixed(2).replace('.',','));
   }
 
   private processarSucesso(mensagens: string[]): void {
