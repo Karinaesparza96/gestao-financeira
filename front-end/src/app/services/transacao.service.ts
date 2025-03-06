@@ -6,7 +6,6 @@ import { Transacao } from '../models/Transacao';
 import { ResumoFinanceiro } from '../models/resumoFinanceiro';
 import { BaseService } from './base.service';
 import { FiltroBuscaTransacao } from '../models/filtroBusca';
-import { CurrencyUtils } from '../utils/currency-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +48,6 @@ export class TransacaoService extends BaseService {
   }
 
   adicionar(transacao: Transacao) {
-    transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
     return this.http.post(`${this.UrlService}/transacoes`, transacao, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractMensagens),
@@ -58,7 +56,6 @@ export class TransacaoService extends BaseService {
   }
 
   atualizar(id:string, transacao: Transacao) {
-    transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
     return this.http.put(`${this.UrlService}/transacoes/${id}`, transacao, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractMensagens),

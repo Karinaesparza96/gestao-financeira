@@ -118,10 +118,5 @@ namespace Business.Services
 
             await categoriaRepository.Excluir(categoria!);
         }
-
-        public async Task<Categoria?> ObterPorNomeEUsuario(string nome, string usuarioId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

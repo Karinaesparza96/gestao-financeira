@@ -118,6 +118,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
   }
 
   private atualizarTransacao(id: string, transacao: Transacao): void {
+      transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
       this.transacaoService.atualizar(id, transacao).subscribe({
           next: r => this.processarSucesso(r as string[]),
           error: e => this.processarFalha(e)
@@ -125,6 +126,7 @@ export class FormularioTransacaoComponent extends BaseFormComponent implements O
   }
 
   private adicionarTransacao(transacao: Transacao): void {
+      transacao.valor = CurrencyUtils.StringParaDecimal(transacao.valor);
       this.transacaoService.adicionar(transacao).subscribe({
           next: r => this.processarSucesso(r),
           error: e => this.processarFalha(e)
