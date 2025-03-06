@@ -11,5 +11,10 @@ namespace Data.Repositories
         {
             return await DbSet.Include(x => x.Transacoes).FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public async Task<Categoria?> ObterPorNomeEUsuario(string nome, string usuarioId)
+        {
+            return await DbSet.FirstOrDefaultAsync(c => c.Nome == nome && (c.Default || c.UsuarioId == usuarioId));
+        }
     }
 }

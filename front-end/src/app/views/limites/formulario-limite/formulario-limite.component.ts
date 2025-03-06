@@ -9,6 +9,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { LimiteService } from '../../../services/limite.service';
 import { NotificacaoService } from '../../../utils/notificacao.service';
 import { IValidationMessage } from '../../../utils/validation/IValidationMessage';
+import { CurrencyUtils } from '../../../utils/currency-utils';
 
 @Component({
   selector: 'app-formulario-limite',
@@ -98,7 +99,7 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
   obterLimiteDeForm() {
     return {
       ...this.limiteOrcamentoForm.value,
-      limite: parseFloat(this.limiteOrcamentoForm.value.limite),
+      limite: CurrencyUtils.StringParaDecimal(this.limiteOrcamentoForm.value.limite),
       porcentagemAviso: parseFloat(this.limiteOrcamentoForm.value.porcentagemAviso),
       periodo: `${this.limiteOrcamentoForm.value.periodo}-01`
     }
@@ -123,7 +124,7 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
       id: [null],
       categoriaId: [null],
       periodo: [null, [Validators.required]],
-      limite: [null, [Validators.required, Validators.min(0.01)]],
+      limite: ['0,00', [Validators.required, Validators.min(0.01)]],
       tipoLimite: [null, [Validators.required]],
       porcentagemAviso: [null, [Validators.required]],
     });
@@ -140,13 +141,14 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
   preencherFormLimite(response: LimiteOrcamento) {
     this.limiteOrcamentoForm.patchValue({
       ...response,
+      limite: CurrencyUtils.DecimalParaString(response.limite),
       periodo: response.periodo.toString().substring(0, 7)
     });
   }
 
   formatarValor({target: {value}}: any) {
     const valor = parseFloat(value.replace(/\D/g, '')) / 100;
-    this.limiteOrcamentoForm.get('limite')?.setValue(valor.toFixed(2));
+    this.limiteOrcamentoForm.get('limite')?.setValue(valor.toFixed(2).replace('.',','));
   }
 
   private processarSucesso(response: string[]): void {

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map } from 'rxjs';
 import { LimiteOrcamento } from '../models/limiteOrcamento';
 import { FiltroBuscaLimite } from '../models/filtroBusca';
+import { CurrencyUtils } from '../utils/currency-utils';
 
 @Injectable({
   providedIn: 'root'

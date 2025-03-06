@@ -13,7 +13,7 @@ namespace Business.Services
         public async Task<IEnumerable<Categoria>> ObterTodos()
         {
             var categorias = await categoriaRepository.Buscar(predicate: x => x.Default || x.UsuarioId == UsuarioId, 
-                                                                orderBy: x => x.Default);
+                                                                orderBy: x => x.Nome);
             return categorias;
         }
         public async Task<Categoria?> ObterPorId(Guid id)
@@ -37,10 +37,17 @@ namespace Business.Services
 
         public async Task Adicionar(Categoria categoria)
         {
-           if(!ExecutarValidacao(new CategoriaValidation(), categoria)) return;
+            if(!ExecutarValidacao(new CategoriaValidation(), categoria)) return;
 
             categoria.UsuarioId = UsuarioId;
             categoria.Default = false;
+
+            var categoriaNome = await categoriaRepository.ObterPorNomeEUsuario(categoria.Nome, categoria.UsuarioId);
+            if (categoriaNome != null)
+            {
+                Notificar(Mensagens.CategoriaJaCadastrada);
+                return;
+            }
 
             await categoriaRepository.Adicionar(categoria);
         }
@@ -66,6 +73,13 @@ namespace Business.Services
             if (!AcessoAutorizado(categoriaBanco.UsuarioId))
             {
                 Notificar(Mensagens.AcaoNaoAutorizada);
+                return;
+            }
+
+            var categoriaNome = await categoriaRepository.ObterPorNomeEUsuario(categoria.Nome, categoria.UsuarioId);
+            if (categoriaNome != null && categoria.Id != categoriaNome.Id)
+            {
+                Notificar(Mensagens.JaExisteCategoriaComEsseNome);
                 return;
             }
 
@@ -105,5 +119,9 @@ namespace Business.Services
             await categoriaRepository.Excluir(categoria!);
         }
 
+        public async Task<Categoria?> ObterPorNomeEUsuario(string nome, string usuarioId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

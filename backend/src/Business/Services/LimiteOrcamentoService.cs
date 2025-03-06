@@ -105,15 +105,15 @@ namespace Business.Services
         {
             if (limiteOrcamento.TipoLimite == TipoLimite.Geral)
             {
-                return ValidarLimiteGeral(limiteOrcamento.Periodo);
+                return ValidarLimiteGeral(limiteOrcamento.Periodo, limiteOrcamento.Id);
             }
 
             return await ValidarLimitePorCategoria(limiteOrcamento);
         }
 
-        private bool ValidarLimiteGeral(DateOnly periodo)
+        private bool ValidarLimiteGeral(DateOnly periodo, Guid idLimite)
         {
-            if (!ExisteLimiteGeral(periodo)) return true;
+            if (!ExisteLimiteGeral(periodo, idLimite)) return true;
 
             Notificar(Mensagens.ExisteLimiteGeral);
             return false;
@@ -126,10 +126,10 @@ namespace Business.Services
             return !TemNotificacao();
         }
 
-        private bool ExisteLimiteGeral(DateOnly periodo)
+        private bool ExisteLimiteGeral(DateOnly periodo, Guid idLimite)
         {
             return limiteOrcamentoRepository.Buscar(predicate: x => x.UsuarioId == UsuarioId && x.Periodo == periodo 
-                                                    && x.CategoriaId == null && x.TipoLimite == TipoLimite.Geral,
+                                                    && x.CategoriaId == null && x.TipoLimite == TipoLimite.Geral && x.Id != idLimite,
                                                                         orderBy: x => x.CategoriaId).Result.Any();
         }
     }
