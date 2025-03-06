@@ -10,7 +10,6 @@ O objetivo principal é desenvolver uma aplicação full-stack que permite aos u
 - **Viliane Oliveira**
 - **Andréia Luiza**
 - **Jansen Chantal**
-- **Vitor**
 - **Tiago Bittencourt**
 - **Marcelo Menezes**
 
