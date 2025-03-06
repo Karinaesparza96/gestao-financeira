@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoriaService } from '../../services/categoria.service';
 import { Categoria, NovaCategoria } from '../../models/categoria';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil, catchError, finalize } from 'rxjs';
+import { BaseFormComponent } from '../../base-components/BaseFormComponent';
+import { NotificacaoService } from '../../utils/notificacao.service';
 
 @Component({
   selector: 'app-categorias',
@@ -13,17 +15,22 @@ import { Subject, takeUntil, catchError, finalize } from 'rxjs';
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.scss'
 })
-export class CategoriasComponent implements OnInit, OnDestroy {
+export class CategoriasComponent extends BaseFormComponent implements OnInit, OnDestroy {
+  @Output() processouComSucesso = new EventEmitter<void>();
   categorias: Categoria[] = [];
   categoriaEmEdicao: Categoria = {} as Categoria;
   modoEdicao = false;
-  ehNovaCategoria = false;
+  ehNovaCategoria = false; 
   carregando = false;
   erro: string | null = null;
-
+  
   private destroy$ = new Subject<void>();
 
-  constructor(private categoriaService: CategoriaService) {
+  constructor(
+    private categoriaService: CategoriaService,
+    private notificacao: NotificacaoService
+  ) {
+    super();
     console.log('Componente Categorias construído');
   }
 
@@ -109,17 +116,14 @@ export class CategoriasComponent implements OnInit, OnDestroy {
           throw error;
         }),
         finalize(() => this.carregando = false)
-      )
+      ) 
       .subscribe({
         next: (categorias) => {
           this.categorias = categorias;
           this.cancelarEdicao();
           this.carregarCategorias();
         },
-        error: (error) => {
-          console.error('Falha na operação:', error)
-          this.erro = 'Ocorreu um erro ao processar a operação. Por favor, tente novamente.'
-        }
+        error: (error) => this.processarFalha(error)
       });
   }
 
@@ -162,10 +166,7 @@ export class CategoriasComponent implements OnInit, OnDestroy {
           this.cancelarEdicao();
           this.carregarCategorias();
         },
-        error: (error) => {
-          console.error('Falha na operação:', error)
-          this.erro = 'Ocorreu um erro ao processar a operação. Por favor, tente novamente.'
-        }
+        error: (error) => this.processarFalha(error)
       });
   }
 
@@ -175,5 +176,9 @@ export class CategoriasComponent implements OnInit, OnDestroy {
     this.ehNovaCategoria = false;
     this.categoriaEmEdicao = {} as Categoria;
     this.erro = null;
+  }
+
+  private processarFalha(fail: any): void {
+    this.errosServer = fail.error.mensagens;
   }
 }

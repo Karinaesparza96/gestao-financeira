@@ -19,5 +19,9 @@
         public static string UsuarioEouSenhaIncorretos = "Usuário e ou senha incorretos.";
 
         public static string IdsDiferentes = "Os ids fornecidos não são iguais.";
+
+        public static string CategoriaJaCadastrada = "Categoria já está cadastrada.";
+
+        public static string JaExisteCategoriaComEsseNome = "Já existe outra categoria com esse nome.";
     }
 }
