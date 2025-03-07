@@ -1,21 +1,19 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { LocalStorageUtils } from '../utils/localstorage';
 import { NotificacaoService } from '../utils/notificacao.service';
-import { SpinnerService } from '../components/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-constructor(private router: Router,  private notificacao: NotificacaoService, private spinnerService: SpinnerService) { }
+constructor(private router: Router,  private notificacao: NotificacaoService) { }
 localStorageUtil = new LocalStorageUtils();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.spinnerService.show();
     return next.handle(req).pipe(
       catchError(error => {
       if (error instanceof HttpErrorResponse) {
@@ -28,9 +26,6 @@ localStorageUtil = new LocalStorageUtils();
           }
       }
       return throwError(() => error);
-  }),
-  finalize(() => {
-    this.spinnerService.hide();
   }));
   }
 
