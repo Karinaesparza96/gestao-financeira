@@ -83,7 +83,10 @@ export class ListaTransacoesComponent implements OnInit {
     if (this.transacao?.id)
       this.transacaoService.excluir(this.transacao?.id)
         .subscribe({
-          next: () => this.processarSucesso(),
+          next: () => {
+            this.processarSucesso(),
+            this.notificacao.show('Transação excluída com sucesso')
+          },
           error: () => this.processarErro()
         })
   }

@@ -1,31 +1,36 @@
-<div class="card p-3 mb-4 shadow-sm bg-light">
+<div class="card p-4 mb-4 bg-white rounded">
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Descrição:</strong></span>
-    <span>{{ transacao?.descricao }}</span>
+    <span class="fw-bold text-secondary">Descrição:</span>
+    <span class="text-muted">{{ transacao?.descricao }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Categoria:</strong></span>
-    <span>{{ transacao?.categoria }}</span>
+    <span class="fw-bold text-secondary">Categoria:</span>
+    <span class="text-muted">{{ transacao?.categoria }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Data:</strong></span>
-    <span>{{ transacao?.data | date : "dd/MM/yyyy" }}</span>
+    <span class="fw-bold text-secondary">Data:</span>
+    <span class="text-muted">{{ transacao?.data | date: "dd/MM/yyyy" }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Tipo:</strong></span>
+    <span class="fw-bold text-secondary">Tipo:</span>
     <span>
       <span
         [class.text-success]="transacao?.tipo === 1"
         [class.text-danger]="transacao?.tipo !== 1"
+        class="fw-bold"
       >
         {{ transacao?.tipo === 1 ? "Receita" : "Despesa" }}
       </span>
     </span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Valor:</strong></span>
-    <span class="fw-bold text-primary"
-      >R$ {{ transacao?.valor | brCurrency }}</span
-    >
+    <span class="fw-bold text-secondary">Valor:</span>
+    <span class="fw-bold text-primary">
+      R$ {{ transacao?.valor | brCurrency }}
+    </span>
   </div>
 </div>

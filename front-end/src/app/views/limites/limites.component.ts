@@ -97,7 +97,10 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     if (this.limite?.id) {
       this.limiteService.excluir(this.limite?.id)
         .subscribe({
-          next: () => this.processarSucesso(),
+          next: () => {
+            this.processarSucesso()
+            this.notificacao.show('Limite excluído com sucesso')
+          },
           error: () => this.processarErro()
         })
     }
