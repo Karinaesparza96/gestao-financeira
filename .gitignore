@@ -2,3 +2,6 @@
 /backend/src/Api/dev.db
 /backend/src/Api/dev.db-shm
 .vs/
+*.db-wal
+*.db
+*.db-shm
