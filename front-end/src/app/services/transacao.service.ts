@@ -1,18 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RetornoPadrao } from '../utils/retornoPadrao';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, finalize, map, Observable, of } from 'rxjs';
 import { Transacao } from '../models/Transacao';
 import { ResumoFinanceiro } from '../models/resumoFinanceiro';
 import { BaseService } from './base.service';
 import { FiltroBuscaTransacao } from '../models/filtroBusca';
+import { SpinnerService } from '../components/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransacaoService extends BaseService {
 
-  constructor(private http: HttpClient) { super(); }
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) { super(); }
 
   obterTodos(): Observable<Transacao[]> {
     return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes`, this.ObterAuthHeaderJson())
@@ -23,11 +24,13 @@ export class TransacaoService extends BaseService {
   }
 
   obterTodosComFiltro(filtro: FiltroBuscaTransacao): Observable<Transacao[]> {
+    this.spinnerService.show();
     const params = Object.entries(filtro).map(key => key.join('=')).join('&');
     return this.http.get<RetornoPadrao>(`${this.UrlService}/transacoes?${params}`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData),
-                      catchError(this.serviceError)
+                      catchError(this.serviceError),
+                      finalize(() => this.spinnerService.hide())
                     )
   }
 

@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs';
 import { LimiteOrcamento } from '../models/limiteOrcamento';
 import { FiltroBuscaLimite } from '../models/filtroBusca';
-import { CurrencyUtils } from '../utils/currency-utils';
+import { SpinnerService } from '../components/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LimiteService extends BaseService {
 
-  constructor(private http: HttpClient) { super() }
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) { super() }
 
   obterTodos() {
     return this.http.get(`${this.UrlService}/limites-orcamentos`, this.ObterAuthHeaderJson())
@@ -22,11 +22,13 @@ export class LimiteService extends BaseService {
   }
 
   obterTodosComFiltro(filtro: FiltroBuscaLimite) {
+    this.spinnerService.show();
     const params = Object.entries(filtro).map(key => key.join('=')).join('&');
     return this.http.get(`${this.UrlService}/limites-orcamentos?${params}`, this.ObterAuthHeaderJson())
                     .pipe(
                       map(this.extractData),
-                      catchError(this.serviceError)
+                      catchError(this.serviceError),
+                      finalize(() => this.spinnerService.hide())
                     );
   }
 
