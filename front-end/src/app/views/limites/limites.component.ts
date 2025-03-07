@@ -14,10 +14,12 @@ import { map } from 'rxjs';
 import { ConfirmacaoExcluirComponent } from "../../components/confirmacao-excluir/confirmacao-excluir.component";
 import { DetalheLimiteComponent } from "./detalhe-limite/detalhe-limite.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { SpinnerComponent } from "../../components/spinner/spinner.component";
+import { SpinnerService } from '../../components/spinner/spinner.service';
 
 @Component({
   selector: 'app-limites',
-  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, TabelaComponent, ConfirmacaoExcluirComponent, DetalheLimiteComponent, ReactiveFormsModule],
+  imports: [CommonModule, ModalComponent, EmptyStateComponent, FormularioLimiteComponent, TabelaComponent, ConfirmacaoExcluirComponent, DetalheLimiteComponent, ReactiveFormsModule, SpinnerComponent],
   templateUrl: './limites.component.html',
   styleUrl: './limites.component.scss'
 })
@@ -43,15 +45,17 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
       {icone: 'bi-trash', classe: 'btn-outline-danger', acao: this.excluirLimite.bind(this)}
     ]
   }
+  carregando: boolean = false;
   
     constructor(
       private fb: FormBuilder,
       private categoriaService: CategoriaService,
       private limiteService: LimiteService,
-      private notificacao: NotificacaoService
+      private notificacao: NotificacaoService,
+      private spinnerService: SpinnerService
     ) {
       super();
-      this.categoriaService.obterTodos().subscribe(x => this.categorias = x);
+      this.spinnerService.loading$.subscribe(x => this.carregando = x);
       this.filtroForm = this.fb.group({
         periodo: [''],
         categoriaId: ['']
@@ -97,7 +101,10 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     if (this.limite?.id) {
       this.limiteService.excluir(this.limite?.id)
         .subscribe({
-          next: () => this.processarSucesso(),
+          next: () => {
+            this.processarSucesso()
+            this.notificacao.show('Limite excluído com sucesso')
+          },
           error: () => this.processarErro()
         })
     }

@@ -1,26 +1,26 @@
-<div class="card p-3 mb-4 shadow-sm bg-light">
+<div class="card p-4 mb-4 bg-white rounded">
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Tipo:</strong></span>
-    <span>{{ limite?.tipoLimite == 1 ? 'Geral' : 'Categoria' }}</span>
+    <span class="fw-bold text-secondary">Tipo:</span>
+    <span class="text-muted">{{ limite?.tipoLimite == 1 ? 'Geral' : 'Categoria' }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3" *ngIf="limite?.categoriaNome">
-    <span><strong>Categoria:</strong></span>
-    <span>{{ limite?.categoriaNome }}</span>
+    <span class="fw-bold text-secondary">Categoria:</span>
+    <span class="text-muted">{{ limite?.categoriaNome }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Periodo:</strong></span>
-    <span>{{ limite?.periodo| date : "dd/MM/yyyy" }}</span>
+    <span class="fw-bold text-secondary">Período:</span>
+    <span class="text-muted">{{ limite?.periodo | date: "dd/MM/yyyy" }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Limite:</strong></span>
-    <span class="fw-bold text-primary"
-    >R$ {{ limite?.limite| brCurrency }}</span
-    >
+    <span class="fw-bold text-secondary">Limite:</span>
+    <span class="fw-bold text-success">R$ {{ limite?.limite | brCurrency }}</span>
   </div>
+
   <div class="d-flex justify-content-between mb-3">
-    <span><strong>Porcentagem Aviso:</strong></span>
-    <span>
-        {{ limite?.porcentagemAviso }}%
-    </span>
+    <span class="fw-bold text-secondary">Porcentagem de Aviso:</span>
+    <span class="text-danger">{{ limite?.porcentagemAviso }}%</span>
   </div>
 </div>

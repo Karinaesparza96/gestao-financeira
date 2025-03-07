@@ -16,10 +16,12 @@ import { ConfirmacaoExcluirComponent } from "../../../components/confirmacao-exc
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria';
+import { SpinnerComponent } from "../../../components/spinner/spinner.component";
+import { SpinnerService } from '../../../components/spinner/spinner.service';
 
 @Component({
   selector: 'app-lista-transacoes',
-  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ResumoFinanceiroComponent, TabelaComponent, DetalheComponent, ConfirmacaoExcluirComponent, ReactiveFormsModule],
+  imports: [CommonModule, ModalComponent, FormularioTransacaoComponent, RouterModule, EmptyStateComponent, ResumoFinanceiroComponent, TabelaComponent, DetalheComponent, ConfirmacaoExcluirComponent, ReactiveFormsModule, SpinnerComponent],
   templateUrl: './lista-transacoes.component.html',
 })
 export class ListaTransacoesComponent implements OnInit {
@@ -44,7 +46,13 @@ export class ListaTransacoesComponent implements OnInit {
       { icone: 'bi-trash', classe: 'btn-outline-danger', acao: this.excluirTransacao.bind(this) }
     ]
   }
-  constructor(private fb: FormBuilder, private categoriaService: CategoriaService, private transacaoService: TransacaoService, private notificacao: NotificacaoService) {
+carregando: boolean = false;
+  constructor(private fb: FormBuilder, 
+            private categoriaService: CategoriaService, 
+            private transacaoService: TransacaoService, 
+            private notificacao: NotificacaoService,
+            private spinnerService: SpinnerService) {
+    this.spinnerService.loading$.subscribe(x => this.carregando = x);
     this.filtroForm = this.fb.group({
       data: [''],
       categoriaId: [''],
@@ -83,7 +91,10 @@ export class ListaTransacoesComponent implements OnInit {
     if (this.transacao?.id)
       this.transacaoService.excluir(this.transacao?.id)
         .subscribe({
-          next: () => this.processarSucesso(),
+          next: () => {
+            this.processarSucesso(),
+            this.notificacao.show('Transação excluída com sucesso')
+          },
           error: () => this.processarErro()
         })
   }

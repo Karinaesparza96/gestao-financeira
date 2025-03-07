@@ -9,7 +9,6 @@ import { TransacaoService } from '../../services/transacao.service';
 import { Transacao } from '../../models/Transacao';
 import { ResumoFinanceiro } from '../../models/resumoFinanceiro';
 import { GraficoTransacaoComponent } from '../transacoes/grafico-transacao/grafico-transacao.component';
-import { NotificacaoService } from '../../utils/notificacao.service';
 import { BrCurrencyPipe } from "../../utils/pipes/br-currency.pipe";
 import { GraficoService } from '../../services/grafico.service';
 
@@ -28,13 +27,12 @@ export class HomeComponent implements OnInit{
   transacoes: Transacao[] = []
   entradasEDespesas: any
   maioresGastos: any
-  resumoSaldo$: Observable<ResumoFinanceiro>;
+  resumoSaldo?: ResumoFinanceiro;
 
   constructor(private transacaoService: TransacaoService,
-              private notificacao: NotificacaoService,
               private graficoService: GraficoService
   ) {
-    this.resumoSaldo$ = this.transacaoService.obterResumoTransacoes();
+    this.transacaoService.obterResumoTransacoes().subscribe(x => this.resumoSaldo = x);
   }
 
   ngOnInit(): void {
