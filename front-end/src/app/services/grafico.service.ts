@@ -45,8 +45,28 @@ export class GraficoService {
     return chartData = {
       labels: [...dadosMensais.keys()],
       datasets: [
-        { data: receitas, label: 'Receitas', backgroundColor: 'green' },
-        { data: despesas, label: 'Despesas', backgroundColor: 'red' }
+        { 
+          data: receitas, 
+          label: 'Receitas', 
+          backgroundColor: 'rgba(0, 128, 0, 0.7)',
+          borderColor: 'rgba(0, 128, 0, 1)', 
+          borderWidth: 1.5,
+          borderRadius: 6, 
+          barPercentage: 0.6, 
+          categoryPercentage: 0.5,
+          hoverBackgroundColor: 'rgba(0, 128, 0, 0.9)', 
+        },
+        { 
+          data: despesas, 
+          label: 'Despesas', 
+          backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          borderColor: 'rgba(255, 0, 0, 1)', 
+          borderWidth: 1.5,
+          borderRadius: 6,
+          barPercentage: 0.6,
+          categoryPercentage: 0.5,
+          hoverBackgroundColor: 'rgba(255, 0, 0, 0.7)',
+        }
       ]
     };
   }
@@ -78,7 +98,36 @@ export class GraficoService {
         labels: Object.keys(maioresGastosNoMes),
         datasets: [
           {
-            data: Object.values(maioresGastosNoMes), label: 'Maiores Gastos'
+            data: Object.values(maioresGastosNoMes),
+            label: 'Maiores Gastos Mês Atual',
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',  
+              'rgba(54, 162, 235, 0.7)',  
+              'rgba(255, 206, 86, 0.7)', 
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+              'rgba(255, 159, 64, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1.5,
+            borderRadius: 6,
+            barPercentage: 0.6,
+            categoryPercentage: 0.5,
+            hoverBackgroundColor: [
+              'rgba(255, 99, 132, 0.9)',
+              'rgba(54, 162, 235, 0.9)',
+              'rgba(255, 206, 86, 0.9)',
+              'rgba(75, 192, 192, 0.9)',
+              'rgba(153, 102, 255, 0.9)',
+              'rgba(255, 159, 64, 0.9)'
+            ]
           }
         ]
       }
