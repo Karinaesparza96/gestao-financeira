@@ -4,15 +4,15 @@
     <div class="dashboard-summary">
       <div class="summary-card receita">
         <span>Receita Mensal</span>
-        <p>R$ {{ (resumoSaldo$ | async)?.totalReceita | brCurrency}}</p>
+        <p>R$ {{ resumoSaldo?.totalReceita | brCurrency}}</p>
       </div>
       <div class="summary-card despesa">
         <span>Despesa Mensal</span>
-        <p>R$ {{ (resumoSaldo$ | async)?.totalDespesa | brCurrency }}</p>
+        <p>R$ {{ resumoSaldo?.totalDespesa | brCurrency }}</p>
       </div>
       <div class="summary-card saldo">
         <span>Saldo Total</span>
-        <p>R$ {{ (resumoSaldo$ | async)?.totalSaldo | brCurrency }}</p>
+        <p>R$ {{ resumoSaldo?.totalSaldo | brCurrency }}</p>
       </div>
     </div>
   </div>

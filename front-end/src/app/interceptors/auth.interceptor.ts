@@ -1,20 +1,23 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, finalize, Observable, throwError } from 'rxjs';
 import { LocalStorageUtils } from '../utils/localstorage';
 import { NotificacaoService } from '../utils/notificacao.service';
+import { SpinnerService } from '../components/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-constructor(private router: Router,  private notificacao: NotificacaoService) { }
+constructor(private router: Router,  private notificacao: NotificacaoService, private spinnerService: SpinnerService) { }
 localStorageUtil = new LocalStorageUtils();
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(catchError(error => {
+    this.spinnerService.show();
+    return next.handle(req).pipe(
+      catchError(error => {
       if (error instanceof HttpErrorResponse) {
           if (error.status === 500) {
             this.notificacao.show('Ops! Ocorreu um erro, tente novamente ou nos contate.', 'falha')
@@ -24,8 +27,10 @@ localStorageUtil = new LocalStorageUtils();
               this.router.navigate(['/conta/login'], { queryParams: { returnUrl: this.router.routerState.snapshot.url}});
           }
       }
-
-      return throwError(error);
+      return throwError(() => error);
+  }),
+  finalize(() => {
+    this.spinnerService.hide();
   }));
   }
 

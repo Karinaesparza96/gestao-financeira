@@ -38,8 +38,11 @@
       <i class="bi bi-plus-lg"></i> Novo Limite
     </a>
   </div>
-  <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes"/>
-  <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Sem registros para listar'"/>
+  <ng-container *ngIf="!carregando">
+    <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes"/>
+    <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Sem registros para listar'"/>
+  </ng-container>
+  <app-spinner [carregando]="carregando"/>
 </div>
 <app-modal [label]="'Novo Limite'" [showModal]="showModalNovo" (modalChanged)="fecharModal()"> 
   <ng-container *ngIf="showModalNovo">
