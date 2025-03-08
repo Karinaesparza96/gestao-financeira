@@ -27,6 +27,8 @@ namespace Data.Repositories
 
             query = query.Include(x => x.Categoria);
 
+            query = query.OrderBy(x => x.DataCriacao);
+
             return await query.ToListAsync();
         }
     }

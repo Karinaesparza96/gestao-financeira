@@ -81,11 +81,60 @@ namespace Api.Configurations
                 Nome = "Salário"
             };
 
+            var categoria5 = new Categoria
+            {
+                Default = false,
+                Nome = "Lazer",
+                Usuario = usuario,
+                UsuarioId = usuario.Id
+
+            };
+
             var limite1 = new LimiteOrcamento()
             {
                 Periodo = dataOnlyPrimeiroDiaDoMes,
                 TipoLimite = TipoLimite.Geral,
                 Limite = 2000,
+                PorcentagemAviso = 50,
+                UsuarioId = userIdentity.Id
+            };
+
+            var limite2 = new LimiteOrcamento()
+            {
+                Periodo = dataOnlyPrimeiroDiaDoMes,
+                TipoLimite = TipoLimite.Categoria,
+                CategoriaId = categoria1.Id, //Alimentação
+                Limite = 1000,
+                PorcentagemAviso = 50,
+                UsuarioId = userIdentity.Id
+            };
+
+            var limite3 = new LimiteOrcamento()
+            {
+                Periodo = dataOnlyPrimeiroDiaDoMes,
+                TipoLimite = TipoLimite.Categoria,
+                CategoriaId = categoria5.Id, //Lazer
+                Limite = 200,
+                PorcentagemAviso = 50,
+                UsuarioId = userIdentity.Id
+            };
+
+            var limite4 = new LimiteOrcamento()
+            {
+                Periodo = dataOnlyPrimeiroDiaDoMes,
+                TipoLimite = TipoLimite.Categoria,
+                CategoriaId = categoria2.Id, //Saúde
+                Limite = 300,
+                PorcentagemAviso = 50,
+                UsuarioId = userIdentity.Id
+            };
+
+            var limite5 = new LimiteOrcamento()
+            {
+                Periodo = dataOnlyPrimeiroDiaDoMes,
+                TipoLimite = TipoLimite.Categoria,
+                CategoriaId = categoria3.Id, //Transporte
+                Limite = 500,
                 PorcentagemAviso = 50,
                 UsuarioId = userIdentity.Id
             };
@@ -97,7 +146,7 @@ namespace Api.Configurations
                 Data = dataPrimeiroDiaDoMes,
                 Tipo = TipoTransacao.Entrada,
                 Descricao = "Remuneração fixa mensal",
-                Valor = 1437.85M,
+                Valor = 2000,
                 Categoria = categoria4,
                 Usuario = usuario,
             };
@@ -110,18 +159,6 @@ namespace Api.Configurations
                 Tipo = TipoTransacao.Saida,
                 Descricao = "Compras de supermercado",
                 Valor = 435.72M,
-                Categoria = categoria1,
-                Usuario = usuario,
-            };
-
-            var transacao3 = new Transacao
-            {
-                UsuarioId = userIdentity.Id,
-                CategoriaId = categoria1.Id,
-                Data = dataPrimeiroDiaDoMes,
-                Tipo = TipoTransacao.Saida,
-                Descricao = "Compras na feira",
-                Valor = 237.54M,
                 Categoria = categoria1,
                 Usuario = usuario,
             };
@@ -150,15 +187,27 @@ namespace Api.Configurations
                 Usuario = usuario,
             };
 
+            var transacao6 = new Transacao
+            {
+                UsuarioId = userIdentity.Id,
+                CategoriaId = categoria5.Id,
+                Data = dataPrimeiroDiaDoMes,
+                Tipo = TipoTransacao.Saida,
+                Descricao = "Ida a praia",
+                Valor = 120.57M,
+                Categoria = categoria5,
+                Usuario = usuario,
+            };
+
             await context.Users.AddAsync(userIdentity);
 
             await context.Set<Usuario>().AddAsync(usuario);
 
             await context.Set<Categoria>().AddRangeAsync([categoria1, categoria2, categoria3, categoria4]);
 
-            await context.Set<LimiteOrcamento>().AddAsync(limite1);
+            await context.Set<LimiteOrcamento>().AddRangeAsync([limite1, limite2, limite3, limite4, limite5]);
 
-            await context.Set<Transacao>().AddRangeAsync([transacao1, transacao2, transacao3, transacao4, transacao5]);
+            await context.Set<Transacao>().AddRangeAsync([transacao1, transacao2, transacao4, transacao5, transacao6]);
 
             await context.SaveChangesAsync();
         }
