@@ -36,7 +36,7 @@ namespace Data.Repositories
 
             query = query.Include(t => t.Categoria);
 
-            query = query.OrderBy(t => t.DataCriacao);
+            query = query.OrderBy(t => t.Data).ThenBy(t => t.DataCriacao);
 
             return await query.ToListAsync();
         }

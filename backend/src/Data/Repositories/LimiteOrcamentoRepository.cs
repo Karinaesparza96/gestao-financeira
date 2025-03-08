@@ -27,7 +27,7 @@ namespace Data.Repositories
 
             query = query.Include(x => x.Categoria);
 
-            query = query.OrderBy(x => x.DataCriacao);
+            query = query.OrderBy(x => x.Periodo).ThenBy(x => x.TipoLimite).ThenBy(x => x.Categoria.Nome).ThenBy(x => x.DataCriacao);
 
             return await query.ToListAsync();
         }
