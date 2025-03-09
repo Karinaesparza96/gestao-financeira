@@ -31,7 +31,7 @@ namespace Data.Repositories
 
             if (orderBy != null)
             {
-                query = query.OrderByDescending(orderBy);
+                query = query.OrderBy(orderBy);
             }
             return await query.ToListAsync();
         }
