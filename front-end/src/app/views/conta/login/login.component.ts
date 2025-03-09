@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -19,7 +19,7 @@ import { ErrorListComponent } from '../../../components/error-list/error-list.co
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errors: any[] = [];
-  @Input() usuario!: Usuario;
+  usuario!: Usuario;
   defaultUrl: string = '/home';
 
   constructor(
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(6)]]
+      senha: ['', [Validators.required]]
     });
   }
 

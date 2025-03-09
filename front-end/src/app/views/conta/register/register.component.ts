@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,7 @@ import { ErrorListComponent } from '../../../components/error-list/error-list.co
 })
 export class RegisterComponent {
   registerForm: FormGroup;
-  @Input() usuario!: Usuario;
+  usuario!: Usuario;
 
   errors: any[] = [];
 
@@ -31,7 +31,7 @@ export class RegisterComponent {
     this.registerForm = this.formBuilder.group({
       nome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(6)]],
+      senha: ['', [Validators.required, Validators.minLength(8)]],
       confimacaoSenha: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
   }
