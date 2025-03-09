@@ -20,7 +20,7 @@ export class CategoriaService extends BaseService {
       );
   }
 
-  ObterPorId(id: string) : Observable<Categoria[]>{
+  ObterPorId(id: string) : Observable<Categoria>{
     return this.http.get<ResponseDefault>(this.UrlService + '/categorias' + id, this.ObterAuthHeaderJson())
       .pipe(
         map(this.extractData),
@@ -28,7 +28,7 @@ export class CategoriaService extends BaseService {
       );
   }
 
-  novaCategoria(categoria: NovaCategoria): Observable<Categoria[]>{
+  novaCategoria(categoria: NovaCategoria) {
     return this.http.post<ResponseDefault>(this.UrlService + '/categorias', categoria, this.ObterAuthHeaderJson())
       .pipe(
         map(this.extractMensagens),
@@ -36,18 +36,16 @@ export class CategoriaService extends BaseService {
       );
   }
 
-  atualizarCategoria(categoria: Categoria): Observable<Categoria[]> {
+  atualizarCategoria(categoria: Categoria) {
     return this.http.put<ResponseDefault>(this.UrlService + '/categorias/' + categoria.id, categoria, this.ObterAuthHeaderJson())
       .pipe(
-        map(this.extractMensagens),
         catchError(this.serviceError)
       );
   }
 
-  excluirCategoria(id: string): Observable<Categoria[]>{
+  excluirCategoria(id: string) {
     return this.http.delete<ResponseDefault>(this.UrlService + "/categorias/" + id, this.ObterAuthHeaderJson())
       .pipe(
-        map(this.extractData),
         catchError(this.serviceError)
       );
   }

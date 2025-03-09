@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Business.Entities
+﻿namespace Business.Entities
 {
     public class Usuario : Entity
     {

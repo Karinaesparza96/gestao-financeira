@@ -21,14 +21,10 @@ namespace Api.Configurations
         public static async Task EnsureSeedData(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            //if (env.IsDevelopment())
-            //{
-                await context.Database.MigrateAsync();
-                await InserirDadosIniciais(context);
-            //}
+            await context.Database.MigrateAsync();
+            await InserirDadosIniciais(context);
         }
 
         private static async Task InserirDadosIniciais(AppDbContext context)

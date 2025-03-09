@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoriaService } from '../../services/categoria.service';
 import { Categoria, NovaCategoria } from '../../models/categoria';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Subject, takeUntil, catchError, finalize } from 'rxjs';
-import { BaseFormComponent } from '../../base-components/BaseFormComponent';
+import { Subject, takeUntil, finalize } from 'rxjs';
 import { NotificacaoService } from '../../utils/notificacao.service';
 
 @Component({
@@ -15,8 +14,7 @@ import { NotificacaoService } from '../../utils/notificacao.service';
   templateUrl: './categorias.component.html',
   styleUrl: './categorias.component.scss'
 })
-export class CategoriasComponent extends BaseFormComponent implements OnInit, OnDestroy {
-  @Output() processouComSucesso = new EventEmitter<void>();
+export class CategoriasComponent implements OnInit, OnDestroy {
   categorias: Categoria[] = [];
   categoriaEmEdicao: Categoria = {} as Categoria;
   modoEdicao = false;
@@ -29,23 +27,17 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
   constructor(
     private categoriaService: CategoriaService,
     private notificacao: NotificacaoService
-  ) {
-    super();
-    console.log('Componente Categorias construído');
-  }
+  ) {}
 
   ngOnInit(): void {
-    console.log('Iniciando carregamento das categorias...');
     this.carregarCategorias();
   }
 
-  // Destruir o componente
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // Carregar categorias
   carregarCategorias(): void {
     this.carregando = true;
     this.erro = null;
@@ -53,11 +45,6 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
     this.categoriaService.obterTodos()
       .pipe(
         takeUntil(this.destroy$),
-        catchError(error => {
-          this.erro = 'Erro ao carregar categorias. Por favor, tente novamente.';
-          console.error('Erro ao carregar categorias:', error);
-          return []; // Retorna array vazio em caso de erro
-        }),
         finalize(() => this.carregando = false)
       )
       .subscribe(data => {
@@ -65,7 +52,6 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
       });
   }
 
-  // Iniciar nova categoria
   iniciarNovaCategoria(): void {
     this.erro = null;
     this.categoriaEmEdicao = {
@@ -76,7 +62,6 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
     this.modoEdicao = true;
   }
 
-  // Editar categoria
   editarCategoria(categoria: Categoria): void {
     this.erro = null;
     this.categoriaEmEdicao = { ...categoria };
@@ -105,29 +90,14 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
     operacao
       .pipe(
         takeUntil(this.destroy$),
-        catchError(error => {
-          this.erro = this.ehNovaCategoria
-            ? 'Erro ao criar categoria. Por favor, tente novamente.'
-            : 'Erro ao atualizar categoria. Por favor, tente novamente.';
-          if (error.error?.mensagens?.length > 0) {
-            this.erro = error.error.mensagens.join(', ');
-          }
-          console.error('Erro ao salvar categoria:', error);
-          throw error;
-        }),
         finalize(() => this.carregando = false)
       ) 
       .subscribe({
-        next: (categorias) => {
-          this.categorias = categorias;
-          this.cancelarEdicao();
-          this.carregarCategorias();
-        },
+        next: () => this.processarSucesso(),
         error: (error) => this.processarFalha(error)
       });
   }
 
-  // Excluir categoria
   excluirCategoria(id: string): void {
     if (!id) {
       this.erro = 'ID da categoria inválido';
@@ -150,27 +120,14 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
     this.categoriaService.excluirCategoria(id)
       .pipe(
         takeUntil(this.destroy$),
-        catchError(error => {
-          this.erro = 'Erro ao excluir categoria. Por favor, tente novamente.';
-          if (error.error?.mensagens?.length > 0) {
-            this.erro = error.error.mensagens.join(', ');
-          }
-          console.error('Erro ao excluir categoria:', error);
-          throw error;
-        }),
         finalize(() => this.carregando = false)
       )
       .subscribe({
-        next: (categorias) => {
-          this.categorias = categorias;
-          this.cancelarEdicao();
-          this.carregarCategorias();
-        },
+        next: () => this.processarSucesso(),
         error: (error) => this.processarFalha(error)
       });
   }
 
-  // Cancelar edição
   cancelarEdicao(): void {
     this.modoEdicao = false;
     this.ehNovaCategoria = false;
@@ -178,7 +135,14 @@ export class CategoriasComponent extends BaseFormComponent implements OnInit, On
     this.erro = null;
   }
 
+  private processarSucesso() {
+    this.cancelarEdicao();
+    this.carregarCategorias();
+    this.notificacao.show('Operação realizada com sucesso!');
+  }
+
   private processarFalha(fail: any): void {
-    this.errosServer = fail.error.mensagens;
+    const erros = fail.error.mensagens.join('<br />');
+    this.notificacao.show(erros, 'falha');
   }
 }
