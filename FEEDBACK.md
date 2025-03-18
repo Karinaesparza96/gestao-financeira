@@ -4,29 +4,32 @@
 
 ### Navegação
 
-- Navegação simples.
-- O dashboard poderia expor graficos, poderia ter mais informações gerais.
+- Navegação fluida e fácil.
+- Bastante informações disponíveis no Dashboard
 
 ### Design
 
-- Design muito simples.
+- Design de acordo com a necessidade, bem ajustado.
 
 ### Funcionalidade
 
-- Não deveria cair direto no dashboard e sim numa tela login/register
-- Nenhuma navegação (rota) funciona.
+- Tudo funciona muito bem e corretamente com algumas exceções:
+    - Formato de data mm/dd/yyyy dificulta a usabilidade
+    - O limite pede um período, seria melhor ser fixo, não tem instruções de que formato oferecer o periodo do limite, ficou confusa a usabilidade.
+    - Ao passar de 100% de um limite a aplicação começa a informar apenas o excedente (ex: mostra 8% ao invés de 108% "acima do limite")
+    - O relatório oferece apenas uma opção de data (o ideal seria data inicio/fim)
+    - Seria interessante um alert fixo de limites atingidos em algum lugar da tela, (dash ou tela de limites)
 
 ## Back End
 
 ### Arquitetura
 
-- Microsoft.AspNetCore.Authentication.JwtBearer na v9 mas o projeto na v8 do .NET
-- Erro de inicialização: “SqliteException: SQLite Error 1: 'table "AspNetRoles" already exists'.”
-- JwtSettings não deveria estar na camada Business
+- Bem estruturada e coesa para o propósito do projeto
+- Código limpo em geral principalmente nas controllers e serviços
 
 ### Funcionalidade
 
-- Não testado, não estava implementado no front-end
+- Funcionalidades expostas na API operando corretamente
 
 ### Modelagem
 
@@ -36,12 +39,14 @@
 
 ### Organização
 
-- Não versionar a pasta “.vs”
+- Projeto bem documentado e organizado.
 
 ### Documentação
 
-- Não constou informações de como rodar o projeto front-end
+- Bem documentado
+- Gostei de expor um user Teste para demos
 
 ### Instalação
 
-- Precisei usar o “npm i —force” devido o uso de algum componente datado
+- O setup ocorreu de forma esperada, apenas os comandos necessários para rodar a aplicação.
+- Não encontrei dificuldades
