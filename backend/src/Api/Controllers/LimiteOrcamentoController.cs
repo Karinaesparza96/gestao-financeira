@@ -20,7 +20,28 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<LimiteOrcamentoDto>>> ObterTodos([FromQuery]FiltroLimiteOrcamento filtroLimiteOrcamento)
         {
             var limiteOrcamentos = await limiteOrcamentoService.ObterTodos(filtroLimiteOrcamento);
-            return RetornoPadrao(data: mapper.Map<IEnumerable<LimiteOrcamentoDto>>(limiteOrcamentos));
+            var limitesOrcamentos = mapper.Map<IEnumerable<LimiteOrcamentoUtilizadoDto>>(limiteOrcamentos);
+            PreencherLimiteUtilizadoDto(limitesOrcamentos);
+            return RetornoPadrao(data: limitesOrcamentos);
+        }
+
+        private void PreencherLimiteUtilizadoDto(IEnumerable<LimiteOrcamentoUtilizadoDto> limitesOrcamentoUtilizado)
+        {
+            foreach (var limite in limitesOrcamentoUtilizado)
+            {
+                var limiteUtilizado = limiteOrcamentoService.ObterValorTotalDeSaidasNoPeriodo(limite.UsuarioId, limite.Periodo, limite.CategoriaId);
+                if (limiteUtilizado != 0)
+                {
+                    limite.LimiteUtilizado = limiteUtilizado;
+                    var percentualUtilizado = (limiteUtilizado / limite.Limite) * Convert.ToDecimal(100);
+                    limite.PercentualLimiteUtilizado = percentualUtilizado.ToString("##0.00").Replace(".",",") + "%";
+                }
+                else
+                {
+                    limite.LimiteUtilizado = 0;
+                    limite.PercentualLimiteUtilizado = "0%";
+                }
+            }
         }
 
         [HttpGet("{id:Guid}")]

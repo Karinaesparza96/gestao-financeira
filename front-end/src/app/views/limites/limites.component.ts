@@ -38,7 +38,9 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
       {campo: 'tipoLimite', titulo: 'Tipo', classe: ''},
       {campo: 'categoria', titulo: 'Categoria', classe: ''},
       {campo: 'limite', titulo: 'Limite', classe: 'text-end', pipe: 'currency'},
-      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'}
+      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'},
+      {campo: 'limiteUtilizado', titulo: 'Utilizado', classe: 'text-end', pipe: 'currency'},
+      {campo: 'percentualLimiteUtilizado', titulo: '% Utilizado', classe: 'text-end'}
     ],
     acoes: [
       {icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarLimite.bind(this)},
