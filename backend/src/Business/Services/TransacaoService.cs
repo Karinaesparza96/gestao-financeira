@@ -17,13 +17,6 @@ namespace Business.Services
         public async Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtroDto)
         {
             var transacoesUsuario = await transacaoRepository.ObterTodos(filtroDto, UsuarioId);
-
-            if (transacoesUsuario != null)
-            {
-                var transacao = transacoesUsuario.FirstOrDefault();
-                await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, DateOnly.FromDateTime(transacao.Data));
-            }
-
             return transacoesUsuario;
         }
 

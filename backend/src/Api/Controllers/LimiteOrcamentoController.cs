@@ -25,25 +25,6 @@ namespace Api.Controllers
             return RetornoPadrao(data: limitesOrcamentos);
         }
 
-        private void PreencherLimiteUtilizadoDto(IEnumerable<LimiteOrcamentoUtilizadoDto> limitesOrcamentoUtilizado)
-        {
-            foreach (var limite in limitesOrcamentoUtilizado)
-            {
-                var limiteUtilizado = limiteOrcamentoService.ObterValorTotalDeSaidasNoPeriodo(limite.UsuarioId, limite.Periodo, limite.CategoriaId);
-                if (limiteUtilizado != 0)
-                {
-                    limite.LimiteUtilizado = limiteUtilizado;
-                    var percentualUtilizado = (limiteUtilizado / limite.Limite) * Convert.ToDecimal(100);
-                    limite.PercentualLimiteUtilizado = percentualUtilizado.ToString("##0.00").Replace(".",",") + "%";
-                }
-                else
-                {
-                    limite.LimiteUtilizado = 0;
-                    limite.PercentualLimiteUtilizado = "0%";
-                }
-            }
-        }
-
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<LimiteOrcamentoDto>> ObterPorId(Guid id)
         {
@@ -88,6 +69,25 @@ namespace Api.Controllers
         {
             await limiteOrcamentoService.Excluir(id);
             return RetornoPadrao(HttpStatusCode.NoContent);
+        }
+
+        private void PreencherLimiteUtilizadoDto(IEnumerable<LimiteOrcamentoUtilizadoDto> limitesOrcamentoUtilizado)
+        {
+            foreach (var limite in limitesOrcamentoUtilizado)
+            {
+                var limiteUtilizado = limiteOrcamentoService.ObterValorTotalDeSaidasNoPeriodo(limite.UsuarioId, limite.Periodo, limite.CategoriaId);
+                if (limiteUtilizado != 0)
+                {
+                    limite.LimiteUtilizado = limiteUtilizado;
+                    var percentualUtilizado = (limiteUtilizado / limite.Limite) * Convert.ToDecimal(100);
+                    limite.PercentualLimiteUtilizado = percentualUtilizado.ToString("##0.00").Replace(".", ",") + "%";
+                }
+                else
+                {
+                    limite.LimiteUtilizado = 0;
+                    limite.PercentualLimiteUtilizado = "0,00%";
+                }
+            }
         }
     }
 }

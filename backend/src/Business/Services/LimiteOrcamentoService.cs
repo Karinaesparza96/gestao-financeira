@@ -17,12 +17,6 @@ namespace Business.Services
         public async Task<IEnumerable<LimiteOrcamento>> ObterTodos(FiltroLimiteOrcamento filtro)
         {
             var limitesOrcamentos = await limiteOrcamentoRepository.ObterTodos(filtro, UsuarioId);
-            if (limitesOrcamentos != null)
-            {
-                var limiteOrcamento = limitesOrcamentos.FirstOrDefault();
-                await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, limiteOrcamento.Periodo);
-            }
-
             return limitesOrcamentos;
         }
         public async Task<LimiteOrcamento?> ObterPorId(Guid id)
