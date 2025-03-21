@@ -39,7 +39,7 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
       {campo: 'categoria', titulo: 'Categoria', classe: ''},
       {campo: 'limite', titulo: 'Limite', classe: 'text-end', pipe: 'currency'},
       {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'},
-      {campo: 'limiteUtilizado', titulo: 'Utilizado', classe: 'text-end', pipe: 'currency'},
+      {campo: 'limiteUtilizado', titulo: 'Utilizado', classe: 'text-end', pipe: 'currency', classeDinamica: 'getPercentualClasse'},
       {campo: 'percentualLimiteUtilizado', titulo: '% Utilizado', classe: 'text-end', classeDinamica: 'getPercentualClasse'}
     ],
     acoes: [
@@ -130,9 +130,14 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   getPercentualClasse(item: any): string {
     const percentual = parseFloat(item.percentualLimiteUtilizado?.replace('%', '') || '0');
     const porcentagemAviso = item.porcentagemAviso;
+    const percentualMaximo = 100;
+
+    if (percentual >= percentualMaximo) {
+      return 'text-danger fw-bold';
+    }
 
     if (percentual >= porcentagemAviso) {
-      return 'text-danger fw-bold';
+      return 'text-warning fw-bold';
     }
 
     return 'text-success fw-bold';
