@@ -20,7 +20,7 @@
           id="categoriaId"
           class="form-select"
           formControlName="categoriaId"
-        > 
+        >
         <option value="" selected>Selecione</option>
         <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nome }}</option>
         </select>
@@ -39,22 +39,22 @@
     </a>
   </div>
   <ng-container *ngIf="!carregando">
-    <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes"/>
+    <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes" [componenteParent]="this" />
     <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Sem registros para listar'"/>
   </ng-container>
   <app-spinner [carregando]="carregando"/>
 </div>
-<app-modal [label]="'Novo Limite'" [showModal]="showModalNovo" (modalChanged)="fecharModal()"> 
+<app-modal [label]="'Novo Limite'" [showModal]="showModalNovo" (modalChanged)="fecharModal()">
   <ng-container *ngIf="showModalNovo">
     <app-formulario-limite (processouComSucesso)="processarSucesso()"/>
   </ng-container>
 </app-modal>
-<app-modal [label]="'Editar Limite'" [showModal]="showModalEditar" (modalChanged)="fecharModal()"> 
+<app-modal [label]="'Editar Limite'" [showModal]="showModalEditar" (modalChanged)="fecharModal()">
   <ng-container *ngIf="limite">
     <app-formulario-limite [id]="limite.id" (processouComSucesso)="processarSucesso()"/>
   </ng-container>
 </app-modal>
-<app-modal [label]="'Excluir Limite'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()"> 
+<app-modal [label]="'Excluir Limite'" [showModal]="showModalExcluir" (modalChanged)="fecharModal()">
    <app-confirmacao-excluir (changed)="corresponderAcaoExcluir($event)">
     <ng-container *ngIf="limite">
      <app-detalhe-limite [limite]="limite" />
