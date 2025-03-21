@@ -8,7 +8,8 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of dados">
-        <td *ngFor="let coluna of colunas" [ngClass]="coluna.classe">
+        <td *ngFor="let coluna of colunas" [ngClass]="coluna.classe"
+            [class]="aplicarClasseDinamica(coluna, item)" >
           <ng-container *ngIf="coluna?.pipe; else noPipe">
             <ng-container [ngSwitch]="coluna.pipe">
               <span *ngSwitchCase="'id'"><app-clip-board [content]="item[coluna.campo]"/></span>

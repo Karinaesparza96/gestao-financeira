@@ -38,7 +38,9 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
       {campo: 'tipoLimite', titulo: 'Tipo', classe: ''},
       {campo: 'categoria', titulo: 'Categoria', classe: ''},
       {campo: 'limite', titulo: 'Limite', classe: 'text-end', pipe: 'currency'},
-      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'}
+      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'},
+      {campo: 'limiteUtilizado', titulo: 'Utilizado', classe: 'text-end', pipe: 'currency', classeDinamica: 'getPercentualClasse'},
+      {campo: 'percentualLimiteUtilizado', titulo: '% Utilizado', classe: 'text-end', classeDinamica: 'getPercentualClasse'}
     ],
     acoes: [
       {icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarLimite.bind(this)},
@@ -46,7 +48,7 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     ]
   }
   carregando: boolean = false;
-  
+
     constructor(
       private fb: FormBuilder,
       private categoriaService: CategoriaService,
@@ -65,7 +67,7 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   ngOnInit(): void {
    this.atualizar();
   }
-  
+
   editarLimite(limite: LimiteOrcamento) {
     this.limite = limite;
     this.showModalEditar = true;
@@ -125,4 +127,19 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
     }))).subscribe((r) => this.limites = r)
   }
 
+  getPercentualClasse(item: any): string {
+    const percentual = parseFloat(item.percentualLimiteUtilizado?.replace('%', '') || '0');
+    const porcentagemAviso = item.porcentagemAviso;
+    const percentualMaximo = 100;
+
+    if (percentual >= percentualMaximo) {
+      return 'text-danger fw-bold';
+    }
+
+    if (percentual >= porcentagemAviso) {
+      return 'text-warning fw-bold';
+    }
+
+    return 'text-success fw-bold';
+  }
 }

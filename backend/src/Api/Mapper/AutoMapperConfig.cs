@@ -17,6 +17,7 @@ namespace Api.Mapper
             CreateMap<CategoriaDto, Categoria>().ReverseMap();
             CreateMap<LimiteOrcamentoDto, LimiteOrcamento>();
             CreateMap<LimiteOrcamento, LimiteOrcamentoDto>().ForMember(dest => dest.CategoriaNome, src => src.MapFrom(x => x.Categoria.Nome));
+            CreateMap<LimiteOrcamento, LimiteOrcamentoUtilizadoDto>().ForMember(dest => dest.CategoriaNome, src => src.MapFrom(x => x.Categoria.Nome));
             CreateMap<Transacao, RelatorioTransacaoDto>()
                 .ForMember(dest => dest.Data, src => src.MapFrom(x => x.Data.ToString(FORMATO_DATA)))
                 .ForMember(dest => dest.Tipo, src => src.MapFrom(x => x.Tipo.ToString()))

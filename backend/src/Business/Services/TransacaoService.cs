@@ -17,7 +17,6 @@ namespace Business.Services
         public async Task<IEnumerable<Transacao>> ObterTodos(FiltroTransacao filtroDto)
         {
             var transacoesUsuario = await transacaoRepository.ObterTodos(filtroDto, UsuarioId);
-
             return transacoesUsuario;
         }
 

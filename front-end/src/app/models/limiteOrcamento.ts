@@ -6,6 +6,8 @@ export interface LimiteOrcamento {
   limite: number
   tipoLimite: TipoLimite
   porcentagemAviso: number
+  limiteUtilizado?: number
+  percentualLimiteUtilizado?: string
 }
 
 export enum TipoLimite

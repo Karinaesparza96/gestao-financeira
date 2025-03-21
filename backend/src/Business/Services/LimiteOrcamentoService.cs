@@ -9,14 +9,14 @@ namespace Business.Services
 {
     public class LimiteOrcamentoService(IAppIdentityUser appIdentityUser, 
                                         ILimiteOrcamentoRepository limiteOrcamentoRepository,
-                                        ILimiteOrcamentoTransacaoService limiteOrcamentoTransacao,
+                                        ILimiteOrcamentoTransacaoService limiteOrcamentoTransacaoService,
+                                        ITransacaoRepository transacaoRepository,
                                         INotificador notificador,
                                         ICategoriaService categoriaService) : BaseService(appIdentityUser, notificador), ILimiteOrcamentoService
     {
         public async Task<IEnumerable<LimiteOrcamento>> ObterTodos(FiltroLimiteOrcamento filtro)
         {
             var limitesOrcamentos = await limiteOrcamentoRepository.ObterTodos(filtro, UsuarioId);
-
             return limitesOrcamentos;
         }
         public async Task<LimiteOrcamento?> ObterPorId(Guid id)
@@ -42,7 +42,7 @@ namespace Business.Services
         {
             if(!ExecutarValidacao(new LimiteOrcamentoValidation(), limiteOrcamento)) return;
 
-            if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
+            if (!limiteOrcamentoTransacaoService.TemRecursoDisponivel(limiteOrcamento.Limite))
             {
                 Notificar(Mensagens.SemRecursoDisponivel);
                 return;
@@ -52,6 +52,7 @@ namespace Business.Services
             limiteOrcamento.UsuarioId = UsuarioId;
 
             await limiteOrcamentoRepository.Adicionar(limiteOrcamento);
+            await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, limiteOrcamento.Periodo);
         }
 
         public async Task Atualizar(LimiteOrcamento limiteOrcamento)
@@ -72,7 +73,7 @@ namespace Business.Services
                 return;
             }
 
-            if (!limiteOrcamentoTransacao.TemRecursoDisponivel(limiteOrcamento.Limite))
+            if (!limiteOrcamentoTransacaoService.TemRecursoDisponivel(limiteOrcamento.Limite))
             {   
                 Notificar(Mensagens.SemRecursoDisponivel);
                 return;
@@ -87,6 +88,7 @@ namespace Business.Services
             limiteOrcamentoBanco.PorcentagemAviso = limiteOrcamento.PorcentagemAviso;
 
             await limiteOrcamentoRepository.Atualizar(limiteOrcamentoBanco);
+            await limiteOrcamentoTransacaoService.ValidarLimitesExcedido(UsuarioId, limiteOrcamento.Periodo);
         }
         public async Task Excluir(Guid id)
         {
@@ -131,6 +133,11 @@ namespace Business.Services
             return limiteOrcamentoRepository.Buscar(predicate: x => x.UsuarioId == UsuarioId && x.Periodo == periodo 
                                                     && x.CategoriaId == null && x.TipoLimite == TipoLimite.Geral && x.Id != idLimite,
                                                                         orderBy: x => x.CategoriaId).Result.Any();
+        }
+
+        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, Guid? categoriaId)
+        {
+            return transacaoRepository.ObterValorTotalDeSaidasNoPeriodo(usuarioId, periodo, categoriaId);
         }
     }
 }
