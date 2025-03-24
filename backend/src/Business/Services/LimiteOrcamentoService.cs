@@ -103,6 +103,11 @@ namespace Business.Services
             await limiteOrcamentoRepository.Excluir(entity);
         }
 
+        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, Guid? categoriaId)
+        {
+            return transacaoRepository.ObterValorTotalDeSaidasNoPeriodo(usuarioId, periodo, categoriaId);
+        }
+
         private async Task<bool> ValidarPorTipoLimite(LimiteOrcamento limiteOrcamento)
         {
             if (limiteOrcamento.TipoLimite == TipoLimite.Geral)
@@ -125,6 +130,11 @@ namespace Business.Services
         {
             await categoriaService.ObterPorId((Guid)limiteOrcamento.CategoriaId!);
 
+            if (ExisteLimiteCategoria(limiteOrcamento.Periodo, limiteOrcamento.Id))
+            {
+                Notificar(Mensagens.ExisteLimiteCategoria);
+            }
+
             return !TemNotificacao();
         }
 
@@ -135,9 +145,11 @@ namespace Business.Services
                                                                         orderBy: x => x.CategoriaId).Result.Any();
         }
 
-        public decimal ObterValorTotalDeSaidasNoPeriodo(string usuarioId, DateOnly periodo, Guid? categoriaId)
+        private bool ExisteLimiteCategoria(DateOnly periodo, Guid idLimite)
         {
-            return transacaoRepository.ObterValorTotalDeSaidasNoPeriodo(usuarioId, periodo, categoriaId);
+            return limiteOrcamentoRepository.Buscar(predicate: x => x.UsuarioId == UsuarioId && x.Periodo == periodo
+                                                    && x.CategoriaId != null && x.TipoLimite == TipoLimite.Categoria && x.Id != idLimite,
+                                                orderBy: x => x.CategoriaId).Result.Any();
         }
     }
 }

@@ -14,6 +14,8 @@
 
         public static string ExisteLimiteGeral = "Já existe um limite geral definido para este período.";
 
+        public static string ExisteLimiteCategoria = "Já existe um limite para essa categoria definido neste período.";
+
         public static string CategoriaNaoCadastrada = "Categoria precisa ser cadastrada antes de associar a uma transação.";
 
         public static string UsuarioEouSenhaIncorretos = "Usuário e ou senha incorretos.";
