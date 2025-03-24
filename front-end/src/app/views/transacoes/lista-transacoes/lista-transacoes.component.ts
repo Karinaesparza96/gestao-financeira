@@ -18,6 +18,7 @@ import { CategoriaService } from '../../../services/categoria.service';
 import { Categoria } from '../../../models/categoria';
 import { SpinnerComponent } from "../../../components/spinner/spinner.component";
 import { SpinnerService } from '../../../components/spinner/spinner.service';
+import { TipoTransacao } from '../../../models/TipoTransacao';
 
 @Component({
   selector: 'app-lista-transacoes',
@@ -35,11 +36,12 @@ export class ListaTransacoesComponent implements OnInit {
   categorias: Categoria[] = []
   tabela = {
     colunas: [
-      { campo: 'id', titulo: '#', classe: '', pipe: 'id' },
-      { campo: 'data', titulo: 'Data', classe: '', pipe: 'date' },
-      { campo: 'descricao', titulo: 'Descrição', classe: '' },
-      { campo: 'categoria', titulo: 'Categoria', classe: '' },
-      { campo: 'valor', titulo: 'Valor', classe: 'text-end fw-bold', pipe: 'currency' }
+      { campo: 'id', titulo: '#', pipe: 'id' },
+      { campo: 'data', titulo: 'Data', pipe: 'date' },
+      { campo: 'descricao', titulo: 'Descrição' },
+      { campo: 'categoria', titulo: 'Categoria' },
+      { campo: 'tipo', titulo: 'Tipo', classeDinamica: this.obterTipoClasse.bind(this), tratativa: this.tratarExibicaoTipo.bind(this) },
+      { campo: 'valor', titulo: 'Valor', pipe: 'currency' }
     ],
     acoes: [
       { icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarTransacao.bind(this) },
@@ -125,4 +127,13 @@ carregando: boolean = false;
       })))
     )
   }
+
+  obterTipoClasse(item: any): string {
+    return item.tipo == TipoTransacao.Saida ? 'text-danger fw-bold' : 'text-success fw-bold'
+  }
+
+  tratarExibicaoTipo(item: any): string {
+    return item.tipo == TipoTransacao.Saida ? 'Despesa' : 'Receita'
+  }
+
 }

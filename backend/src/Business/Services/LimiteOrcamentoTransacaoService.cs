@@ -48,7 +48,7 @@ namespace Business.Services
         {
             if (totalSaida > limite.Limite)
             {
-                var percentual = PercentualHelper.CalcularPercentualExcedido(totalSaida, limite.Limite);
+                var percentual = PercentualHelper.CalcularPorcentagem(totalSaida, limite.Limite);
                 Notificar($"O limite {limite?.Categoria?.Nome ?? "Geral"} ultrapassou {percentual}%", TipoNotificacao.Aviso);
                 return true;
             }

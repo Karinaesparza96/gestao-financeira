@@ -33,14 +33,14 @@ export class LimitesComponent extends BaseFormComponent implements OnInit {
   filtroForm!: FormGroup;
   tabela = {
     colunas: [
-      {campo: 'id', titulo: '#', classe: '', pipe: 'id'},
-      {campo: 'periodo', titulo: 'Periodo', classe: '', pipe: 'date'},
-      {campo: 'tipoLimite', titulo: 'Tipo', classe: ''},
-      {campo: 'categoria', titulo: 'Categoria', classe: ''},
-      {campo: 'limite', titulo: 'Limite', classe: 'text-end', pipe: 'currency'},
-      {campo: 'porcentagemAviso', titulo: '% Aviso', classe: 'text-end', pipe: 'percent'},
-      {campo: 'limiteUtilizado', titulo: 'Utilizado', classe: 'text-end', pipe: 'currency', classeDinamica: 'getPercentualClasse'},
-      {campo: 'percentualLimiteUtilizado', titulo: '% Utilizado', classe: 'text-end', classeDinamica: 'getPercentualClasse'}
+      {campo: 'id', titulo: '#', pipe: 'id'},
+      {campo: 'periodo', titulo: 'Periodo', pipe: 'date'},
+      {campo: 'tipoLimite', titulo: 'Tipo'},
+      {campo: 'categoria', titulo: 'Categoria'},
+      {campo: 'limite', titulo: 'Limite', pipe: 'currency'},
+      {campo: 'porcentagemAviso', titulo: '% Aviso', pipe: 'percent'},
+      {campo: 'limiteUtilizado', titulo: 'Utilizado', pipe: 'currency', classeDinamica: this.getPercentualClasse.bind(this)},
+      {campo: 'percentualLimiteUtilizado', titulo: '% Utilizado', classeDinamica: this.getPercentualClasse.bind(this)}
     ],
     acoes: [
       {icone: 'bi-pencil', classe: 'btn-outline-primary me-1', acao: this.editarLimite.bind(this)},
