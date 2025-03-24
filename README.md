@@ -8,7 +8,6 @@ O objetivo principal é desenvolver uma aplicação full-stack que permite aos u
 ### **Autores**
 - **Karina Esparza**
 - **Viliane Oliveira**
-- **Andréia Luiza**
 - **Jansen Chantal**
 - **Tiago Bittencourt**
 - **Marcelo Menezes**
