@@ -72,6 +72,8 @@ export class FormularioLimiteComponent extends BaseFormComponent implements OnIn
     this.formControls.changes.subscribe(() => {
       this.validateForm(this.limiteOrcamentoForm, this.formControls);
     });
+
+    this.validateForm(this.limiteOrcamentoForm, this.formControls);
   
     this.limiteOrcamentoForm.get('tipoLimite')?.valueChanges.subscribe((tipo) => {
       tipo == TipoLimite.categoria ? this.adicionarValidacaoCategoria() : this.removerValidacaoCategoria();
