@@ -39,7 +39,7 @@
     </a>
   </div>
   <ng-container *ngIf="!carregando">
-    <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes" [componenteParent]="this" />
+    <app-tabela [colunas]="tabela.colunas" [dados]="limites" [acoes]="tabela.acoes" />
     <app-empty-state [condicao]="limites.length === 0" [conteudo]="'Sem registros para listar'"/>
   </ng-container>
   <app-spinner [carregando]="carregando"/>
